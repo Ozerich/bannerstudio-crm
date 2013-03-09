@@ -1,3 +1,2 @@
-assets/
-protected/runtime/
-themes/classic/views/
+protected/config/db.php
+.idea/*
