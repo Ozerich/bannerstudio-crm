@@ -1,0 +1,103 @@
+.container {
+  width: 1280px !important;
+}
+
+.brand {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+.navbar {
+  .nav {
+    > li {
+      line-height: 71px;
+      height: 71px;
+      > a {
+        padding-top: 0;
+        padding-bottom: 0;
+
+      }
+    }
+
+    .dropdown-toggle {
+      .caret {
+        margin-top: 34px;
+      }
+    }
+  }
+  .dropdown-menu {
+    top: 52px;
+  }
+}
+
+.profile-block {
+  margin-top: 10px;
+  float: right;
+  margin-right: 20px;
+  padding-left: 100px;
+
+  .photo {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    background: #fff;
+    border: 1px solid #cfcfcf;
+    float: left;
+    margin-right: 10px;
+    text-align: center;
+    vertical-align: middle;
+
+    img {
+      max-width: 48px;
+      max-height: 48px;
+    }
+  }
+
+  .username {
+    font-size: 14px;
+    color: #2083c6;
+  }
+}
+
+.breadcrumbs {
+  margin: 10px 0;
+}
+
+.form {
+  form {
+    padding-bottom: 0;
+  }
+  fieldset {
+
+    .param {
+      margin: 8px 0;
+
+      &.value-param {
+        label, .value {
+          display: inline-block;
+        }
+        .value{
+          font-weight: bold;
+        }
+      }
+    }
+
+    input[type=text], input[type=password], textarea {
+      margin: 0;
+      width: 300px;
+    }
+
+    select {
+      width: 313px;
+    }
+
+    textarea {
+      height: 125px;
+      width: 500px;
+    }
+  }
+
+  .errorMessage {
+    color: red;
+  }
+}

@@ -68,6 +68,7 @@ class CPhpAuthManager extends CAuthManager
 		if(!isset($this->_items[$itemName]))
 			return false;
 		$item=$this->_items[$itemName];
+
 		Yii::trace('Checking permission "'.$item->getName().'"','system.web.auth.CPhpAuthManager');
 		if(!isset($params['userId']))
 		    $params['userId'] = $userId;
