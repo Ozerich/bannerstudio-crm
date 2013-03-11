@@ -1,4 +1,4 @@
-<p>Вы успешно зарегистрировались на сайте <strong>BannerStudio.ru</strong></p><br/>
+<p>Вы успешно зарегистрировались на сайте <strong>BannerStudio.ru</strong></p>
 <p>Ваш логин: <strong><?=$model->email?></strong><br/>
     Пароль: <strong><?=$model->real_password?></strong>
 </p>

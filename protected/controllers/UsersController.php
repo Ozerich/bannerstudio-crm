@@ -9,8 +9,9 @@ class UsersController extends Controller
         );
     }
 
-    private function processPost($model)
+    private function processPost($model, $redirect = '')
     {
+        $redirect = empty($redirect) ? Yii::app()->request->urlReferrer : $redirect;
         if (Yii::app()->request->isPostRequest) {
 
             $old_password = $model->password;
@@ -39,7 +40,7 @@ class UsersController extends Controller
                     $thumb->save($filename);
                 }
 
-                $this->redirect(Yii::app()->request->urlReferrer);
+                $this->redirect($redirect);
             }
 
         }
@@ -102,7 +103,7 @@ class UsersController extends Controller
     {
         $model = new User();
 
-        $this->processPost($model);
+        $this->processPost($model, '/users/');
 
         $this->breadcrumbs = array(
             'Пользователи' => array('/users/'),

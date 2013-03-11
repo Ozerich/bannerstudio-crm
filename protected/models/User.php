@@ -53,6 +53,7 @@ class User extends CActiveRecord
     {
         return array(
             array('role, email, login, salt, time_created', 'required'),
+            array('email, login', 'unique'),
             array('role', 'length', 'max' => 8),
             array('email', 'email'),
             array('email, login, salt', 'length', 'max' => 255),
