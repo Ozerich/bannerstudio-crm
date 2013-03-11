@@ -22,7 +22,7 @@ class User extends CActiveRecord
     public $avatar_url;
 
     // нужно ли генерировать пароль
-    protected $need_generate_password = false;
+    public $need_generate_password = false;
 
     public static $roles = array(
         'admin' => 'Администратор',
@@ -52,8 +52,8 @@ class User extends CActiveRecord
             array('role, email, login, salt, time_created', 'required'),
             array('role', 'length', 'max' => 8),
             array('email', 'email'),
-            array('email, login, password, salt', 'length', 'max' => 255),
-            array('contact, hide_information', 'safe'),
+            array('email, login, salt', 'length', 'max' => 255),
+            array('contact, hide_information, password', 'safe'),
 
             array('password', 'required', 'on' => 'insert'),
 
@@ -114,11 +114,8 @@ class User extends CActiveRecord
 
     public function beforeValidate()
     {
-        if ($this->isNewRecord || $this->need_generate_password) {
-            $this->salt = $this->generateSalt();
-        }
-
         if ($this->isNewRecord) {
+            $this->salt = $this->generateSalt();
             $this->time_created = date("Y-m-d H:i:s");
         }
 

@@ -18,7 +18,7 @@
         <?=$form->error($model, 'email'); ?>
 
         <?=$form->label($model, 'password'); ?>
-        <?=$form->textField($model, 'password', array('class' => 'span3')); ?>
+        <?=$form->passwordField($model, 'password', array('class' => 'span3')); ?>
         <?=$form->error($model, 'password'); ?>
 
         <?=$form->checkbox($model, 'rememberMe');?>

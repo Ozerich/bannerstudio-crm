@@ -13,6 +13,7 @@ class UsersController extends Controller
     {
         if (Yii::app()->request->isPostRequest) {
 
+            $old_password = $model->password;
             $model->attributes = Yii::app()->request->getPost('User');
 
             $uploadedFile = CUploadedFile::getInstance($model, 'avatar');
@@ -23,6 +24,9 @@ class UsersController extends Controller
             }
 
             $model->need_generate_password = !empty($_POST['User']['password']);
+            if (!$model->need_generate_password) {
+                $model->password = $old_password;
+            }
 
             if ($model->save()) {
 
