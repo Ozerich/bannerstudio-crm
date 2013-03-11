@@ -103,6 +103,7 @@ return array(
     ),
 
     'params' => array(
-        'upload_avatar' => '/uploads/avatars/'
+        'upload_avatar' => '/uploads/avatars/',
+        'email_admin' => 'admin@admin.ru',
     ),
 );

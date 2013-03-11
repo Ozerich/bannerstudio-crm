@@ -24,6 +24,9 @@ class User extends CActiveRecord
     // нужно ли генерировать пароль
     public $need_generate_password = false;
 
+    // незашифрованный проль
+    public $real_password = '';
+
     public static $roles = array(
         'admin' => 'Администратор',
         'worker' => 'Сотрудник',
@@ -53,7 +56,7 @@ class User extends CActiveRecord
             array('role', 'length', 'max' => 8),
             array('email', 'email'),
             array('email, login, salt', 'length', 'max' => 255),
-            array('contact, hide_information, password', 'safe'),
+            array('contact, hide_information, password, send_invite', 'safe'),
 
             array('password', 'required', 'on' => 'insert'),
 
@@ -125,7 +128,25 @@ class User extends CActiveRecord
     public function beforeSave()
     {
         if ($this->isNewRecord || $this->need_generate_password) {
+            $this->real_password = $this->password;
             $this->password = $this->hashPassword($this->password);
+        }
+
+        if ($this->isNewRecord && $this->send_invite) {
+
+            $message = new YiiMailMessage;
+
+            $message->subject = 'Уважаемый, ' . $this->login . '! Вы были успешно зарегистрированы на сайте BannerStudio.ru';
+            $message->view = 'register_invite';
+            $message->from = Yii::app()->params['email_admin'];
+            $message->to = $this->email;
+
+            $message->setBody(array(
+                'model' => $this,
+            ), 'text/html');
+
+            Yii::app()->mail->send($message);
+
         }
 
         return parent::beforeSave();
