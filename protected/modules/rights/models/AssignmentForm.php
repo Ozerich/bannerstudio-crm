@@ -29,4 +29,5 @@ class AssignmentForm extends CFormModel
 			'itemname' => Rights::t('core', 'Authorization item'),
 		);
 	}
+
 }

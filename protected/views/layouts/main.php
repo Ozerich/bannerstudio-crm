@@ -2,29 +2,33 @@
 <html>
 <head>
     <meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" /> 
-	<meta name="description" content="">
-	<meta name="author" content="Vital Ozierski, ozicoder@gmail.com">
-	
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta name="description" content="">
+    <meta name="author" content="Vital Ozierski, ozicoder@gmail.com">
+
     <title></title>
 
 
-	
     <link rel="stylesheet" href="/css/normalize.css">
     <link rel="stylesheet" href="/css/smoothness/jquery-ui-1.10.1.custom.min.css">
 
     <link rel="stylesheet/less" href="/css/base.less"/>
 
-    <? if ($this->getId() == 'auth'): ?>
+    <? if (Yii::app()->user->isGuest): ?>
     <link rel="stylesheet/less" href="/css/login.less"/>
     <? else: ?>
     <link rel="stylesheet/less" href="/css/styles.less"/>
     <link rel="stylesheet/less" href="/css/responsive/media.less"/>
     <? endif; ?>
 
+
     <script src="/js/modernizr.2.6.2.min.js"></script>
     <script src="/js/less-1.3.3.min.js"></script>
     <script src="/js/jquery-ui-1.10.1.custom.min.js"></script>
+
+    <? if (!Yii::app()->user->isGuest): ?>
+    <script src="/js/scripts.js"></script>
+    <? endif; ?>
 
 </head>
 
@@ -80,7 +84,8 @@
 
             <? if (!Yii::app()->user->isGuest): ?>
             <div class="profile-block">
-                <div class="photo"><a href="/profile"><img src="<?=Yii::app()->user->getModel()->avatar_url?>"/></a></div>
+                <div class="photo"><a href="/profile"><img src="<?=Yii::app()->user->getModel()->avatar_url?>"/></a>
+                </div>
                 <a class="username" href="/profile"><?=Yii::app()->user->getModel()->login?></a>
             </div>
 

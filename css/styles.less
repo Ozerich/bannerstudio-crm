@@ -2,6 +2,10 @@
   width: 1280px !important;
 }
 
+.page-container {
+  padding-bottom: 10px;
+}
+
 .brand {
   margin-left: 0 !important;
   padding-left: 0 !important;
@@ -76,7 +80,7 @@
         label, .value {
           display: inline-block;
         }
-        .value{
+        .value {
           font-weight: bold;
         }
       }
@@ -101,3 +105,149 @@
     color: red;
   }
 }
+
+#form_project {
+  .header-block {
+    .input {
+      width: 70%;
+      min-width: 340px;
+      input {
+        width: 99%;
+      }
+      float: left;
+    }
+
+    .status-block {
+      width: 250px;
+      text-align: right;
+      float: right;
+      .closed {
+        font-size: 12px;
+        font-weight: bold;
+        float: right;
+        margin: 5px 20px 0 10px;
+        vertical-align: top;
+      }
+
+      .status-select {
+        width: 150px;
+      }
+    }
+    margin-bottom: 10px;
+  }
+
+  .widgets {
+    .widget {
+      float: left;
+      width: 49%;
+      clear: none;
+
+      &:nth-child(2) {
+        float: right;
+      }
+
+      input[type=text] {
+        margin-bottom: 0;
+      }
+
+      .widget-content {
+        padding: 15px;
+      }
+
+      label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .users-list {
+        margin-top: 10px;
+      }
+
+      .lists {
+        select, .buttons {
+          display: block;
+          float: left;
+        }
+
+        select {
+          width: 270px;
+          height: 155px;
+        }
+
+        .buttons {
+          width: 30px;
+        }
+
+        .buttons {
+          margin: 45px 10px 0;
+
+          a {
+            display: block;
+            &:first-child {
+              margin-bottom: 10px;
+            }
+          }
+        }
+      }
+
+      .description-block {
+        margin: 15px 0;
+        label {
+          display: inline-block;
+          margin: 0 10px 0 5px;
+          vertical-align: middle;
+        }
+
+        textarea {
+          display: block;
+          width: 98%;
+          height: 250px;
+          margin-top: 5px;
+        }
+      }
+
+    }
+
+  }
+
+  .submit-buttons {
+    text-align: center;
+  }
+}
+
+.projects-table {
+
+  th, td{
+    vertical-align: middle;
+  }
+
+  .column-name_date {
+    .name{
+      display: block;
+      font-weight: bold;
+      font-size: 16px;
+      color: #000;
+      &:hover{
+        text-decoration: none;
+        color: #0088cc;
+      }
+    }
+    .date{
+      font-size: 10px;
+      color: #aaa;
+    }
+  }
+
+  .column-status{
+    color: #0088cc;
+    font-size: 14px;
+  }
+
+  .button-column{
+    max-width: 50px;
+    width: 50px;
+    text-align: center;
+  }
+}
+

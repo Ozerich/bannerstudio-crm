@@ -5,7 +5,7 @@
 .profile-block {
   margin-top: -75px;
   margin-right: 0;
-  .username{
+  .username {
     display: none;
   }
 }
@@ -17,43 +17,55 @@
       width: 100%;
     }
 
-    select{
+    select {
       width: 100%;
     }
 
-    textarea{
+    textarea {
       height: 100px;
       width: 100%;
     }
   }
 
-  .form-actions{
+  .form-actions {
     text-align: center;
   }
 }
 
-
-.brand{
-  img{
+.brand {
+  img {
     width: 115px;
   }
 }
 
-.navbar .nav > li a{
+.navbar .nav > li a {
   font-size: 8px
 }
 
-.btn-group{
-  a{
+.btn-group {
+  a {
     font-size: 12px !important;
     padding: 4px 10px;
   }
 }
 
-#page_users{
-  tr{
-    th:nth-child(4), td:nth-child(4), th:nth-child(5), td:nth-child(5),  th:nth-child(6), td:nth-child(6), th:nth-child(7), td:nth-child(7){
+#page_users {
+  tr {
+    th:nth-child(4), td:nth-child(4), th:nth-child(5), td:nth-child(5), th:nth-child(6), td:nth-child(6), th:nth-child(7), td:nth-child(7) {
       display: none;
+    }
+  }
+}
+
+#form_project {
+  .widgets {
+    .widget {
+      display: block;
+      float: none;
+      width: 100%;
+      &:first-child {
+        margin-bottom: 10px;
+      }
     }
   }
 }

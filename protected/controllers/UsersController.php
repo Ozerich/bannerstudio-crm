@@ -123,7 +123,6 @@ class UsersController extends Controller
 
         $this->processPost($model);
 
-
         $model->password = '';
 
         $this->breadcrumbs = array(

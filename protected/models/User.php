@@ -159,4 +159,15 @@ class User extends CActiveRecord
         $this->avatar_url = empty($this->avatar) ? "/img/no-avatar.png" : Yii::app()->params['upload_avatar'] . $this->avatar;
     }
 
+
+    public static function GetWorkers()
+    {
+        return self::model()->findAllByAttributes(array('role' => 'worker'));
+    }
+
+    public static function GetCustomers()
+    {
+        return self::model()->findAllByAttributes(array('role' => 'customer'));
+    }
+
 }

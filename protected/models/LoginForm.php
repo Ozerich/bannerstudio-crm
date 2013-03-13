@@ -8,7 +8,6 @@ class LoginForm extends CFormModel
 
     private $_identity;
 
-
     public function rules()
     {
         return array(
