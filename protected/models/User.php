@@ -27,6 +27,9 @@ class User extends CActiveRecord
     // незашифрованный проль
     public $real_password = '';
 
+    // Отображаемое имя
+    public $display_name = '';
+
     public static $roles = array(
         'admin' => 'Администратор',
         'worker' => 'Сотрудник',
@@ -157,6 +160,8 @@ class User extends CActiveRecord
     public function afterFind()
     {
         $this->avatar_url = empty($this->avatar) ? "/img/no-avatar.png" : Yii::app()->params['upload_avatar'] . $this->avatar;
+
+        $this->display_name = $this->login;
     }
 
 

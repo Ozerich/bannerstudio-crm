@@ -1,14 +1,15 @@
 body {
   font-size: 9pt;
   padding-top: 72px;
-}
 
+  font-family: Arial, sans-serif;
+}
 
 h3 {
   margin: 0;
 }
 
-h1{
+h1 {
   margin: 0 0 10px 0;
 }
 
@@ -113,12 +114,233 @@ fieldset {
   clear: both;
 }
 
-
-.grid-view{
+.grid-view {
   padding-top: 5px;
 }
 
-ul{
+ul {
   margin: 0;
   padding: 0;
+}
+
+.container {
+  width: 1280px !important;
+}
+
+.page-container {
+  padding: 10px 0;
+}
+
+.brand {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+.widget-header {
+  > i {
+    float: left;
+    margin-top: 15px;
+  }
+  h3 {
+    float: left;
+    display: block;
+    line-height: 38px;
+  }
+  .buttons {
+    float: right;
+    margin-right: 10px;
+    i {
+      margin-top: -2px;
+      margin-left: 0;
+    }
+  }
+}
+
+.widget {
+  .pagination {
+    text-align: center;
+    margin-bottom: 0;
+  }
+
+  .w-header {
+    margin-bottom: 12px;
+    h2 {
+      margin: 0 18px 0 12px;
+      line-height: 30px;
+      font-size: 18px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+
+  .w-table {
+
+    .list-view{
+      padding: 0;
+    }
+
+    ul.row {
+      list-style: none;
+      padding: 0 10px;
+      margin-left: 0;
+
+      li {
+        list-style: none;
+        display: block;
+        float: left;
+        min-height: 1px;
+
+        &.clearfix {
+          clear: both;
+          float: none;
+        }
+      }
+    }
+
+    .w-thead {
+      width: 100%;
+      height: 35px;
+      line-height: 35px;
+
+      border: 2px solid #e3e3e3;
+      border-radius: 10px 10px 0 0;
+      border-bottom-width: 1px;
+      border-top-width: 1px;
+
+      box-shadow: 2px 2px 20px #e3e3e3;
+
+      background-image: linear-gradient(bottom, rgb(238, 238, 238) 23%, rgb(248, 251, 255) 69%);
+      background-image: -o-linear-gradient(bottom, rgb(238, 238, 238) 23%, rgb(248, 251, 255) 69%);
+      background-image: -moz-linear-gradient(bottom, rgb(238, 238, 238) 23%, rgb(248, 251, 255) 69%);
+      background-image: -webkit-linear-gradient(bottom, rgb(238, 238, 238) 23%, rgb(248, 251, 255) 69%);
+      background-image: -ms-linear-gradient(bottom, rgb(238, 238, 238) 23%, rgb(248, 251, 255) 69%);
+
+      background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.23, rgb(238, 238, 238)), color-stop(0.69, rgb(248, 251, 255)));
+
+      ul.row {
+        height: 35px;
+
+        li {
+          line-height: 35px !important;
+          color: #8c8c8c !important;
+          font-size: 15px !important;
+          font-weight: normal !important;
+        }
+      }
+    }
+
+    .w-tbody {
+      width: 100%;
+      background: #fff;
+      padding: 5px 0 20px 0;
+
+      border: 2px solid #e3e3e3;
+      border-radius: 0 0 10px 10px;
+      border-top-width: 0;
+      box-shadow: 2px 2px 20px #e3e3e3;
+
+      ul.row {
+        border-bottom: 1px solid #e9e9e9;
+        padding-top: 4px;
+        padding-bottom: 4px;
+      }
+    }
+
+  }
+
+}
+
+.navbar {
+  .nav {
+    > li {
+      line-height: 71px;
+      height: 71px;
+      > a {
+        padding-top: 0;
+        padding-bottom: 0;
+
+      }
+    }
+
+    .dropdown-toggle {
+      .caret {
+        margin-top: 34px;
+      }
+    }
+  }
+  .dropdown-menu {
+    top: 52px;
+  }
+}
+
+.profile-block {
+  margin-top: 10px;
+  float: right;
+  margin-right: 20px;
+  padding-left: 100px;
+
+  .photo {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    background: #fff;
+    border: 1px solid #cfcfcf;
+    float: left;
+    margin-right: 10px;
+    text-align: center;
+    vertical-align: middle;
+
+    img {
+      max-width: 48px;
+      max-height: 48px;
+    }
+  }
+
+  .username {
+    font-size: 14px;
+    color: #2083c6;
+  }
+}
+
+.breadcrumbs {
+  margin: 10px 0 0 0;
+}
+
+.form {
+  form {
+    padding-bottom: 0;
+  }
+  fieldset {
+
+    .param {
+      margin: 8px 0;
+
+      &.value-param {
+        label, .value {
+          display: inline-block;
+        }
+        .value {
+          font-weight: bold;
+        }
+      }
+    }
+
+    input[type=text], input[type=password], textarea {
+      margin: 0;
+      width: 300px;
+    }
+
+    select {
+      width: 313px;
+    }
+
+    textarea {
+      height: 125px;
+      width: 500px;
+    }
+  }
+
+  .errorMessage {
+    color: red;
+  }
 }

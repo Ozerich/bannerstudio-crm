@@ -30,7 +30,7 @@ class ProjectsController extends Controller
             if ($model->save()) {
 
                 foreach (array_merge(explode(',', $model->workers_list), explode(',', $model->customers_list)) as $id) {
-                    ProjectUser::add($model->id, $id);
+                    ProjectUser::add($model->id, $id, isset($_POST['send_worker_email']), isset($_POST['send_customer_email']));
                 }
 
                 $this->redirect('/projects/' . $model->id);
@@ -38,7 +38,7 @@ class ProjectsController extends Controller
         }
 
         $this->breadcrumbs = array(
-            'Все проекты' => '/projects',
+            'Все проекты' => '/',
             'Проект ID ' . $model->id
         );
 
@@ -69,7 +69,7 @@ class ProjectsController extends Controller
             if ($model->save()) {
 
                 foreach (array_merge(explode(',', $model->workers_list), explode(',', $model->customers_list)) as $id) {
-                    ProjectUser::add($model->id, $id);
+                    ProjectUser::add($model->id, $id, isset($_POST['send_worker_email']), isset($_POST['send_customer_email']));
                 }
 
                 $this->redirect('/projects/' . $model->id);
@@ -77,7 +77,7 @@ class ProjectsController extends Controller
         }
 
         $this->breadcrumbs = array(
-            'Все проекты' => '/projects',
+            'Все проекты' => '/',
             'Новый проект'
         );
 

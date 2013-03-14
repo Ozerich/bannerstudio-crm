@@ -40,13 +40,12 @@ class Project extends CActiveRecord
     public function rules()
     {
         return array(
-            array('name, worker_price, closed, status, customer_price, worker_text, customer_text', 'required'),
+            array('name, closed, status', 'required'),
             array('worker_price, customer_price', 'numerical'),
 
-            array('workers_list', 'required', 'message' => 'Необходимо выбрать минимум 1 сотрудника'),
-            array('customers_list', 'required', 'message' => 'Необходимо выбрать минимум 1 заказчика'),
-
             //     array('worker_text, customer_text', 'filter', 'filter' => 'strip_tags'),
+
+            array('worker_price, customer_price, worker_text, customer_text', 'safe'),
 
             array('id, name, worker_price, customer_price, worker_text, customer_text, created_time', 'safe', 'on' => 'search'),
         );
@@ -96,10 +95,10 @@ class Project extends CActiveRecord
 
             if ($user->role == 'customer') {
                 $this->customers[] = $user;
-                $this->customers_list .= ($this->customers_list ? ',' : '').$user->id;
+                $this->customers_list .= ($this->customers_list ? ',' : '') . $user->id;
             } elseif ($user->role == 'worker') {
                 $this->workers[] = $user;
-                $this->workers_list .= ($this->workers_list ? ',' : '').$user->id;
+                $this->workers_list .= ($this->workers_list ? ',' : '') . $user->id;
             }
         }
 

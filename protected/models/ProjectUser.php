@@ -26,8 +26,42 @@ class ProjectUser extends CActiveRecord
     }
 
 
-    public static function add($project_id, $user_id)
+    public static function add($project_id, $user_id, $send_worker_email = false, $send_customer_email = false)
     {
+        if ($send_customer_email || $send_worker_email) {
+
+            if (ProjectUser::model()->countByAttributes(array('project_id' => $project_id, 'user_id' => $user_id)) == 0) {
+
+                $user = User::model()->findByPk($user_id);
+                if (!$user) {
+                    return FALSE;
+                }
+
+                $project = Project::model()->findByPk($project_id);
+                if(!$project){
+                    return FALSE;
+                }
+
+                if (($user->role === 'worker' && $send_worker_email) || ($user->role === 'customer' && $send_customer_email)) {
+
+                    $message = new YiiMailMessage;
+
+                    $message->subject = 'Уважаемый, ' . $user->login . '! Вас добавили в проект на сайте BannerStudio.ru';
+                    $message->view = 'add_to_project';
+                    $message->from = Yii::app()->params['email_admin'];
+                    $message->to = $user->email;
+
+                    $message->setBody(array(
+                        'user' => $user,
+                        'project' => $project
+                    ), 'text/html');
+
+                    Yii::app()->mail->send($message);
+
+                }
+            }
+        }
+
         if (is_numeric($project_id) && is_numeric($user_id)) {
 
             self::model()->deleteAllByAttributes(array(

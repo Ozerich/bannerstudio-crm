@@ -80,11 +80,11 @@ $all_customers = User::GetCustomers(); ?>
                     <?=$form->error($model, 'customer_text');?>
                 </div>
 
-                <? if ($model->isNewRecord): ?>
+
                 <label class="email-remind-block checkbox" for="customer_email_remind">
-                    <input type="checkbox" id="customer_email_remind" checked="checked"> Написать письмо на e-mail
+                    <input type="checkbox" id="customer_email_remind" name="send_customer_email"> Написать новым письмо на e-mail
                 </label>
-                <? endif; ?>
+
 
 
             </div>
@@ -141,11 +141,10 @@ $all_customers = User::GetCustomers(); ?>
                     <?=$form->error($model, 'worker_text');?>
                 </div>
 
-                <? if ($model->isNewRecord): ?>
+
                 <label class="email-remind-block checkbox" for="worker_email_remind">
-                    <input type="checkbox" id="worker_email_remind" checked="checked"> Написать письмо на e-mail
+                    <input type="checkbox" id="worker_email_remind" name="send_worker_email"> Написать новым письмо на e-mail
                 </label>
-                <? endif; ?>
 
             </div>
         </div>

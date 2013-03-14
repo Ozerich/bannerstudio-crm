@@ -8,7 +8,10 @@ class SiteController extends Controller
             $this->redirect('/login');
         }
 
-        $this->render('index');
+        $dataProvider = new CActiveDataProvider('Project');
+
+
+        $this->render('index', array('projects_dataProvider' => $dataProvider));
     }
 
 
