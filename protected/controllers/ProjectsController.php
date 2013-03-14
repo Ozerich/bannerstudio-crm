@@ -11,6 +11,7 @@ class ProjectsController extends Controller
 
     public function actionIndex()
     {
+        $this->redirect('/');
         $this->breadcrumbs = array('Все проекты');
 
         $this->render('index', array('dataProvider' => new CActiveDataProvider('Project')));

@@ -33,11 +33,11 @@
         'template' => "{pager}{items}{pager}",
         'columns' => array(
             array('name' => 'id', 'htmlOptions' => array('class' => 'span1 column-id')),
-            array('name' => 'login', 'htmlOptions' => array('class' => 'span2 column-login'), 'type' => 'raw', 'value' => 'CHtml::link($data->login, array("users/edit", "id"=>$data->id))'),
+            array('name' => 'login', 'htmlOptions' => array('class' => 'span2 column-login'), 'type' => 'raw', 'value' => 'CHtml::link($data->login, array("users/{$data->id}"))'),
             array('name' => 'email', 'htmlOptions' => array('class' => 'span2 column-email')),
             array('name' => 'role', 'value' => 'User::$roles[$data->role]', 'htmlOptions' => array('class' => 'span3 column-role')),
-            array('name' => 'contact', 'htmlOptions' => array('class' => 'column-contact')),
-            array('name' => 'hide_information', 'htmlOptions' => array('class' => 'column-hide_information')),
+            array('name' => 'contact', 'htmlOptions' => array('class' => 'column-contact'), 'type' => 'raw', 'value' => 'nl2br($data->contact)'),
+            array('name' => 'hide_information', 'htmlOptions' => array('class' => 'column-hide_information'), 'type' => 'raw', 'value' => 'nl2br($data->hide_information)'),
             array('name' => 'last_visit', 'htmlOptions' => array('class' => 'column-last_visit'), 'value' => 'Yii::app()->prettydate->relativeTime($data->last_visit)'),
             array(
                 'class' => 'bootstrap.widgets.TbButtonColumn',

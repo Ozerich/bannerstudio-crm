@@ -1,5 +1,24 @@
 $(function () {
 
+    // хедер
+    (function () {
+
+        var $profile_block = $('.profile-block');
+        var $submenu = $profile_block.find('.dropdown-menu');
+
+        $profile_block.find('.dropdown-toggle').on('click', function () {
+            $submenu.fadeToggle();
+            return false;
+        });
+
+        $(document).on('click', function (event) {
+            if ($(event.target).parents('.profile-block').length === 0) {
+                $submenu.fadeOut();
+            }
+        });
+
+    })();
+
     // страница с формой проекта
     (function () {
 

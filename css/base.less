@@ -156,96 +156,108 @@ ul {
   }
 }
 
-.widget {
-  .pagination {
-    text-align: center;
-    margin-bottom: 0;
-  }
+.header-button {
+  margin-top: -45px;
+  float: right;
 
-  .w-header {
-    margin-bottom: 12px;
-    h2 {
-      margin: 0 18px 0 12px;
-      line-height: 30px;
-      font-size: 18px;
-      display: inline-block;
-      vertical-align: middle;
+  &:after {
+    clear: both;
+  }
+}
+
+.pagination {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.w-header {
+  margin-bottom: 12px;
+  h2 {
+    margin: 0 18px 0 12px;
+    line-height: 30px;
+    font-size: 18px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+
+.w-table {
+
+  .list-view {
+    padding: 0;
+
+    .empty{
+      display: block;
+      text-align: center;
+      font-size: 16px;
     }
   }
 
-  .w-table {
+  ul.row {
+    list-style: none;
+    padding: 0 10px;
+    margin-left: 0;
 
-    .list-view{
-      padding: 0;
+    li {
+      list-style: none;
+      display: block;
+      float: left;
+      min-height: 1px;
+
+      &.clearfix {
+        clear: both;
+        float: none;
+      }
     }
+  }
+
+  .w-thead {
+    width: 100%;
+    height: 35px;
+    line-height: 35px;
+
+    border: 2px solid #e3e3e3;
+    border-radius: 10px 10px 0 0;
+    border-bottom-width: 1px;
+    border-top-width: 1px;
+
+    box-shadow: 2px 2px 20px #e3e3e3;
+
+    background-image: linear-gradient(bottom, rgb(238, 238, 238) 23%, rgb(248, 251, 255) 69%);
+    background-image: -o-linear-gradient(bottom, rgb(238, 238, 238) 23%, rgb(248, 251, 255) 69%);
+    background-image: -moz-linear-gradient(bottom, rgb(238, 238, 238) 23%, rgb(248, 251, 255) 69%);
+    background-image: -webkit-linear-gradient(bottom, rgb(238, 238, 238) 23%, rgb(248, 251, 255) 69%);
+    background-image: -ms-linear-gradient(bottom, rgb(238, 238, 238) 23%, rgb(248, 251, 255) 69%);
+
+    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.23, rgb(238, 238, 238)), color-stop(0.69, rgb(248, 251, 255)));
 
     ul.row {
-      list-style: none;
-      padding: 0 10px;
-      margin-left: 0;
+      height: 35px;
 
       li {
-        list-style: none;
-        display: block;
-        float: left;
-        min-height: 1px;
-
-        &.clearfix {
-          clear: both;
-          float: none;
-        }
+        line-height: 35px !important;
+        color: #8c8c8c !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
       }
     }
+  }
 
-    .w-thead {
-      width: 100%;
-      height: 35px;
-      line-height: 35px;
+  .w-tbody {
+    width: 100%;
+    background: #fff;
+    padding: 5px 0 20px 0;
 
-      border: 2px solid #e3e3e3;
-      border-radius: 10px 10px 0 0;
-      border-bottom-width: 1px;
-      border-top-width: 1px;
+    border: 2px solid #e3e3e3;
+    border-radius: 0 0 10px 10px;
+    border-top-width: 0;
+    box-shadow: 2px 2px 20px #e3e3e3;
 
-      box-shadow: 2px 2px 20px #e3e3e3;
-
-      background-image: linear-gradient(bottom, rgb(238, 238, 238) 23%, rgb(248, 251, 255) 69%);
-      background-image: -o-linear-gradient(bottom, rgb(238, 238, 238) 23%, rgb(248, 251, 255) 69%);
-      background-image: -moz-linear-gradient(bottom, rgb(238, 238, 238) 23%, rgb(248, 251, 255) 69%);
-      background-image: -webkit-linear-gradient(bottom, rgb(238, 238, 238) 23%, rgb(248, 251, 255) 69%);
-      background-image: -ms-linear-gradient(bottom, rgb(238, 238, 238) 23%, rgb(248, 251, 255) 69%);
-
-      background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.23, rgb(238, 238, 238)), color-stop(0.69, rgb(248, 251, 255)));
-
-      ul.row {
-        height: 35px;
-
-        li {
-          line-height: 35px !important;
-          color: #8c8c8c !important;
-          font-size: 15px !important;
-          font-weight: normal !important;
-        }
-      }
+    ul.row {
+      border-bottom: 1px solid #e9e9e9;
+      padding-top: 4px;
+      padding-bottom: 4px;
     }
-
-    .w-tbody {
-      width: 100%;
-      background: #fff;
-      padding: 5px 0 20px 0;
-
-      border: 2px solid #e3e3e3;
-      border-radius: 0 0 10px 10px;
-      border-top-width: 0;
-      box-shadow: 2px 2px 20px #e3e3e3;
-
-      ul.row {
-        border-bottom: 1px solid #e9e9e9;
-        padding-top: 4px;
-        padding-bottom: 4px;
-      }
-    }
-
   }
 
 }
@@ -299,6 +311,18 @@ ul {
   .username {
     font-size: 14px;
     color: #2083c6;
+  }
+
+  .dropdown-toggle{
+    display: block;
+    &:hover{
+      text-decoration: none;
+    }
+  }
+
+  .dropdown-menu{
+    display: none;
+    left: 100px;
   }
 }
 

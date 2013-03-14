@@ -133,4 +133,23 @@ class UsersController extends Controller
         $this->render('item', array('model' => $model, 'page_header' => 'Пользователь ' . $model->login));
     }
 
+
+    public function actionView($id)
+    {
+        $model = User::model()->findByPk($id);
+
+        if(!$model){
+            throw new CHttpException(404);
+        }
+
+        $dataProvider = new CArrayDataProvider($model->getProjects());
+
+        $this->breadcrumbs = array(
+            'Пользователи' => array('/users'),
+            'Пользователь ' . $model->login
+        );
+
+        $this->render('view', array('model' => $model, 'page_header' => 'Пользователь ' . $model->login, 'dataProvider' => $dataProvider));
+    }
+
 }

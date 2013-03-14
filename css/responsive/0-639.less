@@ -1,12 +1,53 @@
+body {
+  padding-top: 30px !important;
+}
+
 .container {
   width: 350px !important;
 }
 
+.navbar-inner {
+  min-height: 0;
+}
+
+.nav-collapse {
+  clear: both;
+}
+
+.navbar {
+  .nav {
+
+    padding-left: 0;
+
+    > li {
+      line-height: 30px;
+      height: 30px;
+    }
+
+    .dropdown-toggle {
+      .caret {
+        margin-top: 13px;
+      }
+    }
+  }
+
+  .dropdown-menu {
+    top: 25px;
+  }
+
+}
+
 .profile-block {
-  margin-top: -75px;
+  margin-top: -25px;
   margin-right: 0;
-  .username {
+  .photo {
     display: none;
+  }
+  .username {
+    font-size: 12px;
+  }
+  .dropdown-menu {
+    left: 25px;
   }
 }
 
@@ -70,31 +111,36 @@
   }
 }
 
+.projects-table {
 
-#page_index{
+  .col-status {
 
-
-  .col-status{
-
-    .buttons{
+    .buttons {
       float: none !important;
       width: auto !important;
-      a{
+      a {
         display: inline-block !important;
       }
     }
 
-    .status{
+    .status {
       line-height: normal !important;
       float: none !important;
       margin-right: 0 !important;
     }
   }
 
-
-  .col-price{
-    .username{
+  .col-price {
+    .username {
       display: none !important;
+    }
+
+    .user {
+      .price {
+        float: none !important;
+        margin: 0 auto !important;
+        text-align: center !important;
+      }
     }
   }
 

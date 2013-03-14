@@ -30,6 +30,12 @@ class User extends CActiveRecord
     // Отображаемое имя
     public $display_name = '';
 
+    // Отображаемая дата регистрации
+    public $display_register_date = '';
+
+    // Отображаемая дата последнего входа
+    public $display_last_visit = '';
+
     public static $roles = array(
         'admin' => 'Администратор',
         'worker' => 'Сотрудник',
@@ -162,6 +168,14 @@ class User extends CActiveRecord
         $this->avatar_url = empty($this->avatar) ? "/img/no-avatar.png" : Yii::app()->params['upload_avatar'] . $this->avatar;
 
         $this->display_name = $this->login;
+
+        $this->display_register_date = date('d.m.Y H:i', strtotime($this->time_created));
+
+        if ($this->last_visit === null) {
+            $this->display_last_visit = 'Не заходил';
+        } else {
+            $this->display_last_visit = date('d.m.Y H:i', strtotime($this->last_visit));
+        }
     }
 
 
@@ -173,6 +187,22 @@ class User extends CActiveRecord
     public static function GetCustomers()
     {
         return self::model()->findAllByAttributes(array('role' => 'customer'));
+    }
+
+
+    // Возвращает проекты где задействован пользователь
+    public function getProjects()
+    {
+        $result = array();
+
+        foreach (ProjectUser::model()->findAllByAttributes(array('user_id' => $this->id)) as $_project_user) {
+            $project = Project::model()->findByPk($_project_user->project_id);
+            if ($project) {
+                $result[] = $project;
+            }
+        }
+
+        return $result;
     }
 
 }

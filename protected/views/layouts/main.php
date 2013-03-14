@@ -74,19 +74,27 @@
                         </ul>
                     </li>
 
-                    <li><a href="/profile">Личные данные</a></li>
-
-                    <li><a href="/logout">Выйти</a></li>
-
                 </ul>
                 <? endif; ?>
             </div>
 
             <? if (!Yii::app()->user->isGuest): ?>
-            <div class="profile-block">
-                <div class="photo"><a href="/profile"><img src="<?=Yii::app()->user->getModel()->avatar_url?>"/></a>
-                </div>
-                <a class="username" href="/profile"><?=Yii::app()->user->getModel()->login?></a>
+            <div class="profile-block dropdown">
+
+                <a href="#" class="dropdown-toggle">
+                    <div class="photo">
+                        <img src="<?=Yii::app()->user->getModel()->avatar_url?>"/>
+                    </div>
+                    <span class="username"><?=Yii::app()->user->getModel()->login?></span>
+                    <div style="clear: both"></div>
+                </a>
+
+                <ul id="yw4" class="dropdown-menu">
+                    <li><a href="/profile">Личные данные</a></li>
+                    <li><a href="/logout">Выйти</a></li>
+                </ul>
+
+
             </div>
 
             <? endif; ?>

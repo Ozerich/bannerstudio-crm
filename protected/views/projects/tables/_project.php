@@ -11,7 +11,7 @@
 
         <div class="user worker">
             <span class="price"><?=$data->worker_price?> руб.</span>
-            <span class="username"><?=$worker->display_name?></span>
+            <a href="/users/<?=$worker->id?>" class="username"><?=$worker->display_name?></a>
         </div>
         <? endforeach; ?>
 
@@ -19,7 +19,7 @@
 
         <div class="user customer">
             <span class="price"><?=$data->customer_price?> руб.</span>
-            <span class="username"><?=$customer->display_name?></span>
+            <a href="/users/<?=$customer->id?>" class="username"><?=$customer->display_name?></a>
         </div>
         <? endforeach; ?>
 
