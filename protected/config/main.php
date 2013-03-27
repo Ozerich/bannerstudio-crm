@@ -105,5 +105,6 @@ return array(
     'params' => array(
         'upload_avatar' => '/uploads/avatars/',
         'email_admin' => 'admin@admin.ru',
+        'admin_emails' => array('ozicoder@gmail.com'),
     ),
 );

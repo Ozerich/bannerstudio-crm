@@ -21,6 +21,7 @@ class Project extends CActiveRecord
     public $customers = array();
 
     public static $statuses = array(
+        'customer_created' => 'Создан заказчиком',
         'status_1' => 'Статус 1',
         'status_2' => 'Статус 2',
         'status_3' => 'Статус 3',
@@ -81,6 +82,26 @@ class Project extends CActiveRecord
         return parent::beforeSave();
     }
 
+    public function afterSave()
+    {
+        if ($this->isNewRecord && Yii::app()->user->role == 'customer') {
+
+            $message = new YiiMailMessage;
+
+            $message->subject = 'Новый проект от заказчика';
+            $message->view = 'new_project_from_customer';
+            $message->from = Yii::app()->params['email_admin'];
+            $message->to = Yii::app()->params['email_admin'];
+
+            $message->setBody(array(
+                'project' => $this
+            ), 'text/html');
+
+            Yii::app()->mail->send($message);
+
+        }
+    }
+
 
     public function afterFind()
     {
@@ -112,4 +133,31 @@ class Project extends CActiveRecord
     }
 
 
+    public function checkAccess()
+    {
+        if (Yii::app()->user->role == 'admin') {
+            return true;
+        }
+
+        return ProjectUser::model()->countByAttributes(array(
+            'project_id' => $this->id,
+            'user_id' => Yii::app()->user->id
+        )) > 0;
+    }
+
+    public static function FindLastProjects($count = 10)
+    {
+        $criteria = new CDbCriteria();
+        $criteria->compare('user_id', Yii::app()->user->id);
+        $criteria->limit = 10;
+
+        $projects_for_user = ProjectUser::model()->findAll($criteria);
+
+        $projects = array();
+        foreach ($projects_for_user as $_project) {
+            $projects[] = Project::model()->findByPk($_project->project_id);
+        }
+
+        return $projects;
+    }
 }

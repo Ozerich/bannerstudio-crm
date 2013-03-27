@@ -4,7 +4,10 @@
 
         <div class="w-header">
             <h2>Проекты</h2>
-            <a href="/projects/create" class="btn btn-info"><i class="icon-plus icon-white"></i> Создать</a>
+
+            <? if (Yii::app()->user->checkAccess('Projects.Create')): ?>
+                <a href="/projects/create" class="btn btn-info"><i class="icon-plus icon-white"></i> Создать</a>
+            <? endif; ?>
         </div>
 
         <div class="w-content">

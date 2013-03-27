@@ -3,7 +3,7 @@ $customers = $model->customers_list ? explode(',', $model->customers_list) : arr
 <? $all_workers = User::GetWorkers();
 $all_customers = User::GetCustomers(); ?>
 
-<div class="form" id="form_project">
+<div class="form admin-form" id="form_project">
 
     <?php
     $form = $this->beginWidget('CActiveForm', array(

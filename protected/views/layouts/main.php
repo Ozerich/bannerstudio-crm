@@ -15,10 +15,10 @@
     <link rel="stylesheet/less" href="/css/base.less"/>
 
     <? if (Yii::app()->user->isGuest): ?>
-    <link rel="stylesheet/less" href="/css/login.less"/>
+        <link rel="stylesheet/less" href="/css/login.less"/>
     <? else: ?>
-    <link rel="stylesheet/less" href="/css/styles.less"/>
-    <link rel="stylesheet/less" href="/css/responsive/media.less"/>
+        <link rel="stylesheet/less" href="/css/styles.less"/>
+        <link rel="stylesheet/less" href="/css/responsive/media.less"/>
     <? endif; ?>
 
 
@@ -27,7 +27,7 @@
     <script src="/js/jquery-ui-1.10.1.custom.min.js"></script>
 
     <? if (!Yii::app()->user->isGuest): ?>
-    <script src="/js/scripts.js"></script>
+        <script src="/js/scripts.js"></script>
     <? endif; ?>
 
 </head>
@@ -43,59 +43,68 @@
             <div class="nav-collapse" id="collapse_0">
                 <? if (!Yii::app()->user->isGuest): ?>
 
-                <ul class="nav">
+                    <ul class="nav">
+                        <li><a href="/">Главная</a></li>
 
-                    <li><a href="/">Главная</a></li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Проекты <span
+                                    class="caret"></span></a>
+                            <ul id="yw1" class="dropdown-menu">
+                                <? if(Yii::app()->user->role != 'admin'): ?>
+                                    <? foreach(Project::FindLastProjects(10) as $project): ?>
+                                        <li class="project"><a tabindex="-1" href="/projects/<?=$project->id?>"><?=$project->name?></a> </li>
+                                    <? endforeach; ?>
+                                <? endif; ?>
+                                <li><a tabindex="-1" href="/">Все проекты</a></li>
+                                <? if(Yii::app()->user->checkAccess('Projects.Create')): ?>
+                                <li><a tabindex="-1" href="/projects/create">Добавить проект</a></li>
+                                <? endif; ?>
+                            </ul>
+                        </li>
 
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Проекты <span
-                                class="caret"></span></a>
-                        <ul id="yw1" class="dropdown-menu">
-                            <li><a tabindex="-1" href="/projects">Все проекты</a></li>
-                            <li><a tabindex="-1" href="/projects/create">Добавить проект</a></li>
-                        </ul>
-                    </li>
+                        <? if (Yii::app()->user->checkAccess('Users.Index') || Yii::app()->user->checkAccess('Users.Create')): ?>
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Администрирование<span
+                                        class="caret"></span></a>
+                                <ul id="yw3" class="dropdown-menu">
 
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Администрирование<span
-                                class="caret"></span></a>
-                        <ul id="yw3" class="dropdown-menu">
+                                    <? if (Yii::app()->user->checkAccess('Users.Index')): ?>
+                                        <li><a tabindex="-1" href="/users">Список пользователей</a></li>
+                                    <? endif; ?>
 
-                            <? if (Yii::app()->user->checkAccess('Users.Index')): ?>
-                            <li><a tabindex="-1" href="/users">Список пользователей</a></li>
-                            <? endif; ?>
-
-                            <? if (Yii::app()->user->checkAccess('Users.Create')): ?>
-                            <li><a tabindex="-1" href="/users/create">Добавить пользователя</a></li>
-                            <? endif; ?>
+                                    <? if (Yii::app()->user->checkAccess('Users.Create')): ?>
+                                        <li><a tabindex="-1" href="/users/create">Добавить пользователя</a></li>
+                                    <? endif; ?>
 
 
-                            <li><a tabindex="-1" href="/logs">Просмотр Логов</a></li>
-                        </ul>
-                    </li>
+                                    <li><a tabindex="-1" href="/logs">Просмотр Логов</a></li>
+                                </ul>
+                            </li>
+                        <? endif; ?>
 
-                </ul>
+                    </ul>
                 <? endif; ?>
             </div>
 
             <? if (!Yii::app()->user->isGuest): ?>
-            <div class="profile-block dropdown">
+                <div class="profile-block dropdown">
 
-                <a href="#" class="dropdown-toggle">
-                    <div class="photo">
-                        <img src="<?=Yii::app()->user->getModel()->avatar_url?>"/>
-                    </div>
-                    <span class="username"><?=Yii::app()->user->getModel()->login?></span>
-                    <div style="clear: both"></div>
-                </a>
+                    <a href="#" class="dropdown-toggle">
+                        <div class="photo">
+                            <img src="<?= Yii::app()->user->getModel()->avatar_url ?>"/>
+                        </div>
+                        <span class="username"><?=Yii::app()->user->getModel()->login?></span>
 
-                <ul id="yw4" class="dropdown-menu">
-                    <li><a href="/profile">Личные данные</a></li>
-                    <li><a href="/logout">Выйти</a></li>
-                </ul>
+                        <div style="clear: both"></div>
+                    </a>
+
+                    <ul id="yw4" class="dropdown-menu">
+                        <li><a href="/profile">Личные данные</a></li>
+                        <li><a href="/logout">Выйти</a></li>
+                    </ul>
 
 
-            </div>
+                </div>
 
             <? endif; ?>
         </div>
@@ -107,15 +116,15 @@
     <div class="row-fluid">
 
         <?php $this->widget('bootstrap.widgets.TbBreadcrumbs', array(
-        'homeLink' => CHtml::link('Главная', '/'),
-        'links' => $this->breadcrumbs,
-    )); ?>
+            'homeLink' => CHtml::link('Главная', '/'),
+            'links' => $this->breadcrumbs,
+        )); ?>
     </div>
 
 
     <div class="page-container">
         <? if (isset($page_header)): ?>
-        <h1><?=$page_header?></h1>
+            <h1><?=$page_header?></h1>
         <? endif; ?>
         <?=$content?>
     </div>

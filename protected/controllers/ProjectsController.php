@@ -67,7 +67,16 @@ class ProjectsController extends Controller
         if (Yii::app()->request->isPostRequest) {
             $model->attributes = Yii::app()->request->getPost('Project');
 
+            if (Yii::app()->user->role == 'customer') {
+                $model->closed = 0;
+                $model->status = 'customer_created';
+            }
+
             if ($model->save()) {
+
+                if (Yii::app()->user->role == 'customer') {
+                    ProjectUser::add($model->id, Yii::app()->user->id);
+                }
 
                 foreach (array_merge(explode(',', $model->workers_list), explode(',', $model->customers_list)) as $id) {
                     ProjectUser::add($model->id, $id, isset($_POST['send_worker_email']), isset($_POST['send_customer_email']));
@@ -90,13 +99,12 @@ class ProjectsController extends Controller
     {
         $model = Project::model()->findByPk($id);
 
-        if (!$model) {
+        if (!$model || !$model->checkAccess()) {
             throw new CHttpException(404);
         }
 
-
         $this->breadcrumbs = array(
-            'Все проекты' => '/projects',
+            'Все проекты' => '/',
             'Проект ID ' . $model->id
         );
 
