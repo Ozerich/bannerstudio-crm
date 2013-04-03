@@ -46,9 +46,9 @@ class Project extends CActiveRecord
 
             //     array('worker_text, customer_text', 'filter', 'filter' => 'strip_tags'),
 
-            array('worker_price, customer_price, worker_text, customer_text', 'safe'),
+            array('worker_price, customer_price, worker_text, customer_text, status', 'safe'),
 
-            array('id, name, worker_price, customer_price, worker_text, customer_text, created_time', 'safe', 'on' => 'search'),
+            array('id, name, worker_price, customer_price, worker_text, customer_text, created_time, status', 'safe', 'on' => 'search'),
         );
     }
 
