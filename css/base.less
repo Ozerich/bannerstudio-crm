@@ -5,8 +5,14 @@ body {
   font-family: Arial, sans-serif;
 }
 
-h3 {
+h3,p {
   margin: 0;
+}
+
+input, textarea {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 h1 {
@@ -121,6 +127,10 @@ fieldset {
 ul {
   margin: 0;
   padding: 0;
+  list-style: none;
+  li{
+    list-style: none;
+  }
 }
 
 .container {
@@ -134,6 +144,23 @@ ul {
 .brand {
   margin-left: 0 !important;
   padding-left: 0 !important;
+}
+
+.user-photo {
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  background: #fff;
+  border: 1px solid #cfcfcf;
+  float: left;
+  margin-right: 10px;
+  text-align: center;
+  vertical-align: middle;
+
+  img {
+    max-width: 48px;
+    max-height: 48px;
+  }
 }
 
 .widget-header {
@@ -291,23 +318,6 @@ ul {
   margin-right: 20px;
   padding-left: 100px;
 
-  .photo {
-    width: 50px;
-    height: 50px;
-    line-height: 50px;
-    background: #fff;
-    border: 1px solid #cfcfcf;
-    float: left;
-    margin-right: 10px;
-    text-align: center;
-    vertical-align: middle;
-
-    img {
-      max-width: 48px;
-      max-height: 48px;
-    }
-  }
-
   .username {
     font-size: 14px;
     color: #2083c6;
@@ -366,5 +376,30 @@ ul {
 
   .errorMessage {
     color: red;
+  }
+}
+
+
+
+.time-label {
+  display: block;
+  background: url('../img/icon_time.png') left center no-repeat;
+  padding-left: 15px;
+  color: #a0a6a9;
+  font-size: 11px;
+}
+
+.user-photo-wr {
+  float: left;
+  width: 54px;
+  margin-right: 7px;
+  vertical-align: top;
+
+  .user-photo {
+    border-width: 2px;
+    margin: 0;
+    height: auto;
+    width: auto;
+    line-height: normal;
   }
 }

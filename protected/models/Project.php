@@ -54,7 +54,9 @@ class Project extends CActiveRecord
 
     public function relations()
     {
-        return array();
+        return array(
+            'comments' => array(self::HAS_MANY, 'ProjectComment', 'project_id')
+        );
     }
 
     public function attributeLabels()
@@ -130,6 +132,10 @@ class Project extends CActiveRecord
         ProjectUser::model()->deleteAllByAttributes(array(
             'project_id' => $this->id
         ));
+
+        foreach ($this->comments as $comment) {
+            $comment->delete();
+        }
     }
 
 

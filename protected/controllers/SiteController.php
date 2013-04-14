@@ -10,6 +10,14 @@ class SiteController extends Controller
 
         if (Yii::app()->user->role == 'admin') {
             $dataProvider = new CActiveDataProvider('Project');
+
+            $criteria = new CDbCriteria();
+
+            $criteria->order = 'datetime desc';
+            $criteria->limit = 50;
+
+            $comments = ProjectComment::model()->findAll($criteria);
+
         } else {
 
             $projects = array();
@@ -20,10 +28,28 @@ class SiteController extends Controller
             }
 
             $dataProvider = new CArrayDataProvider($projects);
+
+
+            $criteria = new CDbCriteria();
+
+            $criteria->order = 'datetime desc';
+            $criteria->limit = 50;
+
+            $criteria->addNotInCondition('user_id', Yii::app()->user->id);
+
+            foreach($projects as $project){
+                $criteria->compare('project_id', $project->id, false, 'OR');
+            }
+
+            $comments = ProjectComment::model()->findAll($criteria);
+
         }
 
-
-        $this->render('index', array('projects_dataProvider' => $dataProvider));
+        $this->render('index', array('projects_dataProvider' => $dataProvider, 'comments_dataProvider' => new CArrayDataProvider($comments, array(
+            'pagination' => array(
+                'pageSize' => 10000,
+            ),
+        ))));
     }
 
 

@@ -78,7 +78,9 @@ class User extends CActiveRecord
 
     public function relations()
     {
-        return array();
+        return array(
+            'comments' => array(self::HAS_MANY, 'ProjectComment', 'user_id')
+        );
     }
 
     public function attributeLabels()
@@ -203,6 +205,14 @@ class User extends CActiveRecord
         }
 
         return $result;
+    }
+
+
+    public function afterDelete()
+    {
+        foreach ($this->comments as $comment) {
+            $comment->delete();
+        }
     }
 
 }

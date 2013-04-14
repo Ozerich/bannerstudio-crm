@@ -28,6 +28,7 @@
 
     <? if (!Yii::app()->user->isGuest): ?>
         <script src="/js/scripts.js"></script>
+        <script src="/js/ajaxfileupload.js"></script>
     <? endif; ?>
 
 </head>
@@ -90,7 +91,7 @@
                 <div class="profile-block dropdown">
 
                     <a href="#" class="dropdown-toggle">
-                        <div class="photo">
+                        <div class="user-photo">
                             <img src="<?= Yii::app()->user->getModel()->avatar_url ?>"/>
                         </div>
                         <span class="username"><?=Yii::app()->user->getModel()->login?></span>

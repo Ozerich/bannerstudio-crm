@@ -37,8 +37,8 @@ return array(
             'options' => array()
         ),
 
-        'prettydate'=>array(
-            'class'=>'PrettyDate'
+        'prettydate' => array(
+            'class' => 'PrettyDate'
         ),
 
         'user' => array(
@@ -72,7 +72,7 @@ return array(
                 'profile' => 'users/profile',
 
                 '<controller:\w+>/<id:\d+>' => '<controller>/view',
-                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>/id/<id>',
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ),
         ),
@@ -104,6 +104,9 @@ return array(
 
     'params' => array(
         'upload_avatar' => '/uploads/avatars/',
+        'upload_dir' => '/uploads/',
+        'upload_dir_comments' => '/uploads/comments/',
+        'tmp_dir' => '/uploads/tmp/',
         'email_admin' => 'admin@admin.ru',
         'admin_emails' => array('ozicoder@gmail.com'),
     ),

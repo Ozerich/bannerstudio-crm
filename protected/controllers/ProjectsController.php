@@ -111,4 +111,95 @@ class ProjectsController extends Controller
         $this->render('view', array('model' => $model, 'page_title' => 'Проект ID ' . $model->id));
     }
 
+
+    public function actionAdd_Comment()
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException(404);
+        }
+        $project_id = Yii::app()->request->getPost('project_id');
+        $message = Yii::app()->request->getPost('message');
+
+        $model = new ProjectComment();
+
+        $model->project_id = $project_id;
+        $model->text = $message;
+        $model->user_id = Yii::app()->user->id;
+
+        $model->save();
+
+        echo json_encode(array('comment_id' => $model->id));
+
+        Yii::app()->end();
+    }
+
+    public function actionUpload_Comment_File($comment = 0)
+    {
+        if (!Yii::app()->request->isPostRequest) {
+            throw new CHttpException(404);
+        }
+
+        $file = CUploadedFile::getInstanceByName('file');
+
+        if (!$file) {
+            echo '0';
+        } else {
+
+            $model = new ProjectCommentFile();
+
+            $model->comment_id = $comment;
+            $model->file = uniqid() . '.' . $file->getExtensionName();
+            $model->real_filename = $file->getName();
+            $model->file_size = $file->getSize();
+
+            if ($model->save()) {
+                $file->saveAs($_SERVER['DOCUMENT_ROOT'] . Yii::app()->params['upload_dir_comments'] . $model->file);
+
+                echo '1';
+            } else {
+                echo '0';
+            }
+
+        }
+
+        Yii::app()->end();
+    }
+
+
+    public function actionComments($id = 0)
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException(404);
+        }
+
+        echo $this->renderPartial('_comments_block', array('project' => Project::model()->findByPk($id)));
+
+        Yii::app()->end();
+    }
+
+
+    public function actionDelete_Comment_File($id = 0)
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException(404);
+        }
+
+        $file = ProjectCommentFile::model()->findByPk($id);
+
+        if ($file) {
+            $file->delete();
+        }
+
+        Yii::app()->end();
+    }
+
+    public function actionDownload($id = 0){
+        $file = ProjectCommentFile::model()->findByPk($id);
+
+        if($file){
+            $file->download();
+        }
+
+        Yii::app()->end();
+    }
 }
