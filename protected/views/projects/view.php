@@ -4,19 +4,20 @@
 
     <div class="header">
         <h1><?=$model->name?> (ID <?=$model->id?>):</h1>
-        <? if(Yii::app()->user->role != 'worker'): ?>
+        <? if (Yii::app()->user->role != 'worker'): ?>
             <span class="price" mode="customer"><?=$model->customer_price?> руб.</span>
         <? endif; ?>
-        <? if(Yii::app()->user->role != 'customer'): ?>
+        <? if (Yii::app()->user->role != 'customer'): ?>
             <span class="price" mode="worker"><?=$model->worker_price?> руб.</span>
         <? endif; ?>
         <span class="status"><?=Project::$statuses[$model->status]?></span>
         <button class="btn btn-small" id="btn_show_description"><i class="icon icon-chevron-down"></i>Развернуть
             описание
         </button>
-        <? if(Yii::app()->user->role == 'admin'): ?>
-        <a href="/projects/edit/<?= $model->id ?>" class="btn btn-small" id="btn_edit_project" style="display: none"><i
-                class="icon icon-pencil"></i>Редактировать</a>
+        <? if (Yii::app()->user->role == 'admin'): ?>
+            <a href="/projects/edit/<?= $model->id ?>" class="btn btn-small" id="btn_edit_project"
+               style="display: none"><i
+                    class="icon icon-pencil"></i>Редактировать</a>
         <? endif; ?>
 
         <div class="additional-info" style="display: none">
@@ -42,10 +43,10 @@
             </div>
 
             <div class="project-description">
-                <? if(Yii::app()->user->role != 'customer'): ?>
+                <? if (Yii::app()->user->role != 'customer'): ?>
                     <p mode="worker"><?=$model->worker_text?></p>
                 <? endif; ?>
-                <? if(Yii::app()->user->role != 'worker'): ?>
+                <? if (Yii::app()->user->role != 'worker'): ?>
                     <p mode="customer"><?=$model->customer_text?></p>
                 <? endif; ?>
             </div>
@@ -79,14 +80,14 @@
         </div>
     </div>
 
-    <? if(Yii::app()->user->role == 'admin'): ?>
+    <? if (Yii::app()->user->role == 'admin'): ?>
 
-    <div class="buttons-row">
-        <a href="#" class="btn" id="btn_to_slider" mode="customer">В слайдер</a>
-        <a href="#" class="btn" id="btn_to_customer" mode="worker">Заказчику</a>
-        <a href="#" class="btn" id="btn_to_worker" mode="customer">Сотруднику</a>
-        <a href="#" class="btn" id="btn_delete">Удалить</a>
-    </div>
+        <div class="buttons-row">
+            <a href="#" class="btn" id="btn_to_slider" mode="customer">В слайдер</a>
+            <a href="#" class="btn" id="btn_to_customer" mode="worker">Заказчику</a>
+            <a href="#" class="btn" id="btn_to_worker" mode="customer">Сотруднику</a>
+            <a href="#" class="btn" id="btn_delete">Удалить</a>
+        </div>
 
     <? endif; ?>
 
@@ -97,24 +98,36 @@
         </div>
     </div>
 
-    <? if(Yii::app()->user->role == 'admin'): ?>
+    <? if (Yii::app()->user->role == 'admin'): ?>
 
-    <div class="project-footer worker">
-        <div class="switches">
+        <div class="project-footer worker">
+            <div class="switches">
 
-            <div class="switch customer">
-                <span class="switch-name">Клиенты</span>
+                <div class="switch customer">
+                    <span class="switch-name">Клиенты</span>
+                </div>
+
+                <div class="switch worker active">
+                    <span class="switch-name">Сотрудники</span>
+                </div>
+
             </div>
-
-            <div class="switch worker active">
-                <span class="switch-name">Сотрудники</span>
-            </div>
-
+            <span class="summary"><?=$model->name?> (ID <?=$model->id?>) - <span
+                    mode="worker"><?=$model->worker_price?></span><span
+                    mode="customer"><?=$model->customer_price?></span> руб.</span>
         </div>
-        <span class="summary"><?=$model->name?> (ID <?=$model->id?>) - <span mode="worker"><?=$model->worker_price?></span><span mode="customer"><?=$model->customer_price?></span> руб.</span>
-    </div>
 
     <? endif; ?>
 
 </div>
 
+<div id="popup_form" style="display: none">
+    <textarea placeholder="Добавить комментарий"></textarea>
+    <ul class="files">
+
+    </ul>
+    <div class="footer">
+        <label for="popup_form_add_to_slider"><input type="checkbox" id="popup_form_add_to_slider"> Добавить файлы в слайдер</label>
+        <button class="btn btn-success">Написать</button>
+    </div>
+</div>

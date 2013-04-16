@@ -131,35 +131,4 @@
     </div>
 </div>
 
-<?php
-
-/*$this->widget('bootstrap.widgets.TbNavbar', array(
-    'type' => null,
-    'brand' => '<img src="/img/logo.png"/>',
-    'brandUrl' => '/',
-    'collapse' => true,
-    'items' => array(
-        array(
-            'class' => 'bootstrap.widgets.TbMenu',
-            'items' => array(
-                array('label' => 'Главная', 'url' => array('/index'), 'visible' => !Yii::app()->user->isGuest),
-                array('label' => 'Проекты', 'visible' => !Yii::app()->user->isGuest, "items" => array(
-                    array('label' => 'Все проекты', 'url' => array('project/index')),
-                    array('label' => 'Добавить проект', 'url' => array('project/create'), 'visible' => Yii::app()->user->checkAccess("createProject")),
-                )),
-                array('label' => "Пользователь " . $username, 'visible' => !Yii::app()->user->isGuest, "items" => array(
-                    array('label' => 'Личные данные', 'url' => array('user/update', 'id' => Yii::app()->user->id)),
-                )),
-                array('label' => 'Администрирование', 'url' => "#", 'visible' => Yii::app()->user->role == 1, "items" => array(
-                    array('label' => 'Список пользователей', 'url' => array('user/index'), 'visible' => Yii::app()->user->checkAccess("viewUser")),
-                    array('label' => 'Добавить пользователя', 'url' => array('user/create'), 'visible' => Yii::app()->user->checkAccess("createUser")),
-                    array('label' => 'Просмотр Логов', 'url' => array('site/log'), 'visible' => Yii::app()->user->checkAccess("showLogs")),
-                )),
-                array('label' => 'Выйти', 'url' => array('site/logout'), 'visible' => !Yii::app()->user->isGuest),
-            ),
-        ),
-
-    ),
-)); */ ?>
-
 </body>
