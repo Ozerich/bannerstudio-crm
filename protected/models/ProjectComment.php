@@ -19,13 +19,13 @@ class ProjectComment extends CActiveRecord
     public function rules()
     {
         return array(
-            array('user_id, project_id, text', 'required'),
+            array('user_id, project_id, text, mode', 'required'),
 
             array('text', 'filter', 'filter' => 'strip_tags'),
 
             array('datetime', 'default', 'value' => new CDbExpression('NOW()'), 'setOnEmpty' => false, 'on' => 'insert'),
 
-            array('id, user_id, project_id, text, date', 'safe', 'on' => 'search'),
+            array('id, user_id, project_id, text, date, mode', 'safe', 'on' => 'search'),
         );
     }
 

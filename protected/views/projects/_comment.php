@@ -16,12 +16,12 @@
         <ul class="files">
             <? foreach($data->files as $file): ?>
                 <li data-id="<?=$file->id?>">
-                    <input type="checkbox">
+                    <? if(Yii::app()->user->role == 'admin'): ?><input type="checkbox"><? endif; ?>
                     <span class="filename"><?=$file->real_filename?></span>
                     <span class="size">(<?=$file->file_size_str?>)</span>
                     <? if($file->can_view): ?><a href="<?=$file->url?>" target="_blank" class="btn btn-mini">Открыть</a><? endif; ?>
                     <a href="/projects/download/<?=$file->id?>" target="_blank" class="btn btn-mini">Скачать</a>
-                    <a href="#" class="btn btn-mini btn-delete">Удалить</a>
+                    <? if(Yii::app()->user->role == 'admin'): ?><a href="#" class="btn btn-mini btn-delete">Удалить</a><? endif; ?>
                 </li>
             <? endforeach; ?>
         </ul>

@@ -119,12 +119,14 @@ class ProjectsController extends Controller
         }
         $project_id = Yii::app()->request->getPost('project_id');
         $message = Yii::app()->request->getPost('message');
+        $mode = Yii::app()->request->getPost('mode');
 
         $model = new ProjectComment();
 
         $model->project_id = $project_id;
         $model->text = $message;
         $model->user_id = Yii::app()->user->id;
+        $model->mode = $mode;
 
         $model->save();
 
@@ -172,7 +174,7 @@ class ProjectsController extends Controller
             throw new CHttpException(404);
         }
 
-        echo $this->renderPartial('_comments_block', array('project' => Project::model()->findByPk($id)));
+        echo $this->renderPartial('_comments_list', array('model' => Project::model()->findByPk($id)));
 
         Yii::app()->end();
     }

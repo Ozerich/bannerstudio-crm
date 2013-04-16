@@ -14,8 +14,8 @@
 class Project extends CActiveRecord
 {
 
-    public $workers_list = '';
-    public $customers_list = '';
+    public $workers_list;
+    public $customers_list;
 
     public $workers = array();
     public $customers = array();
@@ -46,9 +46,9 @@ class Project extends CActiveRecord
 
             //     array('worker_text, customer_text', 'filter', 'filter' => 'strip_tags'),
 
-            array('worker_price, customer_price, worker_text, customer_text, status', 'safe'),
+            array('worker_price, customer_price, worker_text, customer_text, workers_list, customers_list, status', 'safe'),
 
-            array('id, name, worker_price, customer_price, worker_text, customer_text, created_time, status', 'safe', 'on' => 'search'),
+            array('id, name, worker_price, customer_price, worker_text, customer_text, created_time, status,workers_list,customers_list', 'safe', 'on' => 'search'),
         );
     }
 

@@ -188,6 +188,8 @@ $(function () {
 
                 $.get('/projects/comments/' + $('#project_id').val(), function (data) {
                     $comments_block.find('.comments-list').html(data);
+                    $comments_block.find('[mode]').hide();
+                    $comments_block.find('[mode=' + $('#active_mode').val() + ']').show();
                     $loader.fadeOut();
                 });
             }
@@ -197,7 +199,7 @@ $(function () {
             $comments_form.find('.file-item:visible').find('.status').text('в очереди');
             $comments_form.find('.file-item:visible').find('.delete-file').hide();
 
-            $.post('/projects/add_comment', {message: $message_textarea.val(), project_id: $('#project_id').val()}, function (data) {
+            $.post('/projects/add_comment', {message: $message_textarea.val(), project_id: $('#project_id').val(), mode: $('#active_mode').val()}, function (data) {
 
                 data = jQuery.parseJSON(data);
 
@@ -273,6 +275,8 @@ $(function () {
                 $('[mode=customer]').hide();
                 $('[mode=worker]').show();
             }
+
+            $('#active_mode').val(mode);
         }
 
 

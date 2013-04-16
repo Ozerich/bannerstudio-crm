@@ -35,14 +35,19 @@ class SiteController extends Controller
             $criteria->order = 'datetime desc';
             $criteria->limit = 50;
 
-            $criteria->addNotInCondition('user_id', Yii::app()->user->id);
+            $criteria->addNotInCondition('user_id', array(Yii::app()->user->id));
 
             foreach($projects as $project){
                 $criteria->compare('project_id', $project->id, false, 'OR');
             }
 
-            $comments = ProjectComment::model()->findAll($criteria);
-
+            $comments = array();
+            $comments_all = ProjectComment::model()->findAll($criteria);
+            foreach($comments_all as $comment){
+                if($comment->mode == Yii::app()->user->role){
+                    $comments[] = $comment;
+                }
+            }
         }
 
         $this->render('index', array('projects_dataProvider' => $dataProvider, 'comments_dataProvider' => new CArrayDataProvider($comments, array(

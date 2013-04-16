@@ -1,5 +1,6 @@
 <div class="page <?= Yii::app()->user->role == 'admin' ? 'mode-admin' : '' ?>" id="page_project">
     <input type="hidden" id="project_id" value="<?= $model->id ?>">
+    <input type="hidden" id="active_mode" value="worker"/>
 
     <div class="header">
         <h1><?=$model->name?> (ID <?=$model->id?>):</h1>
@@ -81,10 +82,10 @@
     <? if(Yii::app()->user->role == 'admin'): ?>
 
     <div class="buttons-row">
-        <a href="#" class="btn" mode="customer">В слайдер</a>
-        <a href="#" class="btn" mode="worker">Заказчику</a>
-        <a href="#" class="btn" mode="customer">Сотруднику</a>
-        <a href="#" class="btn btn-delete">Удалить</a>
+        <a href="#" class="btn" id="btn_to_slider" mode="customer">В слайдер</a>
+        <a href="#" class="btn" id="btn_to_customer" mode="worker">Заказчику</a>
+        <a href="#" class="btn" id="btn_to_worker" mode="customer">Сотруднику</a>
+        <a href="#" class="btn" id="btn_delete">Удалить</a>
     </div>
 
     <? endif; ?>
@@ -92,7 +93,7 @@
     <div class="comments-block">
         <div class="loader"></div>
         <div class="comments-list">
-            <?=$this->renderPartial('_comments_block', array('project' => $model));?>
+            <?=$this->renderPartial('_comments_list', array('model' => $model));?>
         </div>
     </div>
 
