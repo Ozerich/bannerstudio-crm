@@ -1,4 +1,4 @@
-function nl2br (str, is_xhtml) {
+function nl2br(str, is_xhtml) {
     var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
 }
@@ -364,7 +364,7 @@ $(function () {
             $block.find('.edit-block').hide();
 
             $.post('/projects/edit_comment/' + $block.data('id'), {
-               message: message
+                message: message
             });
 
             return false;
@@ -489,4 +489,19 @@ $(function () {
 
 
     })();
+
+
+    function loadUnreadComments(callback) {
+        $.post('/ajax/get_unread_comments', {}, function (data) {
+            callback();
+        });
+    }
+
+    function commentsTimerFunction() {
+        loadUnreadComments(function () {
+            setTimeout(commentsTimerFunction, 1000);
+        });
+    }
+    commentsTimerFunction();
+
 });

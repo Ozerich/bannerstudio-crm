@@ -1,4 +1,4 @@
-<ul class="row role-<?=$data->user->role?>">
+<ul class="row role-<?=$data->user->role?> <?=$data->readed ? 'readed' : 'no-read'?>">
     <li class="col-project">
         <a href="/projects/<?= $data->project->id ?>"><?=$data->project->name?></a>
     </li>

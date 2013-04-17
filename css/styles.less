@@ -214,30 +214,59 @@
   }
 
   .row {
+
     &.role-admin {
-      .username, .col-project a {
-        color: @color_admin
-      }
       .user-photo {
         border-color: @color_admin;
       }
     }
 
     &.role-customer {
-      .username, .col-project a {
-        color: @color_customer
-      }
       .user-photo {
         border-color: @color_customer;
       }
     }
 
     &.role-worker {
-      .username, .col-project a {
-        color: @color_worker
-      }
       .user-photo {
         border-color: @color_worker;
+      }
+    }
+
+    &.no-read {
+      &.role-admin {
+        background: lighten(@color_admin, 15%);
+      }
+      &.role-customer {
+        background: lighten(@color_customer, 15%);
+      }
+      &.role-worker {
+        background: lighten(@color_worker, 15%);
+      }
+
+      .username, .col-project a{
+        color: #8f8f8f;
+      }
+    }
+
+
+    &.readed {
+      &.role-admin {
+        .username, .col-project a {
+          color: @color_admin
+        }
+      }
+
+      &.role-customer {
+        .username, .col-project a {
+          color: @color_customer
+        }
+      }
+
+      &.role-worker {
+        .username, .col-project a {
+          color: @color_worker
+        }
       }
     }
   }
@@ -520,8 +549,8 @@
       margin-bottom: 15px;
       position: relative;
 
-      .edit-block{
-        textarea{
+      .edit-block {
+        textarea {
           width: 80%;
           display: block;
           height: 60px;

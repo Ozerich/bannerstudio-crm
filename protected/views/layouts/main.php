@@ -51,14 +51,16 @@
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Проекты <span
                                     class="caret"></span></a>
                             <ul id="yw1" class="dropdown-menu">
-                                <? if(Yii::app()->user->role != 'admin'): ?>
-                                    <? foreach(Project::FindLastProjects(10) as $project): ?>
-                                        <li class="project"><a tabindex="-1" href="/projects/<?=$project->id?>"><?=$project->name?></a> </li>
+                                <? if (Yii::app()->user->role != 'admin'): ?>
+                                    <? foreach (Project::FindLastProjects(10) as $project): ?>
+                                        <li class="project"><a tabindex="-1"
+                                                               href="/projects/<?= $project->id ?>"><?=$project->name?></a>
+                                        </li>
                                     <? endforeach; ?>
                                 <? endif; ?>
                                 <li><a tabindex="-1" href="/">Все проекты</a></li>
-                                <? if(Yii::app()->user->checkAccess('Projects.Create')): ?>
-                                <li><a tabindex="-1" href="/projects/create">Добавить проект</a></li>
+                                <? if (Yii::app()->user->checkAccess('Projects.Create')): ?>
+                                    <li><a tabindex="-1" href="/projects/create">Добавить проект</a></li>
                                 <? endif; ?>
                             </ul>
                         </li>
@@ -88,6 +90,8 @@
             </div>
 
             <? if (!Yii::app()->user->isGuest): ?>
+
+
                 <div class="profile-block dropdown">
 
                     <a href="#" class="dropdown-toggle">
@@ -104,8 +108,13 @@
                         <li><a href="/logout">Выйти</a></li>
                     </ul>
 
-
                 </div>
+
+                <div class="message-status-block">
+                    <i class="message-unread-exists"></i>
+                    <span>4</span>
+                </div>
+
 
             <? endif; ?>
         </div>

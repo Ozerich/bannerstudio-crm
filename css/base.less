@@ -5,11 +5,11 @@ body {
   font-family: Arial, sans-serif;
 }
 
-input[type="checkbox"], input[type="radio"]{
+input[type="checkbox"], input[type="radio"] {
   vertical-align: top;
 }
 
-h3,p {
+h3, p {
   margin: 0;
 }
 
@@ -132,7 +132,7 @@ ul {
   margin: 0;
   padding: 0;
   list-style: none;
-  li{
+  li {
     list-style: none;
   }
 }
@@ -217,7 +217,7 @@ ul {
   .list-view {
     padding: 0;
 
-    .empty{
+    .empty {
       display: block;
       text-align: center;
       font-size: 16px;
@@ -314,6 +314,24 @@ ul {
   .dropdown-menu {
     top: 52px;
   }
+
+  .message-status-block {
+    float: right;
+    margin: 25px -60px 0 0;
+    i {
+      background: url('../img/massage_icon_anim.gif') no-repeat;
+      width: 15px;
+      height: 14px;
+      display: inline-block;
+      padding-right: 5px;
+      padding-bottom: 3px;
+    }
+    span {
+      color: blue;
+      font-weight: bold;
+      font-size: 16px;
+    }
+  }
 }
 
 .profile-block {
@@ -327,14 +345,14 @@ ul {
     color: #2083c6;
   }
 
-  .dropdown-toggle{
+  .dropdown-toggle {
     display: block;
-    &:hover{
+    &:hover {
       text-decoration: none;
     }
   }
 
-  .dropdown-menu{
+  .dropdown-menu {
     display: none;
     left: 100px;
   }
@@ -382,8 +400,6 @@ ul {
     color: red;
   }
 }
-
-
 
 .time-label {
   display: block;

@@ -48,3 +48,12 @@
     </div>
 
 </div>
+
+<?
+if ($data->readed == false) {
+    $project_comment_read = new ProjectCommentRead();
+    $project_comment_read->comment_id = $data->id;
+    $project_comment_read->user_id = Yii::app()->user->id;
+    $project_comment_read->save();
+}
+?>

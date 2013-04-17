@@ -5,6 +5,8 @@ class ProjectComment extends CActiveRecord
     public $datetime_str;
     public $datetime_short_str;
 
+    public $readed = 0;
+
     public static function model($className = __CLASS__)
     {
         return parent::model($className);
@@ -91,5 +93,11 @@ class ProjectComment extends CActiveRecord
 
         $this->datetime_str .= $diff_years + $diff_monthes + $diff_hours + $diff_days + $diff_minutes == 0 ? 'меньше минуты назад)' : ' назад)';
         $this->datetime_short_str = substr($this->datetime_str, 0, strpos($this->datetime_str, '('));
+
+
+        $this->readed = $this->user_id == Yii::app()->user->id || ProjectCommentRead::model()->countByAttributes(array(
+            'user_id' => Yii::app()->user->id,
+            'comment_id' => $this->id,
+        ));
     }
 }

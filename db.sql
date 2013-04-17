@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50525
 File Encoding         : 65001
 
-Date: 2013-04-16 17:40:52
+Date: 2013-04-17 20:35:30
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -26,13 +26,30 @@ CREATE TABLE `project_comment_files` (
   `real_filename` varchar(255) NOT NULL,
   `file_size` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of project_comment_files
 -- ----------------------------
-INSERT INTO `project_comment_files` VALUES ('1', '4', '516c97a4405ae.png', 'bg.png', '9139');
 INSERT INTO `project_comment_files` VALUES ('2', '6', '516c998b174f2.png', 'bg.png', '9139');
+INSERT INTO `project_comment_files` VALUES ('3', '7', '516c97a4405ae.png', 'bg.png', '9139');
+
+-- ----------------------------
+-- Table structure for `project_comment_reads`
+-- ----------------------------
+DROP TABLE IF EXISTS `project_comment_reads`;
+CREATE TABLE `project_comment_reads` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `comment_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of project_comment_reads
+-- ----------------------------
+INSERT INTO `project_comment_reads` VALUES ('1', '1', '4');
+INSERT INTO `project_comment_reads` VALUES ('2', '1', '1');
 
 -- ----------------------------
 -- Table structure for `project_comments`
@@ -46,17 +63,22 @@ CREATE TABLE `project_comments` (
   `datetime` datetime NOT NULL,
   `mode` enum('worker','customer') NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of project_comments
 -- ----------------------------
-INSERT INTO `project_comments` VALUES ('1', '6', '1', 'пилим!', '2013-04-16 03:07:19', 'worker');
+INSERT INTO `project_comments` VALUES ('1', '6', '1', 'пилим!!!!', '2013-04-16 03:07:19', 'worker');
 INSERT INTO `project_comments` VALUES ('2', '1', '1', 'клиент, мы начинаем', '2013-04-16 03:07:40', 'customer');
 INSERT INTO `project_comments` VALUES ('3', '1', '1', 'отписал клиенту что начинаем', '2013-04-16 03:07:49', 'worker');
-INSERT INTO `project_comments` VALUES ('4', '6', '1', 'ты крот, боссяра', '2013-04-16 03:13:23', 'worker');
-INSERT INTO `project_comments` VALUES ('5', '1', '1', '213123 123', '2013-04-16 03:20:17', 'worker');
+INSERT INTO `project_comments` VALUES ('4', '6', '1', 'ты крот, боссяра!!\n\n\nТретья строка!', '2013-04-16 03:13:23', 'worker');
 INSERT INTO `project_comments` VALUES ('6', '1', '1', 'клиент, не лошара ты?', '2013-04-16 03:21:29', 'customer');
+INSERT INTO `project_comments` VALUES ('7', '1', '1', '456546363563 7457 57', '2013-04-17 12:49:17', 'customer');
+INSERT INTO `project_comments` VALUES ('9', '1', '1', '14142', '2013-04-17 12:50:27', 'customer');
+INSERT INTO `project_comments` VALUES ('10', '1', '1', '2533535', '2013-04-17 12:51:53', 'customer');
+INSERT INTO `project_comments` VALUES ('12', '1', '1', '3455334', '2013-04-17 12:53:05', 'customer');
+INSERT INTO `project_comments` VALUES ('13', '1', '1', '234234 234234', '2013-04-17 12:53:33', 'customer');
+INSERT INTO `project_comments` VALUES ('14', '1', '1', '213414124', '2013-04-17 12:53:39', 'customer');
 
 -- ----------------------------
 -- Table structure for `project_users`
@@ -150,12 +172,16 @@ CREATE TABLE `rights_authitem` (
 INSERT INTO `rights_authitem` VALUES ('admin', '2', 'Администратор', null, 'N;');
 INSERT INTO `rights_authitem` VALUES ('customer', '2', 'Клиент', null, 'N;');
 INSERT INTO `rights_authitem` VALUES ('Projects.Add_Comment', '0', 'Добавление комментариев', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.Admin_Comment', '0', 'Комментарий от админа(\"Заказчику\", \"Сотруднику\")', null, 'N;');
 INSERT INTO `rights_authitem` VALUES ('Projects.Comments', '0', 'Просмотр комментариев', null, 'N;');
 INSERT INTO `rights_authitem` VALUES ('Projects.Create', '0', 'Создание проектов', null, 'N;');
 INSERT INTO `rights_authitem` VALUES ('Projects.Delete', '0', 'Удаление проектов', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.Delete_Comment', '0', 'Удаление комментариев', null, 'N;');
 INSERT INTO `rights_authitem` VALUES ('Projects.Delete_Comment_File', '0', 'Удаление файлов в комментариях', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.Delete_Files', '0', 'Множественное удаление файлов', null, 'N;');
 INSERT INTO `rights_authitem` VALUES ('Projects.Download', '0', 'Скачивание файлов в комментариях', null, 'N;');
 INSERT INTO `rights_authitem` VALUES ('Projects.Edit', '0', 'Редактирование проекта', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.Edit_Comment', '0', 'Редактирование комментария', null, 'N;');
 INSERT INTO `rights_authitem` VALUES ('Projects.Index', '0', 'Просмотр списка проектов', null, 'N;');
 INSERT INTO `rights_authitem` VALUES ('Projects.Upload_Comment_File', '0', 'Добавление файлов к коментариям', null, 'N;');
 INSERT INTO `rights_authitem` VALUES ('Projects.View', '0', 'Просмотр проекта', null, 'N;');
@@ -185,18 +211,22 @@ CREATE TABLE `rights_authitemchild` (
 INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Add_Comment');
 INSERT INTO `rights_authitemchild` VALUES ('customer', 'Projects.Add_Comment');
 INSERT INTO `rights_authitemchild` VALUES ('worker', 'Projects.Add_Comment');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Admin_Comment');
 INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Comments');
 INSERT INTO `rights_authitemchild` VALUES ('customer', 'Projects.Comments');
 INSERT INTO `rights_authitemchild` VALUES ('worker', 'Projects.Comments');
 INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Create');
 INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Delete');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Delete_Comment');
 INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Delete_Comment_File');
 INSERT INTO `rights_authitemchild` VALUES ('customer', 'Projects.Delete_Comment_File');
 INSERT INTO `rights_authitemchild` VALUES ('worker', 'Projects.Delete_Comment_File');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Delete_Files');
 INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Download');
 INSERT INTO `rights_authitemchild` VALUES ('customer', 'Projects.Download');
 INSERT INTO `rights_authitemchild` VALUES ('worker', 'Projects.Download');
 INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Edit');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Edit_Comment');
 INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Index');
 INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Upload_Comment_File');
 INSERT INTO `rights_authitemchild` VALUES ('customer', 'Projects.Upload_Comment_File');
