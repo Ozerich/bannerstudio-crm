@@ -40,13 +40,6 @@ class ProjectCommentFile extends CActiveRecord
         );
     }
 
-    public function beforeDelete()
-    {
-        @unlink($_SERVER['DOCUMENT_ROOT'] . Yii::app()->params['upload_dir_comments'] . $this->file);
-
-        return true;
-    }
-
     public function afterFind()
     {
         $size = $this->file_size;
@@ -77,7 +70,6 @@ class ProjectCommentFile extends CActiveRecord
 
         copy($file, $newfile);
 
-      //  header("Content-type: ");
         header("Content-Disposition: attachment;filename=\"".$this->real_filename."\"");
         header("Content-Transfer-Encoding: binary");
         header('Pragma: no-cache');

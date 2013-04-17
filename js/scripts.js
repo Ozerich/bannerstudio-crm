@@ -1,3 +1,8 @@
+function nl2br (str, is_xhtml) {
+    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
+    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
+}
+
 $(function () {
 
     function Popup(_element) {
@@ -214,6 +219,22 @@ $(function () {
         });
 
 
+        function showCommentsLoader() {
+            $('.comments-block').find('.loader').fadeIn();
+        }
+
+        function updateComments() {
+            showCommentsLoader();
+
+            $.get('/projects/comments/' + $('#project_id').val(), function (data) {
+                $comments_block.find('.comments-list').html(data);
+                $comments_block.find('[mode]').hide();
+                $comments_block.find('[mode=' + $('#active_mode').val() + ']').show();
+                $('.comments-block').find('.loader').fadeOut();
+            });
+        }
+
+
         $('#btn_add_comment').on('click', function () {
 
             var $message_textarea = $('.comments-form').find('textarea');
@@ -231,15 +252,7 @@ $(function () {
                 $comments_form.find('.file-item').not('.example').remove();
                 addFileInput();
 
-                var $comments_block = $('.comments-block');
-                var $loader = $comments_block.find('.loader').fadeIn();
-
-                $.get('/projects/comments/' + $('#project_id').val(), function (data) {
-                    $comments_block.find('.comments-list').html(data);
-                    $comments_block.find('[mode]').hide();
-                    $comments_block.find('[mode=' + $('#active_mode').val() + ']').show();
-                    $loader.fadeOut();
-                });
+                updateComments();
             }
 
             $comments_form.find('.file-item:last').remove();
@@ -313,6 +326,60 @@ $(function () {
             return false;
         });
 
+        $comments_block.on('click', '.btn-delete-comment', function () {
+            if (!confirm('Вы уверены, что хотите удалить комментарий?'))return false;
+
+            var $block = $(this).parents('.comment-item');
+
+            showCommentsLoader();
+            $.get('/projects/delete_comment/' + $block.data('id'), function () {
+                updateComments();
+            });
+
+
+            $block.remove();
+
+            return false;
+        });
+
+        $comments_block.on('click', '.btn-edit-comment', function () {
+            var $block = $(this).parents('.comment-item');
+
+
+            $block.find('.edit-block textarea').val($block.find('.comment-text').text());
+
+            $block.find('.comment-text, .pull-right').hide();
+            $block.find('.edit-block').show();
+
+            return false;
+        });
+
+        $comments_block.on('click', '.edit-block .btn-save', function () {
+            var $block = $(this).parents('.comment-item');
+
+            var message = $block.find('.edit-block textarea').val();
+
+            $block.find('.comment-text').html(nl2br(message));
+            $block.find('.comment-text, .pull-right').show();
+            $block.find('.edit-block').hide();
+
+            $.post('/projects/edit_comment/' + $block.data('id'), {
+               message: message
+            });
+
+            return false;
+        });
+
+
+        $comments_block.on('click', '.edit-block .btn-cancel', function () {
+            var $block = $(this).parents('.comment-item');
+
+            $block.find('.comment-text, .pull-right').show();
+            $block.find('.edit-block').hide();
+
+            return false;
+        });
+
 
         function setMode(mode) {
             $('.project-footer').removeClass('customer').removeClass('worker').addClass(mode);
@@ -341,7 +408,7 @@ $(function () {
 
         var popup = new Popup($('#popup_form'));
 
-        var openPopup = function (mode) {
+        var openPopup = function (direction) {
             var $popup_form = popup.window;
 
             $popup_form.find('textarea').val('');
@@ -362,7 +429,7 @@ $(function () {
 
 
             $popup_form.find('label').toggle(files.length > 0);
-
+            $popup_form.find('.direction').val(direction);
             popup.show();
         };
 
@@ -373,6 +440,50 @@ $(function () {
 
         $('#btn_to_worker').click(function () {
             openPopup('worker');
+            return false;
+        });
+
+
+        $(document).on('click', '.submit-popup', function () {
+            var $form = $(this).parents('.popup-form');
+
+            var request = {
+                message: $form.find('textarea').val(),
+                to_slider: $form.find('input[type=checkbox]').is(':checked') ? 1 : 0,
+                files: [],
+                to: $form.find('.direction').val()
+            };
+
+            $form.find('.files').find('li').each(function () {
+                request.files.push($(this).data('id'));
+            });
+
+            var $btn = $(this);
+            $btn.attr('disabled', 'disabled');
+            $.post('/projects/admin_comment/' + $('#project_id').val(), request, function (data) {
+                $btn.removeAttr('disabled');
+                popup.hide();
+                updateComments();
+            });
+
+            return false;
+        });
+
+
+        $('#btn_delete_files').click(function () {
+            if (!confirm("Вы уверены что хотите удалить выбранные файлы?"))return;
+
+            var files = [];
+
+            $('.comment-item:visible .files li').each(function () {
+                if ($(this).find('input[type=checkbox]').is(':checked')) {
+                    files.push($(this).data('id'));
+                    $(this).remove();
+                }
+            });
+
+            $.post('/projects/delete_files', {files: files});
+
             return false;
         });
 

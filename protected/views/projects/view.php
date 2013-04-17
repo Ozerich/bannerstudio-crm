@@ -86,7 +86,7 @@
             <a href="#" class="btn" id="btn_to_slider" mode="customer">В слайдер</a>
             <a href="#" class="btn" id="btn_to_customer" mode="worker">Заказчику</a>
             <a href="#" class="btn" id="btn_to_worker" mode="customer">Сотруднику</a>
-            <a href="#" class="btn" id="btn_delete">Удалить</a>
+            <a href="#" class="btn" id="btn_delete_files">Удалить</a>
         </div>
 
     <? endif; ?>
@@ -121,13 +121,13 @@
 
 </div>
 
-<div id="popup_form" style="display: none">
+<div id="popup_form" class="popup-form" style="display: none">
+    <input type="hidden" class="direction" value="">
     <textarea placeholder="Добавить комментарий"></textarea>
     <ul class="files">
-
     </ul>
     <div class="footer">
-        <label for="popup_form_add_to_slider"><input type="checkbox" id="popup_form_add_to_slider"> Добавить файлы в слайдер</label>
-        <button class="btn btn-success">Написать</button>
+        <label for="popup_form_add_to_slider"><input type="checkbox"> Добавить файлы в слайдер</label>
+        <button class="btn btn-success submit-popup">Написать</button>
     </div>
 </div>
