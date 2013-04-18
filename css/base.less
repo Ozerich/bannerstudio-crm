@@ -317,28 +317,45 @@ ul {
 
   .message-status-block {
     float: right;
-    margin: 25px -60px 0 0;
-    i {
-      background: url('../img/massage_icon_anim.gif') no-repeat;
-      width: 15px;
-      height: 14px;
-      display: inline-block;
-      padding-right: 5px;
-      padding-bottom: 3px;
+    height: 71px;
+    width: 100px;
+
+    background: url('../img/new-message-no.png') 36px center no-repeat;
+
+    &:hover {
+      background-color: #ececec;
+      cursor: pointer;
+
+      -moz-box-shadow: inset 0 0 30px 0 #c9c9c9;
+      -webkit-box-shadow: inset 0 0 30px 0 #c9c9c9;
+      box-shadow: inset 0 0 30px 0 #c9c9c9;
     }
+
     span {
-      color: blue;
+      font-family: Verdana;
+      font-size: 14px;
       font-weight: bold;
-      font-size: 16px;
+      color: #009cff;
+      margin-top: 26px;
+      margin-left: 58px;
+      display: none;
+    }
+
+
+    &.new-exist {
+      background: url('../img/new-message-exist.gif') 36px center no-repeat;
+
+      span{
+        display: block;
+      }
     }
   }
 }
 
 .profile-block {
-  margin-top: 10px;
   float: right;
-  margin-right: 20px;
-  padding-left: 100px;
+  padding-left: 15px;
+  margin: 10px 20px 0 0;
 
   .username {
     font-size: 14px;
@@ -354,7 +371,7 @@ ul {
 
   .dropdown-menu {
     display: none;
-    left: 100px;
+    left: 15px;
   }
 }
 

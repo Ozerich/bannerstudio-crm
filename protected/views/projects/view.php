@@ -101,6 +101,11 @@
     <? if (Yii::app()->user->role == 'admin'): ?>
 
         <div class="project-footer worker">
+
+            <div class="message-status-block">
+                <span></span>
+            </div>
+
             <div class="switches">
 
                 <div class="switch customer">

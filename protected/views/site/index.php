@@ -48,4 +48,9 @@
         </div>
     </div>
 
+    <br clear="all"/>
+
+    <div class="message-status-block">
+        <span></span>
+    </div>
 </div>

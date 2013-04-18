@@ -9,13 +9,12 @@ class AjaxController extends Controller
         if (!Yii::app()->request->isAjaxRequest) {
             throw new CHttpException(404);
         }
+        return true;
     }
 
 
     public function actionGet_Unread_Comments()
     {
-        $result = array();
-
         $project_ids = array();
 
         if (Yii::app()->user->role == 'admin') {
@@ -27,7 +26,6 @@ class AjaxController extends Controller
                 $project_ids[] = $project->project_id;
             }
         }
-
         $comments_all = array();
 
         foreach ($project_ids as $project_id) {
@@ -51,8 +49,17 @@ class AjaxController extends Controller
             }
         }
 
+        $comments = array();
+        foreach ($comments_unread as $comment) {
+            $comments[] = array(
+                'project_id' => $comment->project_id,
+                'text' => $comment->text,
+            );
+        }
+
         $result = array(
-            'count' => count($comments_unread)
+            'count' => count($comments),
+            'comments' => $comments
         );
 
         echo json_encode($result);

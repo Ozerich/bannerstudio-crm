@@ -111,7 +111,6 @@
                 </div>
 
                 <div class="message-status-block">
-                    <i class="message-unread-exists"></i>
                     <span>4</span>
                 </div>
 
