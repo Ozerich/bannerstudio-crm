@@ -59,6 +59,12 @@
         </div>
     </div>
 
+    <? if(Yii::app()->user->role != 'worker'): ?>
+    <div id="slider" mode="customer">
+        <?=$this->renderPartial('_slider', array('model' => $model));?>
+    </div>
+    <? endif; ?>
+
 
     <div class="comments-form">
         <textarea placeholder="Добавить комментарий"></textarea>
