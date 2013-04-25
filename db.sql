@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50525
 File Encoding         : 65001
 
-Date: 2013-04-17 20:35:30
+Date: 2013-04-18 12:39:32
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -43,13 +43,15 @@ CREATE TABLE `project_comment_reads` (
   `user_id` int(11) NOT NULL,
   `comment_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of project_comment_reads
 -- ----------------------------
 INSERT INTO `project_comment_reads` VALUES ('1', '1', '4');
 INSERT INTO `project_comment_reads` VALUES ('2', '1', '1');
+INSERT INTO `project_comment_reads` VALUES ('3', '6', '3');
+INSERT INTO `project_comment_reads` VALUES ('4', '1', '15');
 
 -- ----------------------------
 -- Table structure for `project_comments`
@@ -63,7 +65,7 @@ CREATE TABLE `project_comments` (
   `datetime` datetime NOT NULL,
   `mode` enum('worker','customer') NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of project_comments
@@ -79,6 +81,7 @@ INSERT INTO `project_comments` VALUES ('10', '1', '1', '2533535', '2013-04-17 12
 INSERT INTO `project_comments` VALUES ('12', '1', '1', '3455334', '2013-04-17 12:53:05', 'customer');
 INSERT INTO `project_comments` VALUES ('13', '1', '1', '234234 234234', '2013-04-17 12:53:33', 'customer');
 INSERT INTO `project_comments` VALUES ('14', '1', '1', '213414124', '2013-04-17 12:53:39', 'customer');
+INSERT INTO `project_comments` VALUES ('15', '6', '1', '234234', '2013-04-18 12:08:13', 'worker');
 
 -- ----------------------------
 -- Table structure for `project_users`
@@ -278,6 +281,6 @@ CREATE TABLE `users` (
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES ('1', 'admin', 'ozicoder@gmail.com', 'Пользователь', '$2a$10$0JTq3q9Gr7r99gyU4eQ/Q.n/PRVIaLX0wa1h4dYjn3/7B7HQZoVoW', '$2a$10$0JTq3q9Gr7r99gyU4eQ/QK', '1231233333', '2013-03-11 00:53:03', '2013-04-16 16:42:24', '123321', '513d144460c76.jpg');
+INSERT INTO `users` VALUES ('1', 'admin', 'ozicoder@gmail.com', 'Пользователь', '$2a$10$0JTq3q9Gr7r99gyU4eQ/Q.n/PRVIaLX0wa1h4dYjn3/7B7HQZoVoW', '$2a$10$0JTq3q9Gr7r99gyU4eQ/QK', '1231233333', '2013-03-11 00:53:03', '2013-04-18 12:08:25', '123321', '513d144460c76.jpg');
 INSERT INTO `users` VALUES ('5', 'customer', 'customer@gmail.com', 'customer', '$2a$10$U6mqV1v6fLOhd02aJaFrTuvQ1xGRfxdg2jlxpkly5URTieikg.vLG', '$2a$10$U6mqV1v6fLOhd02aJaFrTx', '', '2013-04-16 02:57:41', '0000-00-00 00:00:00', '', null);
-INSERT INTO `users` VALUES ('6', 'worker', 'worker@gmail.com', 'worker', '$2a$10$wAEUCSjPGwz6V4xTX/77HuR5EIMLL1zklyfhtdVc38.xkw8nLnaUK', '$2a$10$wAEUCSjPGwz6V4xTX/77H2', '', '2013-04-16 02:58:02', '2013-04-16 02:58:54', '', null);
+INSERT INTO `users` VALUES ('6', 'worker', 'worker@gmail.com', 'worker', '$2a$10$wAEUCSjPGwz6V4xTX/77HuR5EIMLL1zklyfhtdVc38.xkw8nLnaUK', '$2a$10$wAEUCSjPGwz6V4xTX/77H2', '', '2013-04-16 02:58:02', '2013-04-18 12:08:07', '', null);

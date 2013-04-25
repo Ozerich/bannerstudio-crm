@@ -44,7 +44,7 @@ class AjaxController extends Controller
         $comments_unread = array();
 
         foreach ($comments_all as $comment) {
-            if (!$comment->readed) {
+            if (!$comment->readed && $comment->datetime >= $comment->user->time_created) {
                 $comments_unread[] = $comment;
             }
         }

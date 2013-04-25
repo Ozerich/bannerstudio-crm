@@ -38,6 +38,7 @@ class UsersController extends Controller
                     $thumb = Yii::app()->phpThumb->create($filename);
                     $thumb->resize(48, 48);
                     $thumb->save($filename);
+
                 }
 
                 $this->redirect($redirect);

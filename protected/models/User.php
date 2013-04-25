@@ -70,7 +70,7 @@ class User extends CActiveRecord
 
             array('password', 'required', 'on' => 'insert'),
 
-            array('avatar', 'file', 'types' => 'jpg, png, jpeg, bmp', 'maxSize' => 1024 * 1024 * 10, 'tooLarge' => 'Файл имеет большой размер', 'allowEmpty' => true),
+            array('avatar', 'file', 'types' => 'jpg, png, jpeg, bmp, gif', 'maxSize' => 1024 * 1024 * 10, 'tooLarge' => 'Файл имеет большой размер', 'allowEmpty' => true),
 
             array('id, role, email, login, password, salt, contact, time_created, last_visit', 'safe', 'on' => 'search'),
         );
@@ -161,6 +161,7 @@ class User extends CActiveRecord
 
         }
 
+
         return parent::beforeSave();
     }
 
@@ -178,6 +179,14 @@ class User extends CActiveRecord
         } else {
             $this->display_last_visit = date('d.m.Y H:i', strtotime($this->last_visit));
         }
+    }
+
+    public function afterSave()
+    {
+        Yii::app()->authManager->revoke('admin', $this->id);
+        Yii::app()->authManager->revoke('customer', $this->id);
+        Yii::app()->authManager->revoke('worker', $this->id);
+        Yii::app()->authManager->assign($this->role, $this->id);
     }
 
 

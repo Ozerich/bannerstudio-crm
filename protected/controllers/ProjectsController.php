@@ -99,6 +99,7 @@ class ProjectsController extends Controller
     {
         $model = Project::model()->findByPk($id);
 
+
         if (!$model || !$model->checkAccess()) {
             throw new CHttpException(404);
         }

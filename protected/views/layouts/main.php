@@ -29,6 +29,10 @@
     <? if (!Yii::app()->user->isGuest): ?>
         <script src="/js/scripts.js"></script>
         <script src="/js/ajaxfileupload.js"></script>
+
+        <link rel="stylesheet" href="/css/jquery.fancybox.css?v=2.1.4" type="text/css" media="screen"/>
+        <script type="text/javascript" src="/js/jquery.fancybox.js?v=2.1.4"></script>
+
     <? endif; ?>
 
 </head>

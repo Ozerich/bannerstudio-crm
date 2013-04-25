@@ -219,20 +219,9 @@ $(function () {
         });
 
 
-        function showCommentsLoader() {
-            $('.comments-block').find('.loader').fadeIn();
-        }
 
-        function updateComments() {
-            showCommentsLoader();
 
-            $.get('/projects/comments/' + $('#project_id').val(), function (data) {
-                $comments_block.find('.comments-list').html(data);
-                $comments_block.find('[mode]').hide();
-                $comments_block.find('[mode=' + $('#active_mode').val() + ']').show();
-                $('.comments-block').find('.loader').fadeOut();
-            });
-        }
+        $(".fancybox").fancybox();
 
 
         $('#btn_add_comment').on('click', function () {
@@ -490,6 +479,25 @@ $(function () {
 
     })();
 
+    function showCommentsLoader() {
+        $('.comments-block').find('.loader').fadeIn();
+    }
+
+    function updateComments() {
+        var $comments_block = $('.comments-block');
+        showCommentsLoader();
+
+        $.get('/projects/comments/' + $('#project_id').val(), function (data) {
+            $comments_block.find('.comments-list').html(data);
+            $comments_block.find('[mode]').hide();
+            $comments_block.find('[mode=' + $('#active_mode').val() + ']').show();
+            $('.comments-block').find('.loader').fadeOut();
+
+            $(".fancybox").fancybox();
+
+        });
+    }
+
 
     function loadUnreadComments(callback) {
         $.post('/ajax/get_unread_comments', {}, function (data) {
@@ -498,8 +506,12 @@ $(function () {
             var $message_status_block = $('.message-status-block');
 
             $message_status_block.toggleClass('new-exist', data.count > 0);
-            if(data.count > 0){
+            if (data.count > 0) {
                 $message_status_block.find('span').html(data.count);
+
+                if ($('#page_projects_page').length > 0) {
+                    updateComments();
+                }
             }
 
 

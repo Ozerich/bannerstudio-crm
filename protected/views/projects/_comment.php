@@ -1,4 +1,4 @@
-<div class="comment-item comment-<?= $data->user->role ?>" data-id="<?= $data->id ?>">
+<div class="<?=$data->readed ? 'unreaded' : ''?> comment-item comment-<?= $data->user->role ?>" data-id="<?= $data->id ?>">
 
     <div class="user-photo-wr">
         <div class="user-photo">
@@ -35,7 +35,7 @@
                     <? if (Yii::app()->user->role == 'admin'): ?><input type="checkbox"><? endif; ?>
                     <span class="filename"><?=$file->real_filename?></span>
                     <span class="size">(<?=$file->file_size_str?>)</span>
-                    <? if ($file->can_view): ?><a href="<?= $file->url ?>" target="_blank" class="btn btn-mini">
+                    <? if ($file->can_view): ?><a href="<?= $file->url ?>" target="_blank" class="fancybox btn btn-mini">
                             Открыть</a><? endif; ?>
                     <a href="/projects/download/<?= $file->id ?>" target="_blank" class="btn btn-mini">Скачать</a>
                     <? if (Yii::app()->user->role == 'admin'): ?><a href="#"

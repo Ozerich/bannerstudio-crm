@@ -360,16 +360,15 @@
       }
 
       label {
-        width: 49%;
+        width: 25%;
         display: block;
         float: left;
-        text-align: right;
         font-weight: bold;
         font-size: 12px;
         margin: 0;
       }
       span {
-        width: 50%;
+        width: 75%;
         float: right;
         display: block;
         text-align: left;
@@ -474,7 +473,7 @@
     margin: 20px 0;
 
     #btn_add_comment {
-      vertical-align: top;
+      vertical-align: bottom;
     }
 
     textarea {
@@ -586,6 +585,12 @@
         height: 100%;
         position: absolute;
         left: 60px;
+      }
+
+      &.unread{
+        .comment-content{
+          background: #ffa89b;
+        }
       }
 
       .comment-content {
