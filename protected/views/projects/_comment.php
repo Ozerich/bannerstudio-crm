@@ -1,4 +1,4 @@
-<div class="<?=$data->readed ? 'unreaded' : ''?> comment-item comment-<?= $data->user->role ?>" data-id="<?= $data->id ?>">
+<div class="<?=!$data->readed ? 'unreaded' : ''?> comment-item comment-<?= $data->user->role ?>" data-id="<?= $data->id ?>">
 
     <div class="user-photo-wr">
         <div class="user-photo">

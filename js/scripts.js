@@ -24,11 +24,13 @@ $(function () {
         this.window.hide();
 
         _element = $(_element).clone().show();
+        this.element = _element;
 
         this.window.append(_element);
 
 
         this.show = function () {
+            this.window.empty().append(this.element);
             that.overlay.fadeIn(function () {
                 that.window.show();
                 that.center();
@@ -217,8 +219,6 @@ $(function () {
 
             return false;
         });
-
-
 
 
         $(".fancybox").fancybox();
@@ -432,6 +432,63 @@ $(function () {
             return false;
         });
 
+        function updateSlider() {
+            if ($('#slider').length === 0)return;
+
+            $('#slider .loader').show();
+            $.get('/slider/' + $('#project_id').val(), function (html) {
+                $('#slider .slider-content').html(html);
+                $('#slider .loader').hide();
+            });
+        }
+
+        var slider_popup = new Popup($('#popup_slider'));
+
+        $('#btn_to_slider').on('click', function () {
+            var files = [];
+
+            $('.comment-content:visible .files li').each(function () {
+                if ($(this).find('input[type=checkbox]').prop('checked')) {
+                    files.push($(this).data('id'));
+                }
+
+                $(this).find('input[type=checkbox]:checked').prop('checked', false);
+            });
+
+            if (files.length == 0) {
+                alert('Выберите файлы');
+                return false;
+            }
+
+            var pages_count = $('#pages_count').val();
+
+            slider_popup.element.find('select').empty().append('<option value="0">Новая страница</option>');
+            for (var i = 1; i <= pages_count; i++) {
+                slider_popup.element.find('select').append('<option value="' + i + '">Страница ' + i + '</option>');
+            }
+
+
+            slider_popup.show();
+
+            slider_popup.element.find('button').click(function () {
+                var $btn = $(this);
+                $btn.prop('disabled', true);
+                $.post('/slider/add', {
+                    project_id: $('#project_id').val(),
+                    files: files,
+                    page: slider_popup.element.find('select option:selected').val()
+                }, function () {
+                    $btn.prop('disabled', false);
+                    slider_popup.hide();
+                    updateSlider();
+                });
+
+                return false;
+            });
+
+            return false;
+        });
+
 
         $(document).on('click', '.submit-popup', function () {
             var $form = $(this).parents('.popup-form');
@@ -509,8 +566,11 @@ $(function () {
             if (data.count > 0) {
                 $message_status_block.find('span').html(data.count);
 
-                if ($('#page_projects_page').length > 0) {
-                    updateComments();
+                if ($('#page_project').length > 0) {
+                    var project_id = $('#project_id').val();
+                    if (data.projects_count[project_id]) {
+                        updateComments();
+                    }
                 }
             }
 
@@ -521,7 +581,7 @@ $(function () {
 
     function commentsTimerFunction() {
         loadUnreadComments(function () {
-            setTimeout(commentsTimerFunction, 1000);
+            setTimeout(commentsTimerFunction, 5000);
         });
     }
 

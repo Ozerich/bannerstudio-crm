@@ -50,15 +50,24 @@ class AjaxController extends Controller
         }
 
         $comments = array();
+        $projects_count = array();
         foreach ($comments_unread as $comment) {
             $comments[] = array(
                 'project_id' => $comment->project_id,
                 'text' => $comment->text,
             );
+
+            if (!isset($projects_count[$comment->project_id])) {
+                $projects_count[$comment->project_id] = 0;
+            }
+
+            $projects_count[$comment->project_id]++;
         }
+
 
         $result = array(
             'count' => count($comments),
+            'projects_count' => $projects_count,
             'comments' => $comments
         );
 

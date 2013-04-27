@@ -55,7 +55,8 @@ class Project extends CActiveRecord
     public function relations()
     {
         return array(
-            'comments' => array(self::HAS_MANY, 'ProjectComment', 'project_id')
+            'comments' => array(self::HAS_MANY, 'ProjectComment', 'project_id'),
+            'slider_items' => array(self::HAS_MANY, 'SliderItem', 'project_id'),
         );
     }
 
@@ -136,6 +137,10 @@ class Project extends CActiveRecord
         foreach ($this->comments as $comment) {
             $comment->delete();
         }
+
+        foreach ($this->slider_items as $item) {
+            $item->delete();
+        }
     }
 
 
@@ -165,5 +170,16 @@ class Project extends CActiveRecord
         }
 
         return $projects;
+    }
+
+
+    public function getSlidesCount()
+    {
+        $max = 0;
+        $items = SliderItem::model()->findAllByAttributes(array('project_id' => $this->id));
+        foreach ($items as $item) {
+            $max = max($max, $item->page);
+        }
+        return $max;
     }
 }

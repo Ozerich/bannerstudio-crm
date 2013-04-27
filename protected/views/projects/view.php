@@ -59,10 +59,13 @@
         </div>
     </div>
 
-    <? if(Yii::app()->user->role != 'worker'): ?>
-    <div id="slider" mode="customer">
-        <?=$this->renderPartial('_slider', array('model' => $model));?>
-    </div>
+    <? if (Yii::app()->user->role != 'worker'): ?>
+        <div id="slider" mode="customer">
+            <div class="loader" style="display: none"></div>
+            <div class="slider-content">
+                <?=$this->renderPartial('_slider', array('model' => $model));?>
+            </div>
+        </div>
     <? endif; ?>
 
 
@@ -141,4 +144,12 @@
         <label for="popup_form_add_to_slider"><input type="checkbox"> Добавить файлы в слайдер</label>
         <button class="btn btn-success submit-popup">Написать</button>
     </div>
+</div>
+
+<div id="popup_slider" class="popup-form" style="display:none">
+    <label>Страница:</label>
+    <select>
+        <option value="0">Новая страница</option>
+    </select>
+    <button class="btn btn-success">Добавить</button>
 </div>

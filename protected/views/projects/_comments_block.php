@@ -5,7 +5,7 @@
             'order'=>'datetime DESC',
         ),
         'pagination'=>array(
-            'pageSize'=>3,
+            'pageSize'=>30,
         ),
     ));
 

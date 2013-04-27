@@ -384,7 +384,7 @@
   &.mode-admin {
     padding-bottom: 90px;
 
-    [mode=customer] {
+    [mode=worker] {
       display: none;
     }
   }
@@ -587,8 +587,8 @@
         left: 60px;
       }
 
-      &.unread{
-        .comment-content{
+      &.unreaded {
+        .comment-content {
           background: #ffa89b;
         }
       }
@@ -753,11 +753,20 @@
   }
 
   #slider {
+    position: relative;
     padding: 20px;
     border: 1px solid #aaa;
     border-radius: 10px;
     margin-top: 20px;
-    height: 300px;
+    min-height: 200px;
+    .loader {
+      background: url('../img/comments_loader.gif') center center no-repeat;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+    }
   }
 }
 
