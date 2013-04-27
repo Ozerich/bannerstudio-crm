@@ -432,15 +432,53 @@ $(function () {
             return false;
         });
 
-        function updateSlider() {
-            if ($('#slider').length === 0)return;
+        var slider_pages = [];
 
-            $('#slider .loader').show();
-            $.get('/slider/' + $('#project_id').val(), function (html) {
-                $('#slider .slider-content').html(html);
-                $('#slider .loader').hide();
+
+        function toggleSliderLoader(state) {
+            $('#slider .loader').toggle(state);
+            if (state) {
+                $('#btn_to_slider').attr('disabled', 'disabled');
+            }
+            else {
+                $('#btn_to_slider').removeAttr('disabled');
+            }
+        }
+
+        function updateSliderPage(page_id) {
+            page_id = page_id || $('.slider-page:visible').data('id');
+            $.post('/slider/' + $('#project_id').val(), {page_id: page_id}, function (html) {
+                $('.slider-page[data-id=' + page_id + ']').html(html);
+                toggleSliderLoader(false);
             });
         }
+
+        function updateSlider() {
+            if ($('#slider').length === 0)return;
+            toggleSliderLoader(true);
+
+            $.post('/slider/' + $('#project_id').val(), {},
+                function (data) {
+                    data = jQuery.parseJSON(data);
+                    slider_pages = data.pages;
+
+                    if (slider_pages.length === 0) {
+                        $('#slider .slider-container').empty();
+                        $('#slider').hide();
+                    }
+                    else {
+                        $('#slider .slider-container').html(data.html);
+                        $('#slider').show();
+                    }
+
+                    toggleSliderLoader(false);
+                }
+            );
+        }
+
+        $(function () {
+            updateSlider();
+        });
 
         var slider_popup = new Popup($('#popup_slider'));
 
@@ -463,8 +501,8 @@ $(function () {
             var pages_count = $('#pages_count').val();
 
             slider_popup.element.find('select').empty().append('<option value="0">Новая страница</option>');
-            for (var i = 1; i <= pages_count; i++) {
-                slider_popup.element.find('select').append('<option value="' + i + '">Страница ' + i + '</option>');
+            for (var i = 0; i < slider_pages.length; i++) {
+                slider_popup.element.find('select').append('<option value="' + slider_pages[i] + '">Страница ' + (i + 1) + '</option>');
             }
 
 
@@ -532,6 +570,76 @@ $(function () {
 
             return false;
         });
+
+
+        if ($('#slider').length > 0) {
+            var slider = $('#slider');
+            slider.on('click', '.slider-item .btn-delete', function () {
+                if (!confirm("Вы уверены что хотите удалить файл из слайдера?"))return;
+
+                var page_id = $(this).parents('.slider-page').data('id');
+                var $item = $(this).parents('.slider-item');
+                var id = $item.data('id');
+                $item.remove();
+                toggleSliderLoader(true);
+
+                $.get('/slider/delete_item/' + id, function () {
+                    if ($(this).parents('.slider-page').find('.slider-item').length === 0) {
+                        updateSlider();
+                    } else {
+                        updateSliderPage(page_id);
+                    }
+                });
+
+                return false;
+            });
+
+            slider.on('click', '.slider-pagination a', function () {
+                var page_num = $(this).data('num');
+                slider.find('.slider-page').hide();
+                $(slider.find('.slider-page').get(page_num - 1)).show();
+                return false;
+            });
+
+            slider.on('click', '.page-actions .btn-delete', function () {
+                if (!confirm("Вы уверены что хотите удалить страницу из слайдера?"))return;
+                toggleSliderLoader(true);
+
+                $.get('/slider/delete_page/' + $(this).parents('.slider-page').data('id'), function () {
+                    updateSlider();
+                });
+
+                return false;
+            });
+
+            var slider_html_popup = new Popup($('#popup_html_slider'));
+
+            slider.on('click', '.page-actions .btn-add_html', function () {
+                slider_html_popup.show();
+
+                var page_id = $(this).parents('.slider-page').data('id');
+                slider_html_popup.element.find('.page-id').val($(this).parents('.slider-page').data('id'));
+                slider_html_popup.element.find('button').click(function () {
+
+                    var $btn = $(this);
+                    $btn.attr('disabled', 'disabled');
+
+                    $.post('/slider/add', {
+                        project_id: $('#project_id').val(),
+                        page: page_id,
+                        html: slider_html_popup.element.find('textarea').val(),
+                    }, function () {
+                        $btn.prop('disabled', false);
+                        slider_popup.hide();
+                        updateSliderPage();
+                    });
+
+                    return false;
+                });
+
+                return false;
+            });
+        }
 
 
     })();

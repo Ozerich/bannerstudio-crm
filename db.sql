@@ -10,120 +10,10 @@ Target Server Type    : MYSQL
 Target Server Version : 50525
 File Encoding         : 65001
 
-Date: 2013-04-27 19:25:49
+Date: 2013-04-28 02:31:58
 */
 
 SET FOREIGN_KEY_CHECKS=0;
-
--- ----------------------------
--- Table structure for `project_comment_files`
--- ----------------------------
-DROP TABLE IF EXISTS `project_comment_files`;
-CREATE TABLE `project_comment_files` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `comment_id` int(11) NOT NULL,
-  `file` varchar(255) NOT NULL,
-  `real_filename` varchar(255) NOT NULL,
-  `file_size` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of project_comment_files
--- ----------------------------
-INSERT INTO `project_comment_files` VALUES ('2', '6', '516c998b174f2.png', 'bg.png', '9139');
-INSERT INTO `project_comment_files` VALUES ('3', '7', '516c97a4405ae.png', 'bg.png', '9139');
-INSERT INTO `project_comment_files` VALUES ('7', '16', '517911f97d002.png', 'sost_TC-56.png', '662');
-INSERT INTO `project_comment_files` VALUES ('8', '17', '51791205e6bfe.png', 'sost_TC-49.png', '525');
-INSERT INTO `project_comment_files` VALUES ('9', '18', '5179121921766.png', 'sost_TC-56.png', '662');
-INSERT INTO `project_comment_files` VALUES ('10', '19', '51794e54a9b01.png', 'sost_TC-29a (5).png', '874');
-INSERT INTO `project_comment_files` VALUES ('11', '6', '517be9ec17dbe.xlsx', 'Book1.xlsx', '14587');
-INSERT INTO `project_comment_files` VALUES ('12', '7', '517bea0903fc7.png', 'IMG_18042013_175110.png', '401880');
-INSERT INTO `project_comment_files` VALUES ('13', '13', '517bf16a11fb1.jpg', 'newbikes_b_v2_01.jpg', '126689');
-INSERT INTO `project_comment_files` VALUES ('14', '13', '517bf16a1aa19.jpg', '2013-04-16 14.13.04.jpg', '1848404');
-
--- ----------------------------
--- Table structure for `project_comment_reads`
--- ----------------------------
-DROP TABLE IF EXISTS `project_comment_reads`;
-CREATE TABLE `project_comment_reads` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `comment_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of project_comment_reads
--- ----------------------------
-INSERT INTO `project_comment_reads` VALUES ('1', '1', '4');
-INSERT INTO `project_comment_reads` VALUES ('2', '1', '1');
-INSERT INTO `project_comment_reads` VALUES ('3', '6', '3');
-INSERT INTO `project_comment_reads` VALUES ('4', '1', '15');
-INSERT INTO `project_comment_reads` VALUES ('5', '1', '5');
-INSERT INTO `project_comment_reads` VALUES ('6', '1', '3');
-INSERT INTO `project_comment_reads` VALUES ('7', '1', '2');
-INSERT INTO `project_comment_reads` VALUES ('8', '12', '7');
-INSERT INTO `project_comment_reads` VALUES ('9', '12', '6');
-INSERT INTO `project_comment_reads` VALUES ('10', '12', '5');
-INSERT INTO `project_comment_reads` VALUES ('11', '12', '4');
-INSERT INTO `project_comment_reads` VALUES ('12', '12', '3');
-INSERT INTO `project_comment_reads` VALUES ('13', '12', '2');
-INSERT INTO `project_comment_reads` VALUES ('14', '12', '1');
-INSERT INTO `project_comment_reads` VALUES ('15', '1', '8');
-INSERT INTO `project_comment_reads` VALUES ('16', '1', '9');
-INSERT INTO `project_comment_reads` VALUES ('17', '12', '10');
-INSERT INTO `project_comment_reads` VALUES ('18', '1', '11');
-INSERT INTO `project_comment_reads` VALUES ('19', '1', '12');
-
--- ----------------------------
--- Table structure for `project_comments`
--- ----------------------------
-DROP TABLE IF EXISTS `project_comments`;
-CREATE TABLE `project_comments` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `project_id` int(11) NOT NULL,
-  `text` text NOT NULL,
-  `datetime` datetime NOT NULL,
-  `mode` enum('worker','customer') NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of project_comments
--- ----------------------------
-INSERT INTO `project_comments` VALUES ('1', '1', '1', 'Привет юзер', '2013-04-25 18:51:27', 'worker');
-INSERT INTO `project_comments` VALUES ('2', '13', '1', 'Привет админко', '2013-04-25 18:52:06', 'worker');
-INSERT INTO `project_comments` VALUES ('3', '13', '1', 'Привет админка', '2013-04-25 18:52:14', 'worker');
-INSERT INTO `project_comments` VALUES ('4', '13', '1', '1', '2013-04-25 18:53:48', 'worker');
-INSERT INTO `project_comments` VALUES ('5', '13', '1', '1', '2013-04-25 18:53:56', 'worker');
-INSERT INTO `project_comments` VALUES ('6', '1', '1', '1231', '2013-04-27 18:08:28', 'worker');
-INSERT INTO `project_comments` VALUES ('7', '1', '1', '123123', '2013-04-27 18:08:56', 'worker');
-INSERT INTO `project_comments` VALUES ('8', '12', '1', 'че', '2013-04-27 18:20:08', 'worker');
-INSERT INTO `project_comments` VALUES ('9', '12', '1', '5656', '2013-04-27 18:21:34', 'worker');
-INSERT INTO `project_comments` VALUES ('10', '1', '1', '123', '2013-04-27 18:22:49', 'worker');
-INSERT INTO `project_comments` VALUES ('11', '12', '1', '123213', '2013-04-27 18:23:13', 'worker');
-INSERT INTO `project_comments` VALUES ('12', '12', '1', '1233123', '2013-04-27 18:24:10', 'worker');
-INSERT INTO `project_comments` VALUES ('13', '1', '1', '1', '2013-04-27 18:40:26', 'customer');
-
--- ----------------------------
--- Table structure for `project_users`
--- ----------------------------
-DROP TABLE IF EXISTS `project_users`;
-CREATE TABLE `project_users` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `project_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of project_users
--- ----------------------------
-INSERT INTO `project_users` VALUES ('29', '12', '1');
-INSERT INTO `project_users` VALUES ('30', '13', '1');
-
 -- ----------------------------
 -- Table structure for `projects`
 -- ----------------------------
@@ -139,12 +29,76 @@ CREATE TABLE `projects` (
   `customer_text` text NOT NULL,
   `created_time` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of projects
 -- ----------------------------
-INSERT INTO `projects` VALUES ('1', '1111', 'customer_created', '0', '2', '1', '2', '1', '2013-04-25 18:51:12');
+
+-- ----------------------------
+-- Table structure for `project_comments`
+-- ----------------------------
+DROP TABLE IF EXISTS `project_comments`;
+CREATE TABLE `project_comments` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `project_id` int(11) NOT NULL,
+  `text` text NOT NULL,
+  `datetime` datetime NOT NULL,
+  `mode` enum('worker','customer') NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of project_comments
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `project_comment_files`
+-- ----------------------------
+DROP TABLE IF EXISTS `project_comment_files`;
+CREATE TABLE `project_comment_files` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `comment_id` int(11) NOT NULL,
+  `file` varchar(255) NOT NULL,
+  `real_filename` varchar(255) NOT NULL,
+  `file_size` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of project_comment_files
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `project_comment_reads`
+-- ----------------------------
+DROP TABLE IF EXISTS `project_comment_reads`;
+CREATE TABLE `project_comment_reads` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `comment_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of project_comment_reads
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `project_users`
+-- ----------------------------
+DROP TABLE IF EXISTS `project_users`;
+CREATE TABLE `project_users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `project_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of project_users
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `rights_authassignment`
@@ -285,24 +239,30 @@ CREATE TABLE `rights_rights` (
 DROP TABLE IF EXISTS `slider_items`;
 CREATE TABLE `slider_items` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `project_id` int(11) NOT NULL,
-  `page` int(11) NOT NULL,
-  `file` varchar(255) NOT NULL,
+  `page_id` int(11) NOT NULL,
+  `file` varchar(255) DEFAULT NULL,
+  `real_filename` varchar(255) DEFAULT NULL,
+  `html` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of slider_items
 -- ----------------------------
-INSERT INTO `slider_items` VALUES ('2', '1', '1', '517bf16a11fb1.jpg');
-INSERT INTO `slider_items` VALUES ('3', '1', '1', '517bf16a1aa19.jpg');
-INSERT INTO `slider_items` VALUES ('4', '1', '1', '517bf16a11fb1.jpg');
-INSERT INTO `slider_items` VALUES ('5', '1', '1', '517bf16a1aa19.jpg');
-INSERT INTO `slider_items` VALUES ('6', '1', '2', '517bf16a11fb1.jpg');
-INSERT INTO `slider_items` VALUES ('7', '1', '2', '517bf16a1aa19.jpg');
-INSERT INTO `slider_items` VALUES ('8', '1', '2', '517bf16a11fb1.jpg');
-INSERT INTO `slider_items` VALUES ('9', '1', '2', '517bf16a1aa19.jpg');
-INSERT INTO `slider_items` VALUES ('10', '1', '1', '517bf16a11fb1.jpg');
+
+-- ----------------------------
+-- Table structure for `slider_pages`
+-- ----------------------------
+DROP TABLE IF EXISTS `slider_pages`;
+CREATE TABLE `slider_pages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `project_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of slider_pages
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `users`
@@ -328,4 +288,4 @@ CREATE TABLE `users` (
 -- ----------------------------
 INSERT INTO `users` VALUES ('1', 'admin', 'ozicoder@gmail.com', 'Пользователь', '$2a$10$0JTq3q9Gr7r99gyU4eQ/Q.n/PRVIaLX0wa1h4dYjn3/7B7HQZoVoW', '$2a$10$0JTq3q9Gr7r99gyU4eQ/QK', '1231233333', '2013-03-11 00:53:03', '2013-04-27 18:08:12', '123321', '513d144460c76.jpg');
 INSERT INTO `users` VALUES ('12', 'worker', 'worker@gmail.com', 'worker', '$2a$10$H/qEqV75CFRhN9kTyCDhB.wc0.fU9d3KT8H5KOJUmpslkVoMv1uhm', '$2a$10$H/qEqV75CFRhN9kTyCDhBB', '', '2013-04-25 18:50:45', '2013-04-27 18:17:35', '', null);
-INSERT INTO `users` VALUES ('13', 'customer', 'customer@gmail.com', 'customer', '$2a$10$1VD4Rfk.lERisOgEjEoK..momhCHkhS4kCDY1.g8BEe/DNsZ6gs1G', '$2a$10$1VD4Rfk.lERisOgEjEoK./', '', '2013-04-25 18:50:59', '2013-04-25 18:51:56', '', null);
+INSERT INTO `users` VALUES ('13', 'customer', 'customer@gmail.com', 'customer', '$2a$10$1VD4Rfk.lERisOgEjEoK..momhCHkhS4kCDY1.g8BEe/DNsZ6gs1G', '$2a$10$1VD4Rfk.lERisOgEjEoK./', '', '2013-04-25 18:50:59', '2013-04-28 02:30:56', '', null);

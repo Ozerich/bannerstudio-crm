@@ -60,10 +60,9 @@
     </div>
 
     <? if (Yii::app()->user->role != 'worker'): ?>
-        <div id="slider" mode="customer">
+        <div id="slider" mode="customer" style="display: <?= $model->slider_pages ? 'block' : 'none' ?>">
             <div class="loader" style="display: none"></div>
-            <div class="slider-content">
-                <?=$this->renderPartial('_slider', array('model' => $model));?>
+            <div class="slider-container">
             </div>
         </div>
     <? endif; ?>
@@ -151,5 +150,12 @@
     <select>
         <option value="0">Новая страница</option>
     </select>
+    <button class="btn btn-success">Добавить</button>
+</div>
+
+<div id="popup_html_slider" class="popup-form" style="display: none">
+    <input type="hidden" class="page-id"/>
+    <label>HTML код:</label>
+    <textarea></textarea>
     <button class="btn btn-success">Добавить</button>
 </div>
