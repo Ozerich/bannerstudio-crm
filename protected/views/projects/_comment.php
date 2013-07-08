@@ -19,7 +19,7 @@
 
         <span class="user-name"><?=$data->user->display_name?></span>
 
-        <p class="comment-text"><?=nl2br($data->text)?></p>
+        <p class="comment-text"><?=$data->getPlainText()?></p>
 
         <? if (Yii::app()->user->role == 'admin'): ?>
             <div class="edit-block" style="display: none">
@@ -35,11 +35,28 @@
                     <? if (Yii::app()->user->role == 'admin'): ?><input type="checkbox"><? endif; ?>
                     <span class="filename"><?=$file->real_filename?></span>
                     <span class="size">(<?=$file->file_size_str?>)</span>
-                    <? if ($file->can_view): ?><a href="<?= $file->url ?>" target="_blank" class="fancybox btn btn-mini">
+
+                    <? if($data->mode == 'customer'): ?>
+                        <a href="#" class="single-file-to-slider btn btn-mini">В слайдер</a>
+                    <? endif; ?>
+
+
+                    <? if ($file->can_view): ?><a data-width="<?=$file->width?>" data-height="<?=$file->height?>" href="<?=$file->url ?>" target="_blank" class="fancybox <?=$file->is_swf ? 'iframe' : ''?> btn btn-mini">
                             Открыть</a><? endif; ?>
                     <a href="/projects/download/<?= $file->id ?>" target="_blank" class="btn btn-mini">Скачать</a>
-                    <? if (Yii::app()->user->role == 'admin'): ?><a href="#"
-                                                                    class="btn btn-mini btn-delete">Удалить</a><? endif; ?>
+
+                    <? if(Yii::app()->user->role == 'admin'): ?>
+                    <a href="#" class="btn btn-mini btn-delete">Удалить</a>
+
+                        <? if($data->mode == 'customer'): ?>
+                            <a href="#" direction="worker" class="single-file-move btn btn-mini">Сотруднику</a>
+                        <? endif; ?>
+
+                        <? if($data->mode == 'worker'): ?>
+                            <a href="#" direction="customer" class="single-file-move btn btn-mini">Заказчику</a>
+                        <? endif; ?>
+                    <? endif; ?>
+
                 </li>
             <? endforeach; ?>
         </ul>

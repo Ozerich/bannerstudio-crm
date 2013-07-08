@@ -9,6 +9,11 @@ class ProjectsController extends Controller
         );
     }
 
+    public function allowedActions()
+    {
+        return 'files, download, flash';
+    }
+
     public function actionIndex()
     {
         $this->redirect('/');
@@ -20,7 +25,6 @@ class ProjectsController extends Controller
     public function actionEdit($id)
     {
         $model = Project::model()->findByPk($id);
-
         if (!$model) {
             throw new CHttpException(404);
         }
@@ -30,8 +34,26 @@ class ProjectsController extends Controller
 
             if ($model->save()) {
 
+                $users_all = ProjectUser::model()->findAllByAttributes(array('project_id' => $model->id));
+                $users = array();
+                foreach ($users_all as $user) {
+                    $users[$user->user_id] = false;
+                }
+
                 foreach (array_merge(explode(',', $model->workers_list), explode(',', $model->customers_list)) as $id) {
+                    if (isset($users[$id])) {
+                        $users[$id] = true;
+                    }
                     ProjectUser::add($model->id, $id, isset($_POST['send_worker_email']), isset($_POST['send_customer_email']));
+                }
+
+                foreach ($users as $user_id => $found) {
+                    if (!$found) {
+                        ProjectUser::model()->deleteAllByAttributes(array(
+                            'project_id' => $model->id,
+                            'user_id' => $user_id,
+                        ));
+                    }
                 }
 
                 $this->redirect('/projects/' . $model->id);
@@ -72,6 +94,9 @@ class ProjectsController extends Controller
                 $model->status = 'customer_created';
             }
 
+            $model->created_time = new CDbExpression('NOW()');
+            $model->out_hash = md5(microtime());
+
             if ($model->save()) {
 
                 if (Yii::app()->user->role == 'customer') {
@@ -84,6 +109,7 @@ class ProjectsController extends Controller
 
                 $this->redirect('/projects/' . $model->id);
             }
+
         }
 
         $this->breadcrumbs = array(
@@ -95,8 +121,16 @@ class ProjectsController extends Controller
     }
 
 
-    public function actionView($id)
+    public function actionView($id, $mode = 'customer')
     {
+        if (Yii::app()->user->role == 'worker') {
+            $mode = 'worker';
+        } elseif (Yii::app()->user->role == 'customer') {
+            $mode = 'customer';
+        } elseif (Yii::app()->user->role == 'administrator') {
+            $mode = $mode == 'customer' || $mode == 'worker' ? $mode : 'customer';
+        }
+
         $model = Project::model()->findByPk($id);
 
 
@@ -109,7 +143,7 @@ class ProjectsController extends Controller
             'Проект ID ' . $model->id
         );
 
-        $this->render('view', array('model' => $model, 'page_title' => 'Проект ID ' . $model->id));
+        $this->render('view', array('mode' => $mode, 'model' => $model, 'page_title' => 'Проект ID ' . $model->id));
     }
 
 
@@ -118,21 +152,20 @@ class ProjectsController extends Controller
         if (!Yii::app()->request->isAjaxRequest) {
             throw new CHttpException(404);
         }
+
         $project_id = Yii::app()->request->getPost('project_id');
         $message = Yii::app()->request->getPost('message');
         $mode = Yii::app()->request->getPost('mode');
 
         $model = new ProjectComment();
-
         $model->project_id = $project_id;
         $model->text = $message;
         $model->user_id = Yii::app()->user->id;
         $model->mode = $mode;
-
         $model->save();
 
-        echo json_encode(array('comment_id' => $model->id));
 
+        echo json_encode(array('comment_id' => $model->id));
         Yii::app()->end();
     }
 
@@ -250,7 +283,6 @@ class ProjectsController extends Controller
         if (!$project) die;
 
         $message = Yii::app()->request->getPost('message');
-        if (empty($message)) die;
 
         $to_slider = Yii::app()->request->getPost('to_slider', 0);
 
@@ -258,7 +290,6 @@ class ProjectsController extends Controller
         if ($to != 'customer' && $to != 'worker') die;
 
         $files = Yii::app()->request->getPost('files', array());
-
 
         $model = new ProjectComment();
 
@@ -268,9 +299,11 @@ class ProjectsController extends Controller
         $model->mode = $to;
 
         if ($model->save()) {
-            foreach ($files as $file_id) {
+            $to_slider = array();
 
-                $file = ProjectCommentFile::model()->findByPk($file_id);
+            foreach ($files as $_file) {
+
+                $file = ProjectCommentFile::model()->findByPk($_file['id']);
                 if (!$file) continue;
 
                 $new_file = new ProjectCommentFile();
@@ -281,6 +314,28 @@ class ProjectsController extends Controller
                 $new_file->file_size = $file->file_size;
 
                 $new_file->save();
+
+                if ($_file['to_slider']) {
+                    $to_slider[] = $new_file;
+                }
+            }
+
+            if (!empty($to_slider)) {
+                $page = new SliderPage();
+                $page->project_id = $project->id;
+                $page->save();
+
+                foreach ($to_slider as $file) {
+                    $slide_item = new SliderItem();
+
+                    $slide_item->page_id = $page->id;
+                    $slide_item->comment_file_id = $file->id;
+                    $slide_item->file = $file->file;
+                    $slide_item->real_filename = $file->real_filename;
+
+                    $slide_item->save();
+                }
+
             }
         }
 
@@ -300,5 +355,41 @@ class ProjectsController extends Controller
         }
 
         Yii::app()->end();
+    }
+
+
+    public function actionFiles($project_id = '', $hash = '', $page_id = 0)
+    {
+        $this->layout = 'none';
+
+        $project = Project::model()->findByPk($project_id);
+        if (!$project || $hash != $project->out_hash) {
+            throw new CHttpException(404);
+        }
+
+        $page = SliderPage::model()->findByPk($page_id);
+        if ($page->project_id != $project_id) {
+            throw new CHttpException(404);
+        }
+
+        foreach ($page->items as $item) {
+            if ($item->file_url) {
+                $files[] = $item;
+            }
+        }
+
+        $this->render('files', array('project' => $project, 'items' => $files));
+    }
+
+    public function actionFlash($id = 0)
+    {
+        $this->layout = 'none';
+
+        $file = ProjectCommentFile::model()->findByPk($id);
+        if (!$file) {
+            throw new CHttpException(404);
+        }
+
+        $this->render('flash', array('file' => $file));
     }
 }

@@ -36,7 +36,7 @@
 
                 <div class="w-tbody">
                     <? $this->widget('bootstrap.widgets.TbListView', array(
-                        'dataProvider' => $comments_dataProvider,
+                        'dataProvider' => $this->getCommentsDataProvider(),
                         'itemView' => '/projects/_comments_table_item',
                         'template' => "{items}",
                         'enablePagination' => false,
@@ -50,7 +50,4 @@
 
     <br clear="all"/>
 
-    <div class="message-status-block">
-        <span></span>
-    </div>
 </div>

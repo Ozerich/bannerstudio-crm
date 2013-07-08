@@ -1,5 +1,13 @@
 <?php
 
+function sort_projects_function($a, $b)
+{
+    if($a->closed && !$b->closed)return 1;
+    if($b->closed && !$a->closed)return -1;
+
+    return $a->created_time < $b->created_time ? -1 : 1;
+}
+
 Yii::setPathOfAlias('bootstrap', dirname(__FILE__) . '/../extensions/bootstrap');
 return array(
     'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
@@ -71,6 +79,8 @@ return array(
 
                 'profile' => 'users/profile',
 
+                'projects/files/<project_id:\d+>/<hash:\w+>-<page_id:\w+>' => 'projects/files',
+
                 '<controller:\w+>/<id:\d+>' => '<controller>/view',
                 '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>/id/<id>',
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
@@ -107,7 +117,7 @@ return array(
         'upload_dir' => '/uploads/',
         'upload_dir_comments' => '/uploads/comments/',
         'tmp_dir' => '/uploads/tmp/',
-        'email_admin' => 'admin@admin.ru',
+        'email_admin' => 'mail@bannerstudio.ru',
         'admin_emails' => array('ozicoder@gmail.com'),
     ),
 );

@@ -6,14 +6,21 @@
 <? endif; ?>
 
 <? foreach ($page->items as $ind => $item): ?>
-    <? if ($ind % 2 == 0): ?>
-        <div class="slider-row <?= $ind == count($page->items) - 1 ? 'single' : '' ?>">
-    <? endif; ?>
-    <div class="slider-item" data-id="<?= $item->id ?>">
+    <div class="slider-item <?=$item->html ? 'html' : ''?>" data-id="<?= $item->id ?>">
         <div class="slider-item-block">
             <? if (empty($item->html)): ?>
                 <? if ($item->is_image): ?>
                     <img src="<?= Yii::app()->params['upload_dir_comments'] . $item->file ?>">
+                <? elseif ($item->is_swf): ?>
+                    <object  width="<?=$item->image_width?>" height="<?=$item->image_height?>" id="fancybox-swf" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">
+                        <param name="movie" value="<?= Yii::app()->params['upload_dir_comments'] . $item->file ?>">
+                        <param name="wmode" value="transparent">
+                        <param name="allowfullscreen" value="true">
+                        <param name="allowscriptaccess" value="always">
+                        <embed src="<?= Yii::app()->params['upload_dir_comments'] . $item->file ?>"
+                               type="application/x-shockwave-flash" width="<?=$item->image_width?>" height="<?=$item->image_height?>" wmode="transparent"
+                               allowfullscreen="true" allowscriptaccess="always">
+                    </object>
                 <? else: ?>
                     <img src="/img/zip.png">
                 <? endif; ?>
@@ -26,13 +33,15 @@
                 <span><?=($item->image_width && $item->image_height ? $item->image_width . 'x' . $item->image_height : $item->real_filename)?>
                     (<?=$item->file_size?>)</span>
                 <a target="_blank" href="/slider/download/<?= $item->id ?>">скачать</a>
-                <? if ($item->is_image): ?> <a href="<?= Yii::app()->params['upload_dir_comments'] . $item->file ?>"
+                <? if ($item->is_image || $item->is_swf): ?> <a href="<?= Yii::app()->params['upload_dir_comments'] . $item->file ?>"
                                                class="fancybox">открыть</a><? endif; ?>
             <? endif; ?>
             <?if (Yii::app()->user->role == 'admin'): ?><a href="#" class="btn-delete">убрать</a><? endif; ?>
         </div>
     </div>
-    <? if ($ind == count($page->items) - 1 || $ind % 2 == 1): ?>
-        </div>
-    <? endif; ?>
 <? endforeach; ?>
+
+<p class="out-link">
+    <label>Внешняя ссылка на эти файлы: </label>
+    <a target="_blank" href="<?=$page->getOutUrl();?>"><?=$page->getOutUrl();?></a>
+</p>

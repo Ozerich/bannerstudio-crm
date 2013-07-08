@@ -39,6 +39,7 @@ class SliderController extends Controller
                 $model = new SliderItem();
 
                 $model->page_id = $page->id;
+                $model->comment_file_id = $file->id;
                 $model->file = $file->file;
                 $model->real_filename = $file->real_filename;
 
@@ -47,6 +48,11 @@ class SliderController extends Controller
         } else {
             $html = Yii::app()->request->getPost('html');
             if (!empty($html)) {
+
+                $page = new SliderPage();
+                $page->project_id = $project_id;
+                $page->save();
+
                 $model = new SliderItem();
                 $model->page_id = $page->id;
                 $model->html = $html;

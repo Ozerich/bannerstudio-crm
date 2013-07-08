@@ -41,12 +41,11 @@ class Project extends CActiveRecord
     public function rules()
     {
         return array(
-            array('name, closed, status', 'required'),
-            array('worker_price, customer_price', 'numerical'),
+            array('name, closed, status, out_hash', 'required'),
 
             //     array('worker_text, customer_text', 'filter', 'filter' => 'strip_tags'),
 
-            array('worker_price, customer_price, worker_text, customer_text, workers_list, customers_list, status', 'safe'),
+            array('worker_price, customer_price, worker_text, customer_text, workers_list, customers_list, status, worker_price, customer_price', 'safe'),
 
             array('id, name, worker_price, customer_price, worker_text, customer_text, created_time, status,workers_list,customers_list', 'safe', 'on' => 'search'),
         );
@@ -75,15 +74,6 @@ class Project extends CActiveRecord
         );
     }
 
-
-    public function beforeSave()
-    {
-        if ($this->isNewRecord) {
-            $this->created_time = new CDbExpression('NOW()');
-        }
-
-        return parent::beforeSave();
-    }
 
     public function afterSave()
     {
@@ -158,18 +148,65 @@ class Project extends CActiveRecord
 
     public static function FindLastProjects($count = 10)
     {
-        $criteria = new CDbCriteria();
-        $criteria->compare('user_id', Yii::app()->user->id);
-        $criteria->limit = 10;
+        if (Yii::app()->user->role == 'admin') {
+            $criteria = new CDbCriteria();
+            $criteria->compare('closed', 0);
+            $criteria->order = 'created_time DESC';
+            $criteria->limit = $count;
 
-        $projects_for_user = ProjectUser::model()->findAll($criteria);
+            return Project::model()->findAll($criteria);
+        } else {
 
-        $projects = array();
-        foreach ($projects_for_user as $_project) {
-            $projects[] = Project::model()->findByPk($_project->project_id);
+            $projects = array();
+
+            foreach (Yii::app()->user->getModel()->getProjects() as $project) {
+                if ($project->closed == 0) {
+                    $projects[] = $project;
+                }
+                if (count($projects) == $count) {
+                    break;
+                }
+            }
+
+            return $projects;
+
         }
 
-        return $projects;
+    }
+
+
+    // Подготавливает текст для отображения в HTML
+    public function prepareText($text)
+    {
+        $text = preg_replace('@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?)?)@', '<a href="$1" target="_blank">$1</a>', $text);
+
+        return nl2br($text);
+    }
+
+    // Возвращает всех сотрудников и заказчиков в данном проекте.
+    public function getUsers($mode = 'all')
+    {
+        $result = array();
+
+        foreach (ProjectUser::model()->findAllByAttributes(array('project_id' => $this->id)) as $_project_user) {
+            $user = User::model()->findByPk($_project_user->user_id);
+            if ($user && ($mode == 'all' || $user->role == $mode)) {
+                $result[] = $user;
+            }
+        }
+
+        return $result;
+    }
+
+
+    public function getViewUrl($mode = '')
+    {
+        return Yii::app()->getBaseUrl(true) . '/projects/' . $this->id . ($mode ? '?mode=' . $mode : '');
+    }
+
+    public function getOutUrl($mode = '')
+    {
+        return Yii::app()->getBaseUrl(true) . '/projects/files/' . $this->id . '/' . $this->out_hash;
     }
 
 }

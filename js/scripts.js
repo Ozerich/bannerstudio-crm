@@ -5,6 +5,22 @@ function nl2br(str, is_xhtml) {
 
 $(function () {
 
+    setTimeout(function () {
+        $('.flashes').fadeOut();
+    }, 3000);
+
+    $('.toggle-messages-list-container').on('click', function () {
+        $('.message-status-block .messages-list').toggle();
+
+        if ($('.message-status-block .messages-list').is(':visible')) {
+            $('.message-status-block').addClass('active');
+        }
+        else {
+            $('.message-status-block').removeClass('active');
+        }
+        return false;
+    });
+
     function Popup(_element) {
         var that = this;
         if ($('#popup_overlay').length === 0) {
@@ -45,6 +61,7 @@ $(function () {
         this.overlay.click(function () {
             that.hide();
         });
+        page_project
 
         this.center = function () {
             that.window.css("top", Math.max(0, (($(window).height() - $(this.window).outerHeight()) / 2) +
@@ -63,6 +80,8 @@ $(function () {
 
         $profile_block.find('.dropdown-toggle').on('click', function () {
             $submenu.fadeToggle();
+            $('.message-status-block .messages-list').hide();
+            $('.message-status-block').removeClass('active');
             return false;
         });
 
@@ -221,16 +240,32 @@ $(function () {
         });
 
 
-        $(".fancybox").fancybox();
+        $(".fancybox").each(function () {
+            var $item = $(this);
+            var width = $item.data('width');
+            var height = $item.data('height');
+
+            $item.fancybox({
+                autoResize: false,
+                autoSize: false,
+                autoDimension: false,
+                fitToView: false,
+                minHeight: 1,
+                padding: 15,
+                margin: 0,
+                width: width,
+                height: height,
+                minWidth: 1,
+                aspectRatio: false,
+                type: $item.hasClass('iframe') ? 'iframe' : null
+            });
+        });
 
 
         $('#btn_add_comment').on('click', function () {
 
             var $message_textarea = $('.comments-form').find('textarea');
-            if ($message_textarea.val().length === 0) {
-                alert('Сообщение не может быть пустым');
-                return;
-            }
+
 
             var $btn = $(this).prop('disabled', true);
 
@@ -260,11 +295,14 @@ $(function () {
                     successCallback();
                 }
                 else {
+                    var loaded_count = 0;
+                    var count = $comments_form.find('.file-item:visible').length;
                     $comments_form.find('.file-item:visible').each(function (ind) {
                         var $file_item = $(this);
 
                         $file_item.find('.status').text('загрузка...');
                         $file_item.find('input:file').attr('id', 'comment_file_' + ind);
+
 
                         (function ($file_item, is_last) {
                             $.ajaxFileUpload({
@@ -280,7 +318,7 @@ $(function () {
                                         $file_item.find('.status').addClass('status-error').text('Ошибка');
                                     }
 
-                                    if (is_last) {
+                                    if (++loaded_count == count) {
                                         successCallback();
                                     }
                                 }
@@ -298,6 +336,8 @@ $(function () {
 
         var $comments_block = $('.comments-block');
 
+        $('.comments-form').find('textarea').expandable();
+
         $comments_block.on('click', '.btn-delete', function () {
 
             if (!confirm('Вы уверены?')) {
@@ -306,7 +346,9 @@ $(function () {
 
             var $file_row = $(this).parents('li');
 
-            $.get('/projects/delete_comment_file/' + $file_row.data('id'));
+            $.get('/projects/delete_comment_file/' + $file_row.data('id'), function () {
+                updateSlider();
+            });
 
             $file_row.fadeOut(function () {
                 $(this).remove();
@@ -323,6 +365,7 @@ $(function () {
             showCommentsLoader();
             $.get('/projects/delete_comment/' + $block.data('id'), function () {
                 updateComments();
+                updateSlider();
             });
 
 
@@ -380,9 +423,11 @@ $(function () {
                 $('[mode=worker]').show();
             }
 
+            $('.switch').removeClass('active');
+            $('.switch.' + mode).addClass('active');
+
             $('#active_mode').val(mode);
         }
-
 
         $('.project-footer').find('.switch').on('click', function () {
 
@@ -397,84 +442,53 @@ $(function () {
 
         var popup = new Popup($('#popup_form'));
 
-        var openPopup = function (direction) {
+        var openPopup = function (direction, files) {
+            files = files === undefined ? [] : files;
+
             var $popup_form = popup.window;
 
             $popup_form.find('textarea').val('');
             $popup_form.find('.files').empty();
 
-            var files = [];
-
-            $('.comment-item:visible .files li').each(function () {
-                if ($(this).find('input[type=checkbox]').is(':checked')) {
-                    files.push($(this));
-                }
-            });
-
             for (var i = 0; i < files.length; i++) {
-                var file = $('<li data-id="' + files[i].data('id') + '"><span class="filename">' + files[i].find('.filename').text() + '</span><span class="size">' + files[i].find('.size').text() + '</span></li>')
+                var file = $('<li data-id="' + files[i].id + '">' + (direction == 'customer' ? '<input type="checkbox">' : '') + ' <span class="filename">' + files[i].label + '</span><span class="size">' + files[i].size + '</span></li>')
                 $popup_form.find('.files').append(file);
             }
-
 
             $popup_form.find('label').toggle(files.length > 0);
             $popup_form.find('.direction').val(direction);
             popup.show();
         };
 
+
+        var _get_files = function () {
+            var result = [];
+
+            $('.comment-item:visible .files li').each(function () {
+                if ($(this).find('input[type=checkbox]').is(':checked')) {
+                    result.push({
+                        id: $(this).data('id'),
+                        label: $(this).find('.filename').text(),
+                        size: $(this).find('.size').text()
+                    });
+                }
+            });
+
+            return result;
+        };
+
         $('#btn_to_customer').click(function () {
-            openPopup('customer');
+            openPopup('customer', _get_files());
             return false;
         });
 
         $('#btn_to_worker').click(function () {
-            openPopup('worker');
+            openPopup('worker', _get_files());
             return false;
         });
 
         var slider_pages = [];
 
-
-        function toggleSliderLoader(state) {
-            $('#slider .loader').toggle(state);
-            if (state) {
-                $('#btn_to_slider').attr('disabled', 'disabled');
-            }
-            else {
-                $('#btn_to_slider').removeAttr('disabled');
-            }
-        }
-
-        function updateSliderPage(page_id) {
-            page_id = page_id || $('.slider-page:visible').data('id');
-            $.post('/slider/' + $('#project_id').val(), {page_id: page_id}, function (html) {
-                $('.slider-page[data-id=' + page_id + ']').html(html);
-                toggleSliderLoader(false);
-            });
-        }
-
-        function updateSlider() {
-            if ($('#slider').length === 0)return;
-            toggleSliderLoader(true);
-
-            $.post('/slider/' + $('#project_id').val(), {},
-                function (data) {
-                    data = jQuery.parseJSON(data);
-                    slider_pages = data.pages;
-
-                    if (slider_pages.length === 0) {
-                        $('#slider .slider-container').empty();
-                        $('#slider').hide();
-                    }
-                    else {
-                        $('#slider .slider-container').html(data.html);
-                        $('#slider').show();
-                    }
-
-                    toggleSliderLoader(false);
-                }
-            );
-        }
 
         $(function () {
             updateSlider();
@@ -482,33 +496,30 @@ $(function () {
 
         var slider_popup = new Popup($('#popup_slider'));
 
-        $('#btn_to_slider').on('click', function () {
-            var files = [];
-
-            $('.comment-content:visible .files li').each(function () {
-                if ($(this).find('input[type=checkbox]').prop('checked')) {
-                    files.push($(this).data('id'));
-                }
-
-                $(this).find('input[type=checkbox]:checked').prop('checked', false);
-            });
+        var addToSlider = function (files) {
 
             if (files.length == 0) {
                 alert('Выберите файлы');
                 return false;
             }
 
+
             var pages_count = $('#pages_count').val();
 
             slider_popup.element.find('select').empty().append('<option value="0">Новая страница</option>');
-            for (var i = 0; i < slider_pages.length; i++) {
-                slider_popup.element.find('select').append('<option value="' + slider_pages[i] + '">Страница ' + (i + 1) + '</option>');
+            var $pages = $('.slider-page');
+            for (var i = 0; i < $pages.length; i++) {
+                slider_popup.element.find('select').append('<option value="' + $($pages[i]).data('id') + '">Страница ' + (i + 1) + '</option>');
             }
 
-
             slider_popup.show();
-
             slider_popup.element.find('button').click(function () {
+
+
+                for (var i = 0; i < files.length; i++) {
+                    $('.comment-item .files li[data-id="' + files[i] + '"] input[type=checkbox]').prop('checked', false);
+                }
+
                 var $btn = $(this);
                 $btn.prop('disabled', true);
                 $.post('/slider/add', {
@@ -520,26 +531,62 @@ $(function () {
                     slider_popup.hide();
                     updateSlider();
                 });
-
-                return false;
             });
+
+
+        };
+
+        $('#btn_to_slider').on('click', function () {
+            var files = [];
+
+            $('.comment-content:visible .files li').each(function () {
+                if ($(this).find('input[type=checkbox]').prop('checked')) {
+                    files.push($(this).data('id'));
+                }
+            });
+
+            addToSlider(files);
 
             return false;
         });
 
+
+        $(document).on('click', '.single-file-to-slider', function () {
+            var files = [$(this).parents('li').data('id')];
+            addToSlider(files);
+            return false;
+        });
+
+        $(document).on('click', '.single-file-move', function () {
+
+            var fileId = $(this).parents('li').data('id');
+            var direction = $(this).attr('direction');
+
+            openPopup(direction, [
+                {
+                    id: fileId,
+                    label: $(this).parents('li').find('.filename').text(),
+                    size: $(this).parents('li').find('.size').text()
+                }
+            ]);
+
+            return false;
+        });
 
         $(document).on('click', '.submit-popup', function () {
             var $form = $(this).parents('.popup-form');
 
             var request = {
                 message: $form.find('textarea').val(),
-                to_slider: $form.find('input[type=checkbox]').is(':checked') ? 1 : 0,
                 files: [],
                 to: $form.find('.direction').val()
             };
 
             $form.find('.files').find('li').each(function () {
-                request.files.push($(this).data('id'));
+                request.files.push({
+                    id: $(this).data('id'),
+                    to_slider: $(this).find('input[type=checkbox]').is(':checked') ? 1 : 0
+                });
             });
 
             var $btn = $(this);
@@ -548,6 +595,8 @@ $(function () {
                 $btn.removeAttr('disabled');
                 popup.hide();
                 updateComments();
+                updateSlider();
+                setMode($form.find('.direction').val());
             });
 
             return false;
@@ -598,6 +647,10 @@ $(function () {
                 var page_num = $(this).data('num');
                 slider.find('.slider-page').hide();
                 $(slider.find('.slider-page').get(page_num - 1)).show();
+
+                $('.slider-pagination li').removeClass('active');
+                $(this).parents('li').addClass('active');
+
                 return false;
             });
 
@@ -632,6 +685,8 @@ $(function () {
                         $btn.prop('disabled', false);
                         slider_popup.hide();
                         updateSliderPage();
+                        updateSlider();
+                        slider_html_popup.element.find('textarea').val('');
                     });
 
                     return false;
@@ -663,9 +718,58 @@ $(function () {
         });
     }
 
+    function toggleSliderLoader(state) {
+        $('#slider .loader').toggle(state);
+        if (state) {
+            $('#btn_to_slider').attr('disabled', 'disabled');
+        }
+        else {
+            $('#btn_to_slider').removeAttr('disabled');
+        }
+    }
+
+    function updateSliderPage(page_id) {
+        page_id = page_id || $('.slider-page:visible').data('id');
+        $.post('/slider/' + $('#project_id').val(), {page_id: page_id}, function (html) {
+            $('.slider-page[data-id=' + page_id + ']').html(html);
+            toggleSliderLoader(false);
+        });
+    }
+
+
+    function updateSlider() {
+        if ($('#slider').length === 0)return;
+        toggleSliderLoader(true);
+
+        $.post('/slider/' + $('#project_id').val(), {}, function (data) {
+                data = jQuery.parseJSON(data);
+                var slider_pages = data.pages;
+
+                if (slider_pages.length === 0) {
+                    $('#slider .slider-container').empty();
+                    $('#slider').hide();
+                }
+                else {
+                    $('#slider .slider-container').html(data.html);
+                    if ($('#active_mode').val() == 'customer')
+                        $('#slider').show();
+                }
+
+                toggleSliderLoader(false);
+            }
+        );
+    }
+
+    var lastTime = 0;
 
     function loadUnreadComments(callback) {
-        $.post('/ajax/get_unread_comments', {}, function (data) {
+        var project_id = null;
+
+        if ($('#project_id').length > 0) {
+            project_id = $('#project_id').val();
+        }
+
+        $.post('/ajax/get_unread_comments' + (project_id ? '/project_id/' + project_id : ''), {time: lastTime}, function (data) {
             data = jQuery.parseJSON(data);
 
             var $message_status_block = $('.message-status-block');
@@ -676,13 +780,56 @@ $(function () {
 
                 if ($('#page_project').length > 0) {
                     var project_id = $('#project_id').val();
-                    if (data.projects_count[project_id]) {
+                    if (data.project_new_count[project_id]) {
                         updateComments();
                     }
                 }
             }
 
+            if (lastTime && data.html.length > 0) {
+                for (var i = 0; i < data.html.length; i++) {
 
+                    $('.messages-list-container').prepend(data.html[i].header);
+
+                    if ($('#page_index').length > 0) {
+                        $('.comments-table .items').find('.empty').hide();
+                        $('.comments-table .items').prepend(data.html[i].index);
+                    }
+                }
+            }
+
+
+            if ($('#page_project').length > 0) {
+                var pages_count = 0;
+                for (var page_id in data.slider_stats)pages_count++;
+
+                var need_update_slider = false;
+
+                if (pages_count != $('.slider-page').length) {
+                    need_update_slider = true;
+                }
+                else {
+                    for (var page_id in data.slider_stats) {
+
+                        var count = +data.slider_stats[page_id];
+                        var count = +data.slider_stats[page_id];
+                        var page = $('.slider-page[data-id=' + page_id + ']');
+
+                        if (page.length == 0 || page.find('.slider-item').length != count) {
+                            need_update_slider = true;
+                            break;
+                        }
+
+                    }
+                }
+
+                if (need_update_slider) {
+                    //  updateSlider();
+                }
+            }
+
+
+            lastTime = data.timestamp;
             callback();
         });
     }

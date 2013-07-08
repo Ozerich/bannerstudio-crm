@@ -9,7 +9,12 @@ class UsersController extends Controller
         );
     }
 
-    private function processPost($model, $redirect = '')
+    public function allowedActions()
+    {
+        return 'profile';
+    }
+
+    private function processPost($model, $redirect = '', $flash = '')
     {
         $redirect = empty($redirect) ? Yii::app()->request->urlReferrer : $redirect;
         if (Yii::app()->request->isPostRequest) {
@@ -41,6 +46,7 @@ class UsersController extends Controller
 
                 }
 
+                Yii::app()->user->setFlash('success', $flash);
                 $this->redirect($redirect);
             }
 
@@ -51,7 +57,7 @@ class UsersController extends Controller
     {
         $model = Yii::app()->user->getModel();
 
-        $this->processPost($model);
+        $this->processPost($model, '', 'Данные сохранены');
 
         $model->password = '';
 
@@ -104,7 +110,7 @@ class UsersController extends Controller
     {
         $model = new User();
 
-        $this->processPost($model, '/users/');
+        $this->processPost($model, '/users/', 'Пользователь добавлен');
 
         $this->breadcrumbs = array(
             'Пользователи' => array('/users/'),
@@ -122,7 +128,7 @@ class UsersController extends Controller
             throw new CHttpException(404);
         }
 
-        $this->processPost($model);
+        $this->processPost($model, 'Данные пользователя сохранены');
 
         $model->password = '';
 
@@ -139,7 +145,7 @@ class UsersController extends Controller
     {
         $model = User::model()->findByPk($id);
 
-        if(!$model){
+        if (!$model) {
             throw new CHttpException(404);
         }
 

@@ -1,19 +1,22 @@
 <div class="page <?= Yii::app()->user->role == 'admin' ? 'mode-admin' : '' ?>" id="page_project">
     <input type="hidden" id="project_id" value="<?= $model->id ?>">
-    <input type="hidden" id="active_mode" value="worker"/>
+    <input type="hidden" id="active_mode" value="<?=$mode?>"/>
 
     <div class="header">
         <h1><?=$model->name?> (ID <?=$model->id?>):</h1>
+
         <? if (Yii::app()->user->role != 'worker'): ?>
-            <span class="price" mode="customer"><?=$model->customer_price?> руб.</span>
+            <span style="display: <?=$mode=='customer' ? 'inline-block' : 'none'?>" class="price" mode="customer"><?=$model->customer_price?></span>
         <? endif; ?>
         <? if (Yii::app()->user->role != 'customer'): ?>
-            <span class="price" mode="worker"><?=$model->worker_price?> руб.</span>
+            <span style="display: <?=$mode=='worker' ? 'inline-block' : 'none'?>" class="price" mode="worker"><?=$model->worker_price?></span>
         <? endif; ?>
-        <span class="status"><?=Project::$statuses[$model->status]?></span>
+
+        <span class="status"><?=$model->closed ? 'ЗАКРЫТ' : Project::$statuses[$model->status]?></span>
         <button class="btn btn-small" id="btn_show_description"><i class="icon icon-chevron-down"></i>Развернуть
             описание
         </button>
+
         <? if (Yii::app()->user->role == 'admin'): ?>
             <a href="/projects/edit/<?= $model->id ?>" class="btn btn-small" id="btn_edit_project"
                style="display: none"><i
@@ -22,6 +25,8 @@
 
         <div class="additional-info" style="display: none">
 
+			<? if(Yii::app()->user->role == 'admin'): ?>
+		
             <div class="persons">
                 <div class="persons-list">
                     <h2>Сотрудники</h2>
@@ -41,16 +46,17 @@
                     </ul>
                 </div>
             </div>
+			
+			<? endif; ?>
 
             <div class="project-description">
                 <? if (Yii::app()->user->role != 'customer'): ?>
-                    <p mode="worker"><?=$model->worker_text?></p>
+                    <p mode="worker" style="display: <?=$mode == 'worker' ? 'block' : 'none'?>"><?=$model->prepareText($model->worker_text);?></p>
                 <? endif; ?>
                 <? if (Yii::app()->user->role != 'worker'): ?>
-                    <p mode="customer"><?=$model->customer_text?></p>
+                    <p mode="customer" style="display: <?=$mode == 'customer' ? 'block' : 'none'?>"><?=$model->prepareText($model->customer_text);?></p>
                 <? endif; ?>
             </div>
-
 
             <button class="btn btn-small" id="btn_hide_description"><i class="icon icon-chevron-up"></i>Свернуть
                 описание
@@ -60,7 +66,7 @@
     </div>
 
     <? if (Yii::app()->user->role != 'worker'): ?>
-        <div id="slider" mode="customer" style="display: <?= $model->slider_pages ? 'block' : 'none' ?>">
+        <div id="slider" mode="customer" style="display: <?= count($model->slider_pages) > 0 && $mode == 'customer' ? 'block' : 'none' ?>">
             <div class="loader" style="display: none"></div>
             <div class="slider-container">
             </div>
@@ -91,9 +97,9 @@
     <? if (Yii::app()->user->role == 'admin'): ?>
 
         <div class="buttons-row">
-            <a href="#" class="btn" id="btn_to_slider" mode="customer">В слайдер</a>
-            <a href="#" class="btn" id="btn_to_customer" mode="worker">Заказчику</a>
-            <a href="#" class="btn" id="btn_to_worker" mode="customer">Сотруднику</a>
+            <a href="#" class="btn" id="btn_to_slider" mode="customer" style="display: <?=$mode == 'customer' ? 'inline' : 'none'?>">В слайдер</a>
+            <a href="#" class="btn" id="btn_to_customer" mode="worker" style="display: <?=$mode == 'worker' ? 'inline' : 'none'?>">Заказчику</a>
+            <a href="#" class="btn" id="btn_to_worker" mode="customer" style="display: <?=$mode == 'customer' ? 'inline' : 'none'?>">Сотруднику</a>
             <a href="#" class="btn" id="btn_delete_files">Удалить</a>
         </div>
 
@@ -102,32 +108,54 @@
     <div class="comments-block">
         <div class="loader"></div>
         <div class="comments-list">
-            <?=$this->renderPartial('_comments_list', array('model' => $model));?>
+            <?=$this->renderPartial('_comments_list', array('model' => $model, 'mode' => $mode));?>
         </div>
     </div>
 
     <? if (Yii::app()->user->role == 'admin'): ?>
 
-        <div class="project-footer worker">
+        <div class="project-footer <?=$mode?>">
 
-            <div class="message-status-block">
-                <span></span>
-            </div>
 
             <div class="switches">
 
-                <div class="switch customer">
-                    <span class="switch-name">Клиенты</span>
+                <div class="switch customer <?=$mode == 'customer' ? 'active' : ''?>">
+                    <? $customers = $model->getUsers('customer'); $customer = null; if($customers) $customer = $customers[0]; ?>
+
+                    <div class="avatar">
+                        <? if($customer): ?>
+                            <img src="<?=$customer->avatar_url?>">
+                        <? endif; ?>
+                    </div>
+
+                    <div class="text">
+                        <span class="switch-name">Клиенты (<?=count($customers);?>)</span>
+                            <span class="user-name"><?=$customer ? $customer->display_name : ''?></span>
+
+                    </div>
                 </div>
 
-                <div class="switch worker active">
-                    <span class="switch-name">Сотрудники</span>
+                <div class="switch worker <?=$mode == 'worker' ? 'active' : ''?>">
+                    <? $workers = $model->getUsers('worker'); $worker = null; if($workers) $worker = $workers[0]; ?>
+
+                    <div class="avatar">
+                        <? if($worker): ?>
+                            <img src="<?=$worker->avatar_url?>">
+                        <? endif; ?>
+                    </div>
+
+                    <div class="text">
+                        <span class="switch-name">Сотрудники (<?=count($workers);?>)</span>
+
+                            <span class="user-name"><?=$worker ? $worker->display_name : '&nbsp;'?></span>
+
+                    </div>
                 </div>
 
             </div>
             <span class="summary"><?=$model->name?> (ID <?=$model->id?>) - <span
-                    mode="worker"><?=$model->worker_price?></span><span
-                    mode="customer"><?=$model->customer_price?></span> руб.</span>
+                    mode="worker" style="display: <?=$mode == 'worker' ? 'inline' : ''?>"><?=$model->worker_price?></span><span
+                    mode="customer" style="display: <?=$mode == 'customer' ? 'inline' : ''?>"><?=$model->customer_price?></span></span>
         </div>
 
     <? endif; ?>
@@ -136,11 +164,10 @@
 
 <div id="popup_form" class="popup-form" style="display: none">
     <input type="hidden" class="direction" value="">
-    <textarea placeholder="Добавить комментарий"></textarea>
+    <textarea placeholder="Добавить комментарий" spellcheck="false"></textarea>
     <ul class="files">
     </ul>
     <div class="footer">
-        <label for="popup_form_add_to_slider"><input type="checkbox"> Добавить файлы в слайдер</label>
         <button class="btn btn-success submit-popup">Написать</button>
     </div>
 </div>

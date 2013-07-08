@@ -21,8 +21,8 @@ class ProjectComment extends CActiveRecord
     public function rules()
     {
         return array(
-            array('user_id, project_id, text, mode', 'required'),
-
+            array('user_id, project_id, mode', 'required'),
+            array('text', 'safe'),
             array('text', 'filter', 'filter' => 'strip_tags'),
 
             array('datetime', 'default', 'value' => new CDbExpression('NOW()'), 'setOnEmpty' => false, 'on' => 'insert'),
@@ -41,6 +41,21 @@ class ProjectComment extends CActiveRecord
         );
     }
 
+    // Подготавливает текст для отображения в HTML
+    public function getPlainText($length = 0)
+    {
+        $text = $length ? mb_substr($this->text, 0, $length, 'UTF-8') : $this->text;
+        $need_points = $length && mb_strlen($this->text) > $length;
+
+        $text = preg_replace('@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?)?)@sui', '<a href="$1" target="_blank">$1</a>', $text);
+
+        if ($need_points) {
+            $text .= '...';
+        }
+
+        return nl2br($text);
+    }
+
     public function afterDelete()
     {
         foreach ($this->files as $file) {
@@ -54,16 +69,16 @@ class ProjectComment extends CActiveRecord
         $date_info = getdate($timestamp);
 
         $monthes = array('января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря');
-        $this->datetime_str = $date_info['mday'] . ' ' . $monthes[$date_info['mon'] - 1] . ' ' . ($date_info['hours'] < 10 ? '0' : '').$date_info['hours'] . ':' . ($date_info['minutes'] < 10 ? '0' : '').$date_info['minutes'] . ' (';
+        $this->datetime_str = $date_info['mday'] . ' ' . $monthes[$date_info['mon'] - 1] . ' ' . ($date_info['hours'] < 10 ? '0' : '') . $date_info['hours'] . ':' . ($date_info['minutes'] < 10 ? '0' : '') . $date_info['minutes'] . ' (';
 
         $diff = time() - $timestamp;
 
-        $diff_years   = floor($diff / (365*60*60*24));
-        $diff_monthes  = floor(($diff - $diff_years * 365*60*60*24) / (30*60*60*24));
-        $diff_days    = floor(($diff - $diff_years * 365*60*60*24 - $diff_monthes*30*60*60*24)/ (60*60*24));
+        $diff_years = floor($diff / (365 * 60 * 60 * 24));
+        $diff_monthes = floor(($diff - $diff_years * 365 * 60 * 60 * 24) / (30 * 60 * 60 * 24));
+        $diff_days = floor(($diff - $diff_years * 365 * 60 * 60 * 24 - $diff_monthes * 30 * 60 * 60 * 24) / (60 * 60 * 24));
 
-        $diff_hours   = floor(($diff - $diff_years * 365*60*60*24 - $diff_monthes*30*60*60*24 - $diff_days*60*60*24)/ (60*60));
-        $diff_minutes  = floor(($diff - $diff_years * 365*60*60*24 - $diff_monthes*30*60*60*24 - $diff_days*60*60*24 - $diff_hours*60*60)/ 60);
+        $diff_hours = floor(($diff - $diff_years * 365 * 60 * 60 * 24 - $diff_monthes * 30 * 60 * 60 * 24 - $diff_days * 60 * 60 * 24) / (60 * 60));
+        $diff_minutes = floor(($diff - $diff_years * 365 * 60 * 60 * 24 - $diff_monthes * 30 * 60 * 60 * 24 - $diff_days * 60 * 60 * 24 - $diff_hours * 60 * 60) / 60);
 
 
         if ($diff_years > 0) {
@@ -100,4 +115,38 @@ class ProjectComment extends CActiveRecord
             'comment_id' => $this->id,
         ));
     }
+
+
+    public function afterSave()
+    {
+        if ($this->isNewRecord) {
+
+            // Рассылка уведомлений
+            $project = Project::model()->findByPk($this->project->id);
+            if ($this->user->role == 'admin') {
+                $users = $project->getUsers($this->mode);
+            } else {
+                $users = User::GetAdmins();
+            }
+
+            foreach ($users as $user) {
+                $message = new YiiMailMessage;
+
+                $message->subject = 'Уважаемый, ' . $user->login . '! Новый комментарий в проекте ' . $project->name;
+                $message->view = 'new_comment_in_project';
+                $message->from = Yii::app()->params['email_admin'];
+                $message->to = $user->email;
+
+                $message->setBody(array(
+                    'user' => $user,
+                    'project' => $project,
+                    'comment' => $this,
+                ), 'text/html');
+
+                Yii::app()->mail->send($message);
+            }
+
+        }
+    }
+
 }

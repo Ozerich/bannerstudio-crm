@@ -6,10 +6,12 @@ class SliderItem extends CActiveRecord
     public $image_height = 0;
     public $file_size = 0;
     public $is_image = false;
+    public $is_swf = false;
+    public $file_url = '';
 
 
     public static $image_exts = array(
-        'jpg', 'jpeg', 'png', 'bmp', 'swf', 'gif'
+        'jpg', 'jpeg', 'png', 'bmp', 'gif'
     );
 
     public static function model($className = __CLASS__)
@@ -27,7 +29,7 @@ class SliderItem extends CActiveRecord
     {
         return array(
             array('page_id', 'required'),
-            array('file, real_filename, html', 'safe'),
+            array('file, real_filename, html, comment_file_id', 'safe'),
             array('page_id', 'numerical', 'integerOnly' => true),
         );
     }
@@ -36,7 +38,8 @@ class SliderItem extends CActiveRecord
     public function relations()
     {
         return array(
-            'page' => array(self::BELONGS_TO, 'SliderPage', 'page_id')
+            'page' => array(self::BELONGS_TO, 'SliderPage', 'page_id'),
+            'file' => array(self::BELONGS_TO, 'ProjectCommentFile', 'comment_file_id')
         );
     }
 
@@ -57,11 +60,16 @@ class SliderItem extends CActiveRecord
         unlink($newfile);
     }
 
+
     public function afterFind()
     {
         if (!empty($this->file)) {
             $file = $_SERVER['DOCUMENT_ROOT'] . Yii::app()->params['upload_dir_comments'] . $this->file;
+
             if (file_exists($file)) {
+
+                $this->file_url = Yii::app()->getBaseUrl(true) . Yii::app()->params['upload_dir_comments'] . $this->file;
+
                 $file_size = filesize($file);
 
                 if ($file_size < 1024) {
@@ -82,8 +90,18 @@ class SliderItem extends CActiveRecord
 
                 $file_ext = strpos($this->file, '.') !== false ? substr($this->file, strrpos($this->file, '.') + 1) : '';
                 $this->is_image = in_array($file_ext, self::$image_exts);
+                $this->is_swf = $file_ext == 'swf';
             }
         }
+    }
 
+
+    public function afterDelete()
+    {
+        if ($this->page) {
+            if (count($this->page->items) == 0) {
+                $this->page->delete();
+            }
+        }
     }
 }

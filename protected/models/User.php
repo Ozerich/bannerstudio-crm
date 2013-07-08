@@ -200,18 +200,30 @@ class User extends CActiveRecord
         return self::model()->findAllByAttributes(array('role' => 'customer'));
     }
 
+    public static function GetAdmins()
+    {
+        return self::model()->findAllByAttributes(array('role' => 'admin'));
+    }
+
 
     // Возвращает проекты где задействован пользователь
     public function getProjects()
     {
         $result = array();
 
-        foreach (ProjectUser::model()->findAllByAttributes(array('user_id' => $this->id)) as $_project_user) {
-            $project = Project::model()->findByPk($_project_user->project_id);
-            if ($project) {
-                $result[] = $project;
+        if (Yii::app()->user->role == 'admin') {
+            $result = Project::model()->findAll();
+        } else {
+            foreach (ProjectUser::model()->findAllByAttributes(array('user_id' => $this->id)) as $_project_user) {
+                $project = Project::model()->findByPk($_project_user->project_id);
+                if ($project) {
+                    $result[] = $project;
+                }
             }
         }
+
+
+        usort($result, 'sort_projects_function');
 
         return $result;
     }
@@ -222,6 +234,50 @@ class User extends CActiveRecord
         foreach ($this->comments as $comment) {
             $comment->delete();
         }
+
+        foreach(ProjectUser::model()->findAllByAttributes(array('user_id' => $this->id)) as $project_user){
+            $project_user->delete();
+        }
     }
 
+
+    public static function GetInboxComments($from_time = 0)
+    {
+
+        $project_ids = array();
+
+        if (Yii::app()->user->role == 'admin') {
+            foreach (Project::model()->findAll() as $project) {
+                $project_ids[] = $project->id;
+            }
+        } else {
+            foreach (ProjectUser::model()->findAllByAttributes(array('user_id' => Yii::app()->user->id)) as $project) {
+                $project_ids[] = $project->project_id;
+            }
+        }
+
+        $comments_all = array();
+        foreach ($project_ids as $project_id) {
+
+            if (Yii::app()->user->role == 'admin') {
+                $project_comments = ProjectComment::model()->findAllByAttributes(array('project_id' => $project_id));
+            } else {
+                $project_comments = ProjectComment::model()->findAllByAttributes(array('project_id' => $project_id,
+                    'mode' => Yii::app()->user->role
+                ));
+            }
+
+            $comments_all = array_merge($comments_all, $project_comments);
+        }
+
+
+        $result = array();
+        foreach ($comments_all as $comment) {
+            if ($comment->user_id != Yii::app()->user->id && strtotime($comment->datetime) > $from_time) {
+                $result[] = $comment;
+            }
+        }
+
+        return $result;
+    }
 }

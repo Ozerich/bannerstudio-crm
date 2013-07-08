@@ -7,68 +7,87 @@ class AjaxController extends Controller
         $this->layout = 'none';
 
         if (!Yii::app()->request->isAjaxRequest) {
-            throw new CHttpException(404);
+            //  throw new CHttpException(404);
         }
         return true;
     }
 
 
-    public function actionGet_Unread_Comments()
+    // возвращает непрочитанные последние комментарии
+    public function actionGetLastComments()
     {
-        $project_ids = array();
-
-        if (Yii::app()->user->role == 'admin') {
-            foreach (Project::model()->findAll() as $project) {
-                $project_ids[] = $project->id;
-            }
+        $result = array();
+        $time = Yii::app()->request->getPost('time', 0);
+        if ($time == 0) {
+            $result = array('timestamp' => time(), 'items' => array());
         } else {
-            foreach (ProjectUser::model()->findAllByAttributes(array('user_id' => Yii::app()->user->id)) as $project) {
-                $project_ids[] = $project->project_id;
-            }
-        }
-        $comments_all = array();
+            $comments_all = User::GetInboxComments($time);
 
-        foreach ($project_ids as $project_id) {
-
-            if (Yii::app()->user->role == 'admin') {
-                $project_comments = ProjectComment::model()->findAllByAttributes(array('project_id' => $project_id));
-            } else {
-                $project_comments = ProjectComment::model()->findAllByAttributes(array('project_id' => $project_id,
-                    'mode' => Yii::app()->user->role
-                ));
+            foreach ($comments_all as $comment) {
+                $result[] = $this->renderPartial('//projects/_comments_table_item', array('data' => $comment), true);
             }
 
-            $comments_all = array_merge($comments_all, $project_comments);
+            $result = array('timestamp' => time(), 'items' => $result);
         }
+
+        echo json_encode($result);
+        die;
+    }
+
+
+    public function actionGet_Unread_Comments($project_id = 0)
+    {
+        $request_project = Project::model()->findByPk($project_id);
+
+        $time = Yii::app()->request->getPost('time', 0);
 
         $comments_unread = array();
-
-        foreach ($comments_all as $comment) {
+        foreach (User::GetInboxComments() as $comment) {
             if (!$comment->readed && $comment->datetime >= $comment->user->time_created) {
                 $comments_unread[] = $comment;
             }
         }
 
         $comments = array();
-        $projects_count = array();
+        $project_new_count = array();
         foreach ($comments_unread as $comment) {
             $comments[] = array(
                 'project_id' => $comment->project_id,
                 'text' => $comment->text,
             );
 
-            if (!isset($projects_count[$comment->project_id])) {
-                $projects_count[$comment->project_id] = 0;
+            if (!isset($project_new_count[$comment->project_id])) {
+                $project_new_count[$comment->project_id] = 0;
             }
 
-            $projects_count[$comment->project_id]++;
+            $project_new_count[$comment->project_id]++;
         }
 
 
+        $slider_stats = array();
+        if ($request_project) {
+            foreach ($request_project->slider_pages as $page) {
+                $slider_stats[$page->id] = count($page->items);
+            }
+        }
+
+
+        $html = array();
+        $comments_all = $time ? User::GetInboxComments($time) : array();
+        foreach ($comments_all as $comment) {
+            $html[] = array(
+                'header' => $this->renderPartial('//projects/_header_comments_item', array('data' => $comment), true),
+                'index' => $this->renderPartial('//projects/_comments_table_item', array('data' => $comment), true)
+            );
+
+        }
+
         $result = array(
+            'timestamp' => time(),
             'count' => count($comments),
-            'projects_count' => $projects_count,
-            'comments' => $comments
+            'project_new_count' => $project_new_count,
+            'slider_stats' => $slider_stats,
+            'html' => $html,
         );
 
         echo json_encode($result);

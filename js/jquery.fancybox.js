@@ -57,8 +57,8 @@
 
 			width     : 800,
 			height    : 600,
-			minWidth  : 100,
-			minHeight : 100,
+			minWidth  : 1,
+			minHeight : 1,
 			maxWidth  : 9999,
 			maxHeight : 9999,
 

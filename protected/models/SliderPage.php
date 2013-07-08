@@ -31,8 +31,15 @@ class SliderPage extends CActiveRecord
 
     public function afterDelete()
     {
-        foreach ($this->items as $item) {
-            $item->delete();
+        if ($this->items) {
+            foreach ($this->items as $item) {
+                $item->delete();
+            }
         }
+    }
+
+    public function getOutUrl()
+    {
+        return $this->project->getOutUrl() . '-' . $this->id;
     }
 }

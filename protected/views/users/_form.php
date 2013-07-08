@@ -1,3 +1,9 @@
+<?
+if($model->isNewRecord){
+    $model->role = 'customer';
+    $model->send_invite = true;
+}
+?>
 <div class="form">
 
     <?php
@@ -18,7 +24,7 @@
 
         <div class="param">
             <?=$form->labelEx($model, 'role');?>
-            <?=$form->dropDownList($model, 'role', User::$roles, array('empty' => 'Выберите роль')); ?>
+            <?=$form->dropDownList($model, 'role', User::$roles); ?>
             <?=$form->error($model, 'role');?>
         </div>
 
@@ -62,7 +68,7 @@
         <? if ($model->isNewRecord): ?>
         <div class="param">
             <?=$form->labelEx($model, 'send_invite');?>
-            <?=$form->dropDownList($model, 'send_invite', array('0' => 'Нет', '1' => 'Да')); ?>
+            <?=$form->checkbox($model, 'send_invite'); ?>
             <?=$form->error($model, 'send_invite');?>
         </div>
         <? endif; ?>

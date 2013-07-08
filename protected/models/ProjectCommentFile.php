@@ -4,7 +4,11 @@ class ProjectCommentFile extends CActiveRecord
 {
     public $file_size_str;
     public $can_view;
+    public $is_swf;
     public $url;
+    public $file_url;
+    public $width;
+    public $height;
 
     public static $can_view_exts = array(
         'jpg', 'jpeg', 'png', 'bmp', 'swf', 'gif'
@@ -56,21 +60,46 @@ class ProjectCommentFile extends CActiveRecord
 
 
         $file_ext = strpos($this->file, '.') !== false ? substr($this->file, strrpos($this->file, '.') + 1) : '';
-        $this->can_view = in_array($file_ext, self::$can_view_exts);
+        $this->can_view = in_array(strtolower($file_ext), self::$can_view_exts);
+
+        $file = $_SERVER['DOCUMENT_ROOT'] . Yii::app()->params['upload_dir_comments'] . $this->file;
+
+        if ($size = getimagesize($file)) {
+            $this->width = $size[0];
+            $this->height = $size[1];
+        }
+
+        $file_ext = strpos($this->file, '.') !== false ? substr($this->file, strrpos($this->file, '.') + 1) : '';
+        $this->is_swf = $file_ext == 'swf';
 
 
-        $this->url = 'http://'.$_SERVER['HTTP_HOST'].Yii::app()->params['upload_dir_comments'].$this->file;
+        $this->file_url = $this->url = 'http://' . $_SERVER['HTTP_HOST'] . Yii::app()->params['upload_dir_comments'] . $this->file;
+
+        if($this->is_swf){
+            $this->url = 'http://' . $_SERVER['HTTP_HOST'] . '/projects/flash/' . $this->id;
+        }
+
     }
 
+    private function getContentType()
+    {
+        $content_type = exec("file -bi " . escapeshellarg($_SERVER['DOCUMENT_ROOT'] . Yii::app()->params['upload_dir_comments'] . $this->file));
+        return $content_type;
+    }
 
-    public function download(){
+    public function download()
+    {
 
-        $file = $_SERVER['DOCUMENT_ROOT'].Yii::app()->params['upload_dir_comments'].$this->file;
-        $newfile = $_SERVER['DOCUMENT_ROOT'].Yii::app()->params['tmp_dir'].$this->real_filename;
+        $file = $_SERVER['DOCUMENT_ROOT'] . Yii::app()->params['upload_dir_comments'] . $this->file;
+        $newfile = $_SERVER['DOCUMENT_ROOT'] . Yii::app()->params['tmp_dir'] . $this->real_filename;
 
         copy($file, $newfile);
 
-        header("Content-Disposition: attachment;filename=\"".$this->real_filename."\"");
+        $content_type = $this->getContentType();
+        $content_type = 'application/x-download';
+
+        header("Content-Disposition: attachment;filename=\"" . $this->real_filename . "\"");
+        header("Content-Type: " . $content_type);
         header("Content-Transfer-Encoding: binary");
         header('Pragma: no-cache');
         header('Expires: 0');
@@ -78,5 +107,18 @@ class ProjectCommentFile extends CActiveRecord
         set_time_limit(0);
         readfile($newfile);
         unlink($newfile);
+    }
+
+
+
+    public function afterDelete()
+    {
+        $sliderItems = SliderItem::model()->findAllByAttributes(array('comment_file_id' => $this->id));
+
+        foreach ($sliderItems as $item) {
+            $item->delete();
+        }
+
+        @unlink($_SERVER['DOCUMENT_ROOT'] . Yii::app()->params['upload_dir_comments'] . $this->file);
     }
 }

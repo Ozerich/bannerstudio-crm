@@ -1,7 +1,7 @@
-<ul class="row">
+<ul class="row <?=$data->closed ? 'closed' : ''?>">
 
     <li class="col-name">
-        <a href="/projects/<?=$data->id?>" target="_blank" class="project-name"><?=$data->name?> (ID <?=$data->id?>)</a>
+        <a href="/projects/<?=$data->id?>" class="project-name"><?=$data->name?> (ID <?=$data->id?>)</a>
         <span class="datetime"><?=$data->created_time?></span>
     </li>
 
@@ -10,7 +10,7 @@
         <? foreach ($data->workers as $worker): ?>
 
         <div class="user worker">
-            <span class="price"><?=$data->worker_price?> руб.</span>
+            <span class="price"><?=$data->worker_price?></span>
             <a href="/users/<?=$worker->id?>" class="username"><?=$worker->display_name?></a>
         </div>
         <? endforeach; ?>
@@ -18,7 +18,7 @@
         <? foreach ($data->customers as $customer): ?>
 
         <div class="user customer">
-            <span class="price"><?=$data->customer_price?> руб.</span>
+            <span class="price"><?=$data->customer_price?></span>
             <a href="/users/<?=$customer->id?>" class="username"><?=$customer->display_name?></a>
         </div>
         <? endforeach; ?>

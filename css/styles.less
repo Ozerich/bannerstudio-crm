@@ -1,6 +1,12 @@
 @color_worker: #fac840;
 @color_customer: #79a101;
-@color_admin: #2083c6;
+@color_admin: #3c8dca;
+
+@color_admin_new: #c1e6ff;
+@color_customer_new: #b7ce7f;
+@color_worker_new: #ffdc7f;
+
+@color_message_text: #2a2a2a;
 
 #form_project {
   .header-block {
@@ -40,8 +46,12 @@
         height: 200px;
       }
     }
+    .additional-info {
+      margin: 10px 0;
+    }
     .submit-buttons {
-      margin-top: 15px;
+      margin: 0;
+      text-align: left;
     }
   }
 
@@ -126,6 +136,13 @@
 }
 
 .w-table.projects-table {
+
+  .closed{
+    .col-price, .col-name, .col-status .status{
+      opacity: 0.3;
+    }
+  }
+
   li {
 
     &.col-name {
@@ -235,36 +252,36 @@
 
     &.no-read {
       &.role-admin {
-        background: lighten(@color_admin, 15%);
+        background: @color_admin_new;
       }
       &.role-customer {
-        background: lighten(@color_customer, 15%);
+        background: @color_customer_new;
       }
       &.role-worker {
-        background: lighten(@color_worker, 15%);
+        background: @color_worker_new;
       }
 
       .username, .col-project a {
-        color: #8f8f8f;
+        color: @color_message_text;
       }
     }
 
     &.readed {
       &.role-admin {
         .username, .col-project a {
-          color: @color_admin
+          color: @color_admin;
         }
       }
 
       &.role-customer {
         .username, .col-project a {
-          color: @color_customer
+          color: @color_customer;
         }
       }
 
       &.role-worker {
         .username, .col-project a {
-          color: @color_worker
+          color: @color_worker;
         }
       }
     }
@@ -280,7 +297,7 @@
       .message-content {
         margin-left: 70px;
         p {
-          color: #2a2a2a;
+          color: @color_message_text;
           font-weight: 300;
           line-height: 14px;
         }
@@ -587,9 +604,22 @@
         left: 60px;
       }
 
+
       &.unreaded {
-        .comment-content {
-          background: #ffa89b;
+        &.comment-admin{
+          .comment-content{
+            background: @color_admin_new;
+          }
+        }
+        &.comment-worker{
+          .comment-content{
+            background: @color_worker_new;
+          }
+        }
+        &.comment-customer{
+          .comment-content{
+            background: @color_customer_new;
+          }
         }
       }
 
@@ -746,7 +776,29 @@
 
         .switch-name {
           text-transform: uppercase;
+          display: block;
         }
+
+        .no-users {
+          margin-top: 8px;
+          display: block;
+        }
+
+        .avatar {
+          width: 48px;
+          height: 48px;
+          padding: 2px;
+          float: left;
+          img {
+            max-width: 48px;
+            max-height: 48px;
+          }
+        }
+
+        .text {
+          margin-left: 55px;
+        }
+
       }
     }
 
@@ -755,11 +807,30 @@
   #slider {
     position: relative;
     margin-top: 20px;
-    min-height: 200px;
+
+    .slider-pagination{
+      li.active{
+        a{
+          background-color: #f5f5f5;
+        }
+      }
+    }
 
     .slider-content {
-      border: 1px solid #aaa;
+      border: 1px solid #f1f1f1;
       border-radius: 10px;
+
+      .out-link {
+        clear: both;
+        margin-top: 10px;
+        font-size: 12px;
+        margin-bottom: -20px;
+        text-align: left;
+        label {
+          display: inline-block;
+          font-weight: bold;
+        }
+      }
     }
 
     .loader {
@@ -774,9 +845,10 @@
     }
 
     .slider-page {
-      overflow: hidden;
+      overflow: auto;
       padding: 20px;
       position: relative;
+      text-align: center;
 
       .page-actions {
         position: absolute;
@@ -784,31 +856,19 @@
         top: 5px;
         font-size: 9px;
 
-        .btn-delete{
+        .btn-delete {
           color: red;
         }
       }
 
-      .slider-row {
-        clear: both;
-        margin: 10px 0;
-        overflow: hidden;
-
-        &.single {
-          .slider-item {
-            width: 100%;
-            float: none;
-          }
-        }
-      }
 
       .slider-item {
-        float: left;
-        width: 50%;
+        margin: 10px;
         text-align: center;
-        img {
-          max-width: 90%;
-          max-height: 300px;
+        display: inline-block;
+        &.html{
+          float: none;
+          clear: both;
         }
       }
     }
@@ -854,8 +914,8 @@
   }
 }
 
-#popup_html_slider{
-  textarea{
+#popup_html_slider {
+  textarea {
     width: 600px;
     height: 200px;
     display: block;

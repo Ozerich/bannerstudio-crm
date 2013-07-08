@@ -38,7 +38,6 @@ $all_customers = User::GetCustomers(); ?>
                 <div class="price-param param">
                     <?=$form->labelEx($model, 'customer_price');?>
                     <?=$form->textField($model, 'customer_price');?>
-                    руб.
                     <?=$form->error($model, 'customer_price');?>
                 </div>
 
@@ -82,7 +81,7 @@ $all_customers = User::GetCustomers(); ?>
 
 
                 <label class="email-remind-block checkbox" for="customer_email_remind">
-                    <input type="checkbox" id="customer_email_remind" name="send_customer_email"> Написать новым письмо на e-mail
+                    <input type="checkbox" id="customer_email_remind" name="send_customer_email" checked> Написать новым письмо на e-mail
                 </label>
 
 
@@ -102,7 +101,6 @@ $all_customers = User::GetCustomers(); ?>
                 <div class="price-param param">
                     <?=$form->labelEx($model, 'worker_price');?>
                     <?=$form->textField($model, 'worker_price');?>
-                    руб.
                     <?=$form->error($model, 'worker_price');?>
                 </div>
 
@@ -143,7 +141,7 @@ $all_customers = User::GetCustomers(); ?>
 
 
                 <label class="email-remind-block checkbox" for="worker_email_remind">
-                    <input type="checkbox" id="worker_email_remind" name="send_worker_email"> Написать новым письмо на e-mail
+                    <input type="checkbox" id="worker_email_remind" name="send_worker_email" checked> Написать новым письмо на e-mail
                 </label>
 
             </div>

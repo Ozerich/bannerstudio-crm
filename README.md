@@ -1,4 +1,4 @@
 projects_panel
 ==============
 
-System for cooperation employers and customers
+Application for cooperation employers and customers and control by head of company.

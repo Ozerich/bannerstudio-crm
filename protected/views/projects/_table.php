@@ -29,11 +29,11 @@ $this->widget('bootstrap.widgets.TbGridView', array(
             $result = '';
 
             foreach ($data->workers as $user) {
-                $result .= '<div class="user"><span class="price worker">' . $data->worker_price . ' руб.</span><span class="username worker">' . $user->login . '</span></div>';
+                $result .= '<div class="user"><span class="price worker">' . $data->worker_price . '</span><span class="username worker">' . $user->login . '</span></div>';
             }
 
             foreach ($data->customers as $user) {
-                $result .= '<div class="user"><span class="price customer">' . $data->customer_price . ' руб.</span><span class="username customer">' . $user->login . '</span></div>';
+                $result .= '<div class="user"><span class="price customer">' . $data->customer_price . '</span><span class="username customer">' . $user->login . '</span></div>';
             }
 
             return $result;

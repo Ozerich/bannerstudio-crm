@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
@@ -7,7 +7,6 @@
     <meta name="author" content="Vital Ozierski, ozicoder@gmail.com">
 
     <title></title>
-
 
     <link rel="stylesheet" href="/css/normalize.css">
     <link rel="stylesheet" href="/css/smoothness/jquery-ui-1.10.1.custom.min.css">
@@ -21,12 +20,12 @@
         <link rel="stylesheet/less" href="/css/responsive/media.less"/>
     <? endif; ?>
 
-
     <script src="/js/modernizr.2.6.2.min.js"></script>
     <script src="/js/less-1.3.3.min.js"></script>
     <script src="/js/jquery-ui-1.10.1.custom.min.js"></script>
 
     <? if (!Yii::app()->user->isGuest): ?>
+        <script src="/js/jquery.expandable.js"></script>
         <script src="/js/scripts.js"></script>
         <script src="/js/ajaxfileupload.js"></script>
 
@@ -38,6 +37,12 @@
 </head>
 
 <body>
+
+<ul class="flashes">
+    <? foreach (Yii::app()->user->getFlashes() as $key => $message): ?>
+        <li class="alert alert-<?=$key?> flash-<?= $key; ?>"><?=$message;?></li>
+    <? endforeach; ?>
+</ul>
 
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
@@ -55,17 +60,17 @@
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Проекты <span
                                     class="caret"></span></a>
                             <ul id="yw1" class="dropdown-menu">
-                                <? if (Yii::app()->user->role != 'admin'): ?>
-                                    <? foreach (Project::FindLastProjects(10) as $project): ?>
+                                <? if (Yii::app()->user->checkAccess('Projects.Create')): ?>
+                                    <li class="strong"><a tabindex="-1" href="/projects/create">Добавить проект</a></li>
+                                <? endif; ?>
+
+                                    <? foreach (Project::FindLastProjects(30) as $project): ?>
                                         <li class="project"><a tabindex="-1"
                                                                href="/projects/<?= $project->id ?>"><?=$project->name?></a>
                                         </li>
                                     <? endforeach; ?>
-                                <? endif; ?>
-                                <li><a tabindex="-1" href="/">Все проекты</a></li>
-                                <? if (Yii::app()->user->checkAccess('Projects.Create')): ?>
-                                    <li><a tabindex="-1" href="/projects/create">Добавить проект</a></li>
-                                <? endif; ?>
+
+                                <li class="strong"><a tabindex="-1" href="/">Все проекты</a></li>
                             </ul>
                         </li>
 
@@ -83,8 +88,6 @@
                                         <li><a tabindex="-1" href="/users/create">Добавить пользователя</a></li>
                                     <? endif; ?>
 
-
-                                    <li><a tabindex="-1" href="/logs">Просмотр Логов</a></li>
                                 </ul>
                             </li>
                         <? endif; ?>
@@ -115,7 +118,20 @@
                 </div>
 
                 <div class="message-status-block">
-                    <span>4</span>
+                    <a href="#" class="toggle-messages-list-container"></a>
+                    <span></span>
+
+                    <div class="messages-list">
+                        <div class="messages-list-container">
+                            <? $this->widget('bootstrap.widgets.TbListView', array(
+                                'dataProvider' => $this->getCommentsDataProvider(),
+                                'itemView' => '/projects/_header_comments_item',
+                                'template' => "{items}",
+                                'enablePagination' => false,
+                            ));
+                            ?>
+                        </div>
+                    </div>
                 </div>
 
 
@@ -123,9 +139,8 @@
         </div>
     </div>
 </div>
-
-
 <div class="container">
+    <? /*
     <div class="row-fluid">
 
         <?php $this->widget('bootstrap.widgets.TbBreadcrumbs', array(
@@ -133,7 +148,7 @@
             'links' => $this->breadcrumbs,
         )); ?>
     </div>
-
+*/?>
 
     <div class="page-container">
         <? if (isset($page_header)): ?>
