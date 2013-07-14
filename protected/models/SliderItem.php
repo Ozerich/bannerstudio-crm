@@ -52,6 +52,7 @@ class SliderItem extends CActiveRecord
 
         header("Content-Disposition: attachment;filename=\"" . $this->real_filename . "\"");
         header("Content-Transfer-Encoding: binary");
+        header("Content-Type: application/x-download" );
         header('Pragma: no-cache');
         header('Expires: 0');
 

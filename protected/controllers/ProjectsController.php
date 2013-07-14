@@ -91,7 +91,6 @@ class ProjectsController extends Controller
 
             if (Yii::app()->user->role == 'customer') {
                 $model->closed = 0;
-                $model->status = 'customer_created';
             }
 
             $model->created_time = new CDbExpression('NOW()');
@@ -131,6 +130,7 @@ class ProjectsController extends Controller
             $mode = $mode == 'customer' || $mode == 'worker' ? $mode : 'customer';
         }
 
+
         $model = Project::model()->findByPk($id);
 
 
@@ -156,6 +156,7 @@ class ProjectsController extends Controller
         $project_id = Yii::app()->request->getPost('project_id');
         $message = Yii::app()->request->getPost('message');
         $mode = Yii::app()->request->getPost('mode');
+        $session = Yii::app()->request->getPost('session');
 
         $model = new ProjectComment();
         $model->project_id = $project_id;
@@ -163,6 +164,16 @@ class ProjectsController extends Controller
         $model->user_id = Yii::app()->user->id;
         $model->mode = $mode;
         $model->save();
+
+        if(isset($_SESSION['files'][$session])){
+            foreach($_SESSION['files'][$session] as $file_id){
+                $file = ProjectCommentFile::model()->findByPk($file_id);
+                if($file){
+                    $file->comment_id = $model->id;
+                    $file->save();
+                }
+            }
+        }
 
 
         echo json_encode(array('comment_id' => $model->id));
@@ -201,7 +212,7 @@ class ProjectsController extends Controller
     }
 
 
-    public function actionUpload_Comment_File($comment = 0)
+    public function actionUpload_Comment_File($session = '')
     {
         if (!Yii::app()->request->isPostRequest) {
             throw new CHttpException(404);
@@ -215,7 +226,6 @@ class ProjectsController extends Controller
 
             $model = new ProjectCommentFile();
 
-            $model->comment_id = $comment;
             $model->file = uniqid() . '.' . $file->getExtensionName();
             $model->real_filename = $file->getName();
             $model->file_size = $file->getSize();
@@ -223,10 +233,21 @@ class ProjectsController extends Controller
             if ($model->save()) {
                 $file->saveAs($_SERVER['DOCUMENT_ROOT'] . Yii::app()->params['upload_dir_comments'] . $model->file);
 
+                if(!isset($_SESSION['files'])){
+                    $_SESSION['files'] = array();
+                }
+
+                if(!isset($_SESSION['files'][$session])){
+                    $_SESSION['files'] = array($session => array());
+                }
+
+                $_SESSION['files'][$session][] = $model->id;
+
                 echo '1';
             } else {
                 echo '0';
             }
+
 
         }
 
@@ -383,6 +404,10 @@ class ProjectsController extends Controller
 
     public function actionFlash($id = 0)
     {
+		if(Yii::app()->user->isGuest){
+			throw new CHttpException(404);
+		};
+		
         $this->layout = 'none';
 
         $file = ProjectCommentFile::model()->findByPk($id);

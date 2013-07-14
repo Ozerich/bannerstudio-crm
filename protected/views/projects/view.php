@@ -81,7 +81,7 @@
             <div class="file-item example" style="display: none">
 
                 <div class="file">
-                    <a href="#" class="btn-upload">Прикрепить файл</a>
+                    <button class="btn-upload">Прикрепить файл</button>
                     <input type="file" name="file">
                 </div>
 

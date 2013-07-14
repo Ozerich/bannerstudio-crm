@@ -5,7 +5,7 @@ function sort_projects_function($a, $b)
     if($a->closed && !$b->closed)return 1;
     if($b->closed && !$a->closed)return -1;
 
-    return $a->created_time < $b->created_time ? -1 : 1;
+    return $a->created_time > $b->created_time ? -1 : 1;
 }
 
 Yii::setPathOfAlias('bootstrap', dirname(__FILE__) . '/../extensions/bootstrap');
@@ -39,6 +39,10 @@ return array(
     ),
 
     'components' => array(
+
+        'session' => array (
+            'autoStart' => false,
+        ),
 
         'phpThumb' => array(
             'class' => 'ext.PhpThumb.EPhpThumb',

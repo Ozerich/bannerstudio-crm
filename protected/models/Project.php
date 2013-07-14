@@ -21,12 +21,13 @@ class Project extends CActiveRecord
     public $customers = array();
 
     public static $statuses = array(
-        'customer_created' => 'Создан заказчиком',
         'status_1' => 'Статус 1',
         'status_2' => 'Статус 2',
         'status_3' => 'Статус 3',
         'status_4' => 'Статус 4',
     );
+
+    public static $default_status = 'status_1';
 
     public static function model($className = __CLASS__)
     {
@@ -74,6 +75,14 @@ class Project extends CActiveRecord
         );
     }
 
+    public function beforeValidate()
+    {
+        if($this->status == '' || !in_array($this->status, self::$statuses)){
+            $this->status = self::$default_status;
+        }
+
+        return true;
+    }
 
     public function afterSave()
     {
@@ -114,6 +123,11 @@ class Project extends CActiveRecord
                 $this->workers[] = $user;
                 $this->workers_list .= ($this->workers_list ? ',' : '') . $user->id;
             }
+        }
+
+        if (!in_array($this->status, self::$statuses)) {
+            $this->status = self::$default_status;
+            $this->save();
         }
 
     }

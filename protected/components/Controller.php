@@ -38,7 +38,10 @@ class Controller extends RController
 
             $project_users = ProjectUser::model()->findAllByAttributes(array('user_id' => Yii::app()->user->id));
             foreach ($project_users as $project_user) {
-                $projects[] = Project::model()->findByPk($project_user->project_id);
+                $project = Project::model()->findByPk($project_user->project_id);
+                if ($project) {
+                    $projects[] = $project;
+                }
             }
 
             if (!empty($projects)) {
@@ -46,9 +49,13 @@ class Controller extends RController
                 $criteria->order = 'datetime desc';
                 $criteria->limit = 50;
                 $criteria->addNotInCondition('user_id', array(Yii::app()->user->id));
+
+                $project_ids= array();
                 foreach ($projects as $project) {
-                    $criteria->compare('project_id', $project->id, false, 'OR');
+                    $project_ids[] = $project->id;
                 }
+
+                $criteria->compare('project_id', $project_ids, false, 'AND');
 
                 $comments_all = ProjectComment::model()->findAll($criteria);
                 foreach ($comments_all as $comment) {
@@ -59,7 +66,15 @@ class Controller extends RController
             }
         }
 
-        return new CArrayDataProvider($comments, array(
+        $result = array();
+
+        foreach ($comments as $comment) {
+            if ($comment->project) {
+                $result[] = $comment;
+            }
+        }
+
+        return new CArrayDataProvider($result, array(
             'pagination' => array(
                 'pageSize' => 10000,
             ),

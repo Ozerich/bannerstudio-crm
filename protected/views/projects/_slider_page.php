@@ -33,8 +33,8 @@
                 <span><?=($item->image_width && $item->image_height ? $item->image_width . 'x' . $item->image_height : $item->real_filename)?>
                     (<?=$item->file_size?>)</span>
                 <a target="_blank" href="/slider/download/<?= $item->id ?>">скачать</a>
-                <? if ($item->is_image || $item->is_swf): ?> <a href="<?= Yii::app()->params['upload_dir_comments'] . $item->file ?>"
-                                               class="fancybox">открыть</a><? endif; ?>
+                <? if ($item->is_image ): ?> <a href="<?= Yii::app()->params['upload_dir_comments'] . $item->file ?>"
+                                               class="fancybox" data-width="<?=$item->file->width?>" data-height="<?=$item->file->height?>">открыть</a><? endif; ?>
             <? endif; ?>
             <?if (Yii::app()->user->role == 'admin'): ?><a href="#" class="btn-delete">убрать</a><? endif; ?>
         </div>

@@ -36,7 +36,7 @@
                     <span class="filename"><?=$file->real_filename?></span>
                     <span class="size">(<?=$file->file_size_str?>)</span>
 
-                    <? if($data->mode == 'customer'): ?>
+                    <? if($data->mode == 'customer' && Yii::app()->user->role == 'admin'): ?>
                         <a href="#" class="single-file-to-slider btn btn-mini">В слайдер</a>
                     <? endif; ?>
 

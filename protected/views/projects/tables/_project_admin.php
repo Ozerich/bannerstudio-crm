@@ -10,7 +10,7 @@
         <? foreach ($data->workers as $worker): ?>
 
         <div class="user worker">
-            <span class="price"><?=$data->worker_price?></span>
+            <span class="price" title="<?=$data->worker_price?>"><?=$data->worker_price?></span>
             <a href="/users/<?=$worker->id?>" class="username"><?=$worker->display_name?></a>
         </div>
         <? endforeach; ?>
@@ -18,7 +18,7 @@
         <? foreach ($data->customers as $customer): ?>
 
         <div class="user customer">
-            <span class="price"><?=$data->customer_price?></span>
+            <span class="price" title="<?=$data->customer_price?>"><?=$data->customer_price?></span>
             <a href="/users/<?=$customer->id?>" class="username"><?=$customer->display_name?></a>
         </div>
         <? endforeach; ?>

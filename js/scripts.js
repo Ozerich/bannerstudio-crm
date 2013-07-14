@@ -240,95 +240,73 @@ $(function () {
         });
 
 
-        $(".fancybox").each(function () {
-            var $item = $(this);
-            var width = $item.data('width');
-            var height = $item.data('height');
-
-            $item.fancybox({
-                autoResize: false,
-                autoSize: false,
-                autoDimension: false,
-                fitToView: false,
-                minHeight: 1,
-                padding: 15,
-                margin: 0,
-                width: width,
-                height: height,
-                minWidth: 1,
-                aspectRatio: false,
-                type: $item.hasClass('iframe') ? 'iframe' : null
-            });
-        });
+        updateFancyBox();
 
 
         $('#btn_add_comment').on('click', function () {
 
-            var $message_textarea = $('.comments-form').find('textarea');
-
+            var $message_textarea = $('.comments-form').find('textarea').prop('disabled', true);
 
             var $btn = $(this).prop('disabled', true);
 
+            var session = Math.round(Math.random() * 10000000);
+
             function successCallback() {
-                $btn.prop('disabled', false);
-                $message_textarea.val('');
 
-                $comments_form.find('.file-item').not('.example').remove();
-                addFileInput();
+                $.post('/projects/add_comment', {session: session, message: $message_textarea.val(), project_id: $('#project_id').val(), mode: $('#active_mode').val()}, function (data) {
 
-                updateComments();
+                    $btn.prop('disabled', false);
+                    $message_textarea.prop('disabled', false);
+                    $message_textarea.val('');
+
+                    $comments_form.find('.file-item').not('.example').remove();
+                    addFileInput();
+
+                    updateComments();
+                });
             }
 
             $comments_form.find('.file-item:last').remove();
-
             $comments_form.find('.file-item:visible').find('.status').text('в очереди');
             $comments_form.find('.file-item:visible').find('.delete-file').hide();
 
-            $.post('/projects/add_comment', {message: $message_textarea.val(), project_id: $('#project_id').val(), mode: $('#active_mode').val()}, function (data) {
-
-                data = jQuery.parseJSON(data);
-
-                var comment_id = data.comment_id;
+            var count = $comments_form.find('.file-item:visible').length;
+            if (count === 0) {
+                successCallback();
+            }
+            else {
+                var loaded_count = 0;
                 var count = $comments_form.find('.file-item:visible').length;
+                $comments_form.find('.file-item:visible').each(function (ind) {
+                    var $file_item = $(this);
 
-                if (count === 0) {
-                    successCallback();
-                }
-                else {
-                    var loaded_count = 0;
-                    var count = $comments_form.find('.file-item:visible').length;
-                    $comments_form.find('.file-item:visible').each(function (ind) {
-                        var $file_item = $(this);
-
-                        $file_item.find('.status').text('загрузка...');
-                        $file_item.find('input:file').attr('id', 'comment_file_' + ind);
+                    $file_item.find('.status').text('загрузка...');
+                    $file_item.find('input:file').attr('id', 'comment_file_' + ind);
 
 
-                        (function ($file_item, is_last) {
-                            $.ajaxFileUpload({
-                                url: '/projects/upload_comment_file/comment/' + comment_id,
-                                secureuri: false,
-                                fileElementId: 'comment_file_' + ind,
-                                dataType: 'json',
-                                success: function (data, status) {
-                                    if (data != 0) {
-                                        $file_item.find('.status').addClass('status-success').text('Загружен');
-                                    }
-                                    else {
-                                        $file_item.find('.status').addClass('status-error').text('Ошибка');
-                                    }
-
-                                    if (++loaded_count == count) {
-                                        successCallback();
-                                    }
+                    (function ($file_item) {
+                        $.ajaxFileUpload({
+                            url: '/projects/upload_comment_file/session/' + session,
+                            secureuri: false,
+                            fileElementId: 'comment_file_' + ind,
+                            dataType: 'json',
+                            complete: function (data, status) {
+                                console.log('loaded: ' + loaded_count);
+                                if (data != 0) {
+                                    $file_item.find('.status').addClass('status-success').text('Загружен');
                                 }
-                            });
-                        })($file_item, ind === count - 1);
-                    });
-                }
+                                else {
+                                    $file_item.find('.status').addClass('status-error').text('Ошибка');
+                                }
 
-
-            });
+                                if (++loaded_count == count) {
+                                    successCallback();
+                                }
+                            }
+                        });
+                    })($file_item);
+                });
+            }
 
             return false;
         });
@@ -703,6 +681,49 @@ $(function () {
         $('.comments-block').find('.loader').fadeIn();
     }
 
+
+    function updateFancyBox() {
+        $(".fancybox").each(function () {
+            var $item = $(this);
+            var width = $item.data('width');
+            var height = $item.data('height');
+
+            /*  $item.fancybox({
+             autoResize: false,
+             autoSize: false,
+             autoDimension: false,
+             fitToView: false,
+             minHeight: 1,
+             padding: 15,
+             margin: 0,
+             width: width,
+             height: height,
+             minWidth: 1,
+             aspectRatio: false,
+             type: $item.hasClass('iframe') ? 'iframe' : null
+             });
+             */
+
+            $item.fancybox({
+                autoResize: false,
+                autoSize: false,
+                autoDimension: false,
+                fitToView: false,
+                aspectRatio: false,
+                minHeight: 1,
+                maxWidth: '95%',
+                maxHeight: '95%',
+                padding: 15,
+                margin: 0,
+                width: width,
+                height: height,
+                minWidth: 1,
+                type: $item.hasClass('iframe') ? 'iframe' : null
+            });
+
+        });
+    }
+
     function updateComments() {
         var $comments_block = $('.comments-block');
         showCommentsLoader();
@@ -713,7 +734,8 @@ $(function () {
             $comments_block.find('[mode=' + $('#active_mode').val() + ']').show();
             $('.comments-block').find('.loader').fadeOut();
 
-            $(".fancybox").fancybox();
+
+            updateFancyBox();
 
         });
     }
@@ -756,6 +778,7 @@ $(function () {
                 }
 
                 toggleSliderLoader(false);
+                updateFancyBox();
             }
         );
     }
@@ -812,7 +835,6 @@ $(function () {
                     for (var page_id in data.slider_stats) {
 
                         var count = +data.slider_stats[page_id];
-                        var count = +data.slider_stats[page_id];
                         var page = $('.slider-page[data-id=' + page_id + ']');
 
                         if (page.length == 0 || page.find('.slider-item').length != count) {
@@ -824,7 +846,7 @@ $(function () {
                 }
 
                 if (need_update_slider) {
-                    //  updateSlider();
+                    updateSlider();
                 }
             }
 

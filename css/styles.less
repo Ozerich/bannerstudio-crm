@@ -171,6 +171,9 @@
       text-align: center;
       font-size: 10px;
       font-weight: bold;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
 
       .user {
         padding: 0 3px;
@@ -197,6 +200,10 @@
           width: 62px;
           text-align: right;
           display: block;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          cursor: pointer;
         }
 
       }
@@ -514,6 +521,9 @@
 
           .btn-upload {
             background: url('../img/upload_icon.png') center right no-repeat;
+            border: 0;
+            padding: 5px 15px;
+            cursor: pointer;
             display: block;
             padding-right: 15px;
             color: #727272;

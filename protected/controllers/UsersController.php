@@ -128,7 +128,7 @@ class UsersController extends Controller
             throw new CHttpException(404);
         }
 
-        $this->processPost($model, 'Данные пользователя сохранены');
+        $this->processPost($model, '/users/', 'Данные пользователя сохранены');
 
         $model->password = '';
 

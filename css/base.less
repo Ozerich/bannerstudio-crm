@@ -8,9 +8,10 @@
 
 @color_message_text: #2a2a2a;
 
-html,body{
-	min-height: 100%;
+html, body {
+  min-height: 100%;
 }
+
 body {
   font-size: 9pt;
   padding-top: 72px;
@@ -30,7 +31,7 @@ input, textarea {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  outline:none;
+  outline: none;
 }
 
 h1 {
@@ -43,12 +44,12 @@ fieldset {
   border: 0;
 }
 
-.flashes{
+.flashes {
   position: fixed;
   top: 33px;
   right: 50px;
   z-index: 999999;
-  li{
+  li {
     padding: 5px 50px;
   }
 }
@@ -341,8 +342,8 @@ ul {
     max-height: 200px;
     overflow-y: auto;
 
-    .strong{
-      a{
+    .strong {
+      a {
         font-weight: bold;
       }
     }
@@ -374,16 +375,15 @@ ul {
       display: none;
     }
 
-
     &.new-exist {
       background: url('../img/new-message-exist.gif') 36px center no-repeat;
 
-      span{
+      span {
         display: block;
       }
     }
 
-    .toggle-messages-list-container{
+    .toggle-messages-list-container {
       position: absolute;
       left: 0;
       top: 0;
@@ -392,8 +392,8 @@ ul {
       display: block;
       z-index: 999999;
     }
-    
-    .messages-list{
+
+    .messages-list {
       position: absolute;
       top: 65px;
       width: 250px;
@@ -402,67 +402,76 @@ ul {
       background: #fff;
       display: none;
 
-
-      .messages-list-container{
+      .messages-list-container {
         background: #fff;
         max-height: 270px;
         overflow-x: hidden;
         overflow-y: auto;
         padding-right: 10px;
-        .list-view{
+        .list-view {
           padding-top: 0;
         }
 
-        .message{
+        .message {
           padding: 0 10px;
           margin-bottom: 10px;
           color: @color_message_text;
+          border-bottom: 1px dotted #aaa;
 
-          a:hover{
+          a:hover {
             text-decoration: none;
           }
 
-          .header{
-            color: @color_message_text;
+          .header {
+            font-weight: bold;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
           }
 
-          &.no-read{
-            .header-link{
+          &.no-read {
+            .header-link {
               color: @color_message_text;
             }
           }
 
-          &.role-admin{
-            &.no-read{
+          &.role-admin {
+            &.no-read {
               background: @color_admin_new;
             }
-            &.readed{
-              .header-link{
+            &.readed {
+              a {
+                color: @color_admin;
+              }
+              .header-link {
                 color: @color_admin;
               }
             }
           }
 
-          &.role-worker{
-            &.no-read{
+          &.role-worker {
+            &.no-read {
               background: @color_worker_new;
             }
-            &.readed{
-              .header-link{
+            &.readed {
+              a {
+                color: @color_worker;
+              }
+              .header-link {
                 color: @color_worker;
               }
             }
           }
 
-          &.role-customer{
-            &.no-read{
+          &.role-customer {
+            &.no-read {
               background: @color_customer_new;
             }
-            &.readed{
-              .header-link{
+            &.readed {
+              a {
+                color: @color_customer;
+              }
+              .header-link {
                 color: @color_customer;
               }
             }
@@ -480,7 +489,6 @@ ul {
   padding-left: 15px;
   margin: 10px 20px 0 0;
   width: 250px;
-
 
   .username {
     font-size: 14px;

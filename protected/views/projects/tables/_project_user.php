@@ -1,4 +1,4 @@
-<ul class="row">
+<ul class="row <?=$data->closed ? 'closed' : ''?>"">
 
     <li class="col-name">
         <a href="/projects/<?=$data->id?>" class="project-name"><?=$data->name?></a>

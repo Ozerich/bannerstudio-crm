@@ -28,7 +28,7 @@ class ProjectCommentFile extends CActiveRecord
     public function rules()
     {
         return array(
-            array('comment_id, file,real_filename, file_size', 'required'),
+            array('file,real_filename, file_size', 'required'),
             array('comment_id, file_size', 'numerical', 'integerOnly' => true),
             array('file', 'length', 'max' => 255),
 
@@ -64,9 +64,11 @@ class ProjectCommentFile extends CActiveRecord
 
         $file = $_SERVER['DOCUMENT_ROOT'] . Yii::app()->params['upload_dir_comments'] . $this->file;
 
-        if ($size = getimagesize($file)) {
-            $this->width = $size[0];
-            $this->height = $size[1];
+        if (file_exists($file)) {
+            if ($size = getimagesize($file)) {
+                $this->width = $size[0];
+                $this->height = $size[1];
+            }
         }
 
         $file_ext = strpos($this->file, '.') !== false ? substr($this->file, strrpos($this->file, '.') + 1) : '';
@@ -75,7 +77,7 @@ class ProjectCommentFile extends CActiveRecord
 
         $this->file_url = $this->url = 'http://' . $_SERVER['HTTP_HOST'] . Yii::app()->params['upload_dir_comments'] . $this->file;
 
-        if($this->is_swf){
+        if ($this->is_swf) {
             $this->url = 'http://' . $_SERVER['HTTP_HOST'] . '/projects/flash/' . $this->id;
         }
 
@@ -108,7 +110,6 @@ class ProjectCommentFile extends CActiveRecord
         readfile($newfile);
         unlink($newfile);
     }
-
 
 
     public function afterDelete()
