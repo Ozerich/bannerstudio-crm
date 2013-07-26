@@ -28,7 +28,7 @@ class ProjectCommentFile extends CActiveRecord
     public function rules()
     {
         return array(
-            array('file,real_filename, file_size', 'required'),
+            array('file,real_filename, pos, file_size', 'required'),
             array('comment_id, file_size', 'numerical', 'integerOnly' => true),
             array('file', 'length', 'max' => 255),
 
@@ -121,5 +121,11 @@ class ProjectCommentFile extends CActiveRecord
         }
 
         @unlink($_SERVER['DOCUMENT_ROOT'] . Yii::app()->params['upload_dir_comments'] . $this->file);
+    }
+
+    public function defaultScope(){
+        return array(
+            'order' => 'pos ASC',
+        );
     }
 }

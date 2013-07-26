@@ -20,7 +20,7 @@ class Controller extends RController
         }
     }
 
-    public function getCommentsDataProvider()
+    public function getCommentsDataProvider($page_size = 10000)
     {
         $comments = array();
 
@@ -56,6 +56,7 @@ class Controller extends RController
                 }
 
                 $criteria->compare('project_id', $project_ids, false, 'AND');
+                $criteria->compare('mode', Yii::app()->user->role, false, 'AND');
 
                 $comments_all = ProjectComment::model()->findAll($criteria);
                 foreach ($comments_all as $comment) {
@@ -76,7 +77,7 @@ class Controller extends RController
 
         return new CArrayDataProvider($result, array(
             'pagination' => array(
-                'pageSize' => 10000,
+                'pageSize' => $page_size,
             ),
         ));
     }

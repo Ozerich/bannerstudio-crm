@@ -1,4 +1,4 @@
-<div class="<?=!$data->readed ? 'unreaded' : ''?> comment-item comment-<?= $data->user->role ?>" data-id="<?= $data->id ?>">
+<div class="<?=!$data->readed ? 'unreaded' : ''?> comment-item comment-<?= $data->user->role == 'admin' ? 'admin' : $data->mode ?>" data-id="<?= $data->id ?>">
 
     <div class="user-photo-wr">
         <div class="user-photo">
@@ -17,7 +17,7 @@
             </div>
         <? endif; ?>
 
-        <span class="user-name"><?=$data->user->display_name?></span>
+        <a href="/users/<?=$data->user->id?>" target="_blank" class="user-name"><?=$data->user->display_name?></a>
 
         <p class="comment-text"><?=$data->getPlainText()?></p>
 
@@ -65,12 +65,3 @@
     </div>
 
 </div>
-
-<?
-if ($data->readed == false) {
-    $project_comment_read = new ProjectCommentRead();
-    $project_comment_read->comment_id = $data->id;
-    $project_comment_read->user_id = Yii::app()->user->id;
-    $project_comment_read->save();
-}
-?>

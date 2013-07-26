@@ -17,4 +17,9 @@ class SiteController extends Controller
     }
 
 
+    public function actionError(){
+        $this->redirect('/');
+    }
+
+
 }

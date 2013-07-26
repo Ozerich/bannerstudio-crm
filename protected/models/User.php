@@ -107,12 +107,13 @@ class User extends CActiveRecord
 
     public function validatePassword($password)
     {
-        return crypt($password, $this->salt) === $this->password;
+
+        return md5($password) === $this->password;
     }
 
     public function hashPassword($password)
     {
-        return crypt($password, $this->salt);
+        return md5($password);
     }
 
     public function generateSalt($cost = 10)
@@ -159,6 +160,12 @@ class User extends CActiveRecord
 
             Yii::app()->mail->send($message);
 
+        }
+
+
+        foreach ($this->comments as $comment) {
+            $comment->mode = $this->role;
+            $comment->save();
         }
 
 
@@ -211,7 +218,7 @@ class User extends CActiveRecord
     {
         $result = array();
 
-        if (Yii::app()->user->role == 'admin') {
+        if ($this->role == 'admin') {
             $result = Project::model()->findAll();
         } else {
             foreach (ProjectUser::model()->findAllByAttributes(array('user_id' => $this->id)) as $_project_user) {
@@ -235,39 +242,60 @@ class User extends CActiveRecord
             $comment->delete();
         }
 
-        foreach(ProjectUser::model()->findAllByAttributes(array('user_id' => $this->id)) as $project_user){
+        foreach (ProjectUser::model()->findAllByAttributes(array('user_id' => $this->id)) as $project_user) {
             $project_user->delete();
         }
     }
 
 
-    public static function GetInboxComments($from_time = 0)
+    public function getInboxComments($from_time = 0)
     {
 
         $project_ids = array();
 
         if (Yii::app()->user->role == 'admin') {
             foreach (Project::model()->findAll() as $project) {
-                $project_ids[] = $project->id;
+                $project_ids[] = array('time' => Yii::app()->user->getModel()->time_created, 'id' => $project->id);
             }
         } else {
             foreach (ProjectUser::model()->findAllByAttributes(array('user_id' => Yii::app()->user->id)) as $project) {
-                $project_ids[] = $project->project_id;
+                $project_ids[] = array('time' => $project->datetime, 'id' => $project->project_id);
             }
         }
 
         $comments_all = array();
-        foreach ($project_ids as $project_id) {
+        foreach ($project_ids as $project_info) {
+
+            $project_id = $project_info['id'];
+            $project_time = strtotime($project_info['time']);
 
             if (Yii::app()->user->role == 'admin') {
                 $project_comments = ProjectComment::model()->findAllByAttributes(array('project_id' => $project_id));
             } else {
+
                 $project_comments = ProjectComment::model()->findAllByAttributes(array('project_id' => $project_id,
-                    'mode' => Yii::app()->user->role
+                    'mode' => Yii::app()->user->role,
+                    'user_id' => $this->id,
                 ));
+
+                $admins = User::model()->findAllByAttributes(array('role' => 'admin'));
+                foreach($admins as $admin){
+                    $project_comments = array_merge($project_comments, ProjectComment::model()->findAllByAttributes(array('project_id' => $project_id,
+                        'mode' => Yii::app()->user->role,
+                        'user_id' => $admin->id,
+                    )));
+                }
             }
 
-            $comments_all = array_merge($comments_all, $project_comments);
+            $project_comments_filtered = array();
+
+            foreach ($project_comments as $comment) {
+                if(strtotime($comment->datetime) >= $project_time){
+                    $project_comments_filtered[] = $comment;
+                }
+            }
+
+            $comments_all = array_merge($comments_all, $project_comments_filtered);
         }
 
 

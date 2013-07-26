@@ -81,8 +81,8 @@
             <div class="file-item example" style="display: none">
 
                 <div class="file">
-                    <button class="btn-upload">Прикрепить файл</button>
                     <input type="file" name="file">
+                    <span class="btn-upload">Прикрепить файл</span>
                 </div>
 
                 <div class="filename-block" style="display: none">

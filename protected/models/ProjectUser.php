@@ -22,6 +22,7 @@ class ProjectUser extends CActiveRecord
     {
         return array(
             array('user_id, project_id', 'required'),
+            array('datetime', 'safe'),
         );
     }
 
@@ -38,7 +39,7 @@ class ProjectUser extends CActiveRecord
                 }
 
                 $project = Project::model()->findByPk($project_id);
-                if(!$project){
+                if (!$project) {
                     return FALSE;
                 }
 
@@ -64,14 +65,19 @@ class ProjectUser extends CActiveRecord
 
         if (is_numeric($project_id) && is_numeric($user_id)) {
 
-            self::model()->deleteAllByAttributes(array(
+            $attrs = array(
                 'project_id' => $project_id,
                 'user_id' => $user_id
-            ));
+            );
+
+            $project_user = self::model()->findByAttributes($attrs);
+            $last_time = $project_user ? $project_user->datetime : null;
+            self::model()->deleteAllByAttributes($attrs);
 
             $model = new self;
             $model->project_id = $project_id;
             $model->user_id = $user_id;
+            $model->datetime = $last_time ? $last_time : new CDbExpression('NOW()');
 
             return $model->save();
         }

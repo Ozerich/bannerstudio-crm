@@ -495,9 +495,14 @@
     border-radius: 5px;
     padding: 8px;
     margin: 20px 0;
+    min-height: 88px;
+    position: relative;
 
     #btn_add_comment {
       vertical-align: bottom;
+      position: absolute;
+      z-index: 1;
+      bottom: 10px;
     }
 
     textarea {
@@ -509,36 +514,38 @@
 
     .files {
       display: inline-block;
-      margin-left: 25px;
+      margin-left: 110px;
+      vertical-align: bottom;
 
       .file-item {
         margin-bottom: 5px;
 
         .file {
-          display: inline-block;
-          margin-right: 5px;
+          display: block;
           position: relative;
+          cursor: pointer;
+          margin-left: -25px;
 
           .btn-upload {
             background: url('../img/upload_icon.png') center right no-repeat;
             border: 0;
             padding: 5px 15px;
-            cursor: pointer;
             display: block;
             padding-right: 15px;
             color: #727272;
-            text-decoration: underline;
+            margin-right: 5px;
+            padding: 4px 18px;
           }
 
           input[type=file] {
             cursor: pointer;
-            opacity: 0;
+            font-size: 100px;
+            filter: alpha(opacity=1);
+            -moz-opacity: 0.01;
+            opacity: 0.01;
             position: absolute;
             right: 0;
             top: 0;
-            bottom: 0;
-            left: 0;
-            position: absolute;
           }
         }
 
@@ -794,6 +801,13 @@
           display: block;
         }
 
+        .user-name{
+          display: block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
         .avatar {
           width: 48px;
           height: 48px;
@@ -807,6 +821,8 @@
 
         .text {
           margin-left: 55px;
+          overflow: hidden;
+          text-overflow: ellipsis;          white-space: nowrap;
         }
 
       }

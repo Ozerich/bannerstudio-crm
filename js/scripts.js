@@ -61,7 +61,6 @@ $(function () {
         this.overlay.click(function () {
             that.hide();
         });
-        page_project
 
         this.center = function () {
             that.window.css("top", Math.max(0, (($(window).height() - $(this.window).outerHeight()) / 2) +
@@ -183,6 +182,26 @@ $(function () {
     (function () {
         if ($('#page_project').length === 0)return;
 
+
+        $(window).bind("scroll", function (event) {
+
+            if (window.forceScroll)return;
+
+            $('.comments-block .comment-item.unreaded:in-viewport').each(function () {
+                if ($(this).hasClass('marked'))return;
+                $(this).addClass('marked');
+                $.get('/projects/mark_comment/' + $(this).data('id'));
+            });
+        });
+
+        $(function () {
+            $('.comments-block .comment-item.unreaded:in-viewport').each(function () {
+                if ($(this).hasClass('marked'))return;
+                $(this).addClass('marked');
+                $.get('/projects/mark_comment/' + $(this).data('id'));
+            });
+        });
+
         var $description_block = $('.additional-info');
         var $btn_hide_description = $('#btn_hide_description');
         var $btn_show_description = $('#btn_show_description');
@@ -284,9 +303,9 @@ $(function () {
                     $file_item.find('input:file').attr('id', 'comment_file_' + ind);
 
 
-                    (function ($file_item) {
+                    (function ($file_item, ind) {
                         $.ajaxFileUpload({
-                            url: '/projects/upload_comment_file/session/' + session,
+                            url: '/projects/upload_comment_file/session/' + session + '/pos/' + (ind + 1),
                             secureuri: false,
                             fileElementId: 'comment_file_' + ind,
                             dataType: 'json',
@@ -304,7 +323,7 @@ $(function () {
                                 }
                             }
                         });
-                    })($file_item);
+                    })($file_item, ind);
                 });
             }
 
@@ -658,7 +677,7 @@ $(function () {
                     $.post('/slider/add', {
                         project_id: $('#project_id').val(),
                         page: page_id,
-                        html: slider_html_popup.element.find('textarea').val(),
+                        html: slider_html_popup.element.find('textarea').val()
                     }, function () {
                         $btn.prop('disabled', false);
                         slider_popup.hide();
@@ -734,6 +753,13 @@ $(function () {
             $comments_block.find('[mode=' + $('#active_mode').val() + ']').show();
             $('.comments-block').find('.loader').fadeOut();
 
+            $(document).one('mousemove', function () {
+                $('.comments-block .comment-item.unreaded:in-viewport').each(function () {
+                    if ($(this).hasClass('marked'))return;
+                    $(this).addClass('marked');
+                    $.get('/projects/mark_comment/' + $(this).data('id'));
+                });
+            });
 
             updateFancyBox();
 
@@ -803,8 +829,20 @@ $(function () {
 
                 if ($('#page_project').length > 0) {
                     var project_id = $('#project_id').val();
-                    if (data.project_new_count[project_id]) {
-                        updateComments();
+					
+                    if (data.project_new_count[project_id] && lastTime) {
+					
+						var project_ids = data.unread_ids;			
+						
+						var need_update = false;					
+						for(var i = 0; i < project_ids.length; i++){
+							if($('.comment-item[data-id=' + projects_ids[i] + ']').length === 0){
+								need_update = true;
+							}
+						}
+						
+						//if(need_update)
+							updateComments();
                     }
                 }
             }
@@ -812,15 +850,23 @@ $(function () {
             if (lastTime && data.html.length > 0) {
                 for (var i = 0; i < data.html.length; i++) {
 
+					if($('.messages-list-container .message[data-id=' + $(data.html[i].header).data('id') + ']').length === 0)
                     $('.messages-list-container').prepend(data.html[i].header);
 
                     if ($('#page_index').length > 0) {
                         $('.comments-table .items').find('.empty').hide();
+						if($('.comments-table .items .row[data-id=' + $(data.html[i].index).data('id') + ']').length === 0)
                         $('.comments-table .items').prepend(data.html[i].index);
                     }
                 }
             }
 
+
+            $('.messages-list-container .message').removeClass('no-read').addClass('read');
+            for (var i = 0; i < data.unread_ids.length; i++) {
+                var comment_id = data.unread_ids[i];
+                $('.messages-list-container .message[data-id="' + comment_id + '"]').addClass('no-read').removeClass('read');
+            }
 
             if ($('#page_project').length > 0) {
                 var pages_count = 0;

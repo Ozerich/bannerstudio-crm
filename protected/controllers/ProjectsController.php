@@ -11,7 +11,7 @@ class ProjectsController extends Controller
 
     public function allowedActions()
     {
-        return 'files, download, flash';
+        return 'files, download, flash, mark_comment';
     }
 
     public function actionIndex()
@@ -100,12 +100,11 @@ class ProjectsController extends Controller
 
                 if (Yii::app()->user->role == 'customer') {
                     ProjectUser::add($model->id, Yii::app()->user->id);
+                } else {
+                    foreach (array_merge(explode(',', $model->workers_list), explode(',', $model->customers_list)) as $id) {
+                        ProjectUser::add($model->id, $id, isset($_POST['send_worker_email']), isset($_POST['send_customer_email']));
+                    }
                 }
-
-                foreach (array_merge(explode(',', $model->workers_list), explode(',', $model->customers_list)) as $id) {
-                    ProjectUser::add($model->id, $id, isset($_POST['send_worker_email']), isset($_POST['send_customer_email']));
-                }
-
                 $this->redirect('/projects/' . $model->id);
             }
 
@@ -165,10 +164,10 @@ class ProjectsController extends Controller
         $model->mode = $mode;
         $model->save();
 
-        if(isset($_SESSION['files'][$session])){
-            foreach($_SESSION['files'][$session] as $file_id){
+        if (isset($_SESSION['files'][$session])) {
+            foreach ($_SESSION['files'][$session] as $file_id) {
                 $file = ProjectCommentFile::model()->findByPk($file_id);
-                if($file){
+                if ($file) {
                     $file->comment_id = $model->id;
                     $file->save();
                 }
@@ -212,7 +211,7 @@ class ProjectsController extends Controller
     }
 
 
-    public function actionUpload_Comment_File($session = '')
+    public function actionUpload_Comment_File($session = '', $pos = 0)
     {
         if (!Yii::app()->request->isPostRequest) {
             throw new CHttpException(404);
@@ -228,20 +227,23 @@ class ProjectsController extends Controller
 
             $model->file = uniqid() . '.' . $file->getExtensionName();
             $model->real_filename = $file->getName();
+            $model->pos = $pos;
             $model->file_size = $file->getSize();
 
             if ($model->save()) {
-                $file->saveAs($_SERVER['DOCUMENT_ROOT'] . Yii::app()->params['upload_dir_comments'] . $model->file);
 
-                if(!isset($_SESSION['files'])){
+                if (!isset($_SESSION['files'])) {
                     $_SESSION['files'] = array();
                 }
 
-                if(!isset($_SESSION['files'][$session])){
+                if (!isset($_SESSION['files'][$session])) {
                     $_SESSION['files'] = array($session => array());
                 }
 
                 $_SESSION['files'][$session][] = $model->id;
+
+                $file->saveAs($_SERVER['DOCUMENT_ROOT'] . Yii::app()->params['upload_dir_comments'] . $model->file);
+
 
                 echo '1';
             } else {
@@ -404,10 +406,11 @@ class ProjectsController extends Controller
 
     public function actionFlash($id = 0)
     {
-		if(Yii::app()->user->isGuest){
-			throw new CHttpException(404);
-		};
-		
+        if (Yii::app()->user->isGuest) {
+            throw new CHttpException(404);
+        }
+        ;
+
         $this->layout = 'none';
 
         $file = ProjectCommentFile::model()->findByPk($id);
@@ -416,5 +419,28 @@ class ProjectsController extends Controller
         }
 
         $this->render('flash', array('file' => $file));
+    }
+
+
+    public function actionMark_comment($id)
+    {
+        $comment = ProjectComment::model()->findByPk($id);
+
+        if (!$comment) {
+            throw new CHttpException(404);
+        }
+
+        $f = fopen('data.txt', 'w+');
+        fwrite($f, print_r($_SERVER, true));
+        fclose($f);
+
+        if ($comment->user_id == Yii::app()->user->id) {
+            Yii::app()->end();
+        }
+
+        $project_comment_read = new ProjectCommentRead();
+        $project_comment_read->comment_id = $id;
+        $project_comment_read->user_id = Yii::app()->user->id;
+        $project_comment_read->save();
     }
 }

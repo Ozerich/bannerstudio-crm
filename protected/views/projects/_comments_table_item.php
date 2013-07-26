@@ -1,4 +1,4 @@
-<ul class="row role-<?=$data->user->role?> <?=$data->readed ? 'readed' : 'no-read'?>">
+<ul class="row role-<?=$data->user->role?> <?=$data->readed ? 'readed' : 'no-read'?>" data-id="<?=$data->id?>">
     <li class="col-project">
         <a href="/projects/<?= $data->project->id ?><?=Yii::app()->user->role == 'admin' ? ($data->user->role == 'worker' ? '?mode=worker' : ($data->user->role == 'customer' ? '?mode=customer' : '')) : ''?>"><?=$data->project->name?></a>
     </li>

@@ -21,7 +21,7 @@ class AjaxController extends Controller
         if ($time == 0) {
             $result = array('timestamp' => time(), 'items' => array());
         } else {
-            $comments_all = User::GetInboxComments($time);
+            $comments_all = Yii::app()->user->getModel()->getInboxComments($time);
 
             foreach ($comments_all as $comment) {
                 $result[] = $this->renderPartial('//projects/_comments_table_item', array('data' => $comment), true);
@@ -41,8 +41,10 @@ class AjaxController extends Controller
 
         $time = Yii::app()->request->getPost('time', 0);
 
+        $inbox_comments = Yii::app()->user->getModel()->getInboxComments();
+
         $comments_unread = array();
-        foreach (User::GetInboxComments() as $comment) {
+        foreach ($inbox_comments as $comment) {
             if (!$comment->readed && $comment->datetime >= $comment->user->time_created) {
                 $comments_unread[] = $comment;
             }
@@ -60,7 +62,8 @@ class AjaxController extends Controller
                 $project_new_count[$comment->project_id] = 0;
             }
 
-            $project_new_count[$comment->project_id]++;
+            if (strtotime($comment->datetime) > ($time - 1))
+                $project_new_count[$comment->project_id]++;
         }
 
 
@@ -73,13 +76,20 @@ class AjaxController extends Controller
 
 
         $html = array();
-        $comments_all = $time ? User::GetInboxComments($time) : array();
+        $comments_all = $time ? Yii::app()->user->getModel()->getInboxComments($time) : array();
         foreach ($comments_all as $comment) {
             $html[] = array(
                 'header' => $this->renderPartial('//projects/_header_comments_item', array('data' => $comment), true),
                 'index' => $this->renderPartial('//projects/_comments_table_item', array('data' => $comment), true)
             );
+        }
 
+
+        $unread_ids = array();
+        foreach ($inbox_comments as $comment) {
+            if (!$comment->readed) {
+                $unread_ids[] = $comment->id;
+            }
         }
 
         $result = array(
@@ -88,6 +98,7 @@ class AjaxController extends Controller
             'project_new_count' => $project_new_count,
             'slider_stats' => $slider_stats,
             'html' => $html,
+            'unread_ids' => $unread_ids,
         );
 
         echo json_encode($result);

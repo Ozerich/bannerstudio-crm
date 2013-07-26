@@ -23,6 +23,7 @@
     <script src="/js/modernizr.2.6.2.min.js"></script>
     <script src="/js/less-1.3.3.min.js"></script>
     <script src="/js/jquery-ui-1.10.1.custom.min.js"></script>
+    <script src="/js/jquery.viewport.js"></script>
 
     <? if (!Yii::app()->user->isGuest): ?>
         <script src="/js/jquery.expandable.js"></script>
@@ -124,7 +125,7 @@
                     <div class="messages-list">
                         <div class="messages-list-container">
                             <? $this->widget('bootstrap.widgets.TbListView', array(
-                                'dataProvider' => $this->getCommentsDataProvider(),
+                                'dataProvider' => $this->getCommentsDataProvider(100),
                                 'itemView' => '/projects/_header_comments_item',
                                 'template' => "{items}",
                                 'enablePagination' => false,
