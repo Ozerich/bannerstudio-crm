@@ -1,32 +1,24 @@
--- phpMyAdmin SQL Dump
--- version 3.5.8
--- http://www.phpmyadmin.net
---
--- Хост: localhost
--- Время создания: Июл 08 2013 г., 20:04
--- Версия сервера: 5.1.68-cll-lve
--- Версия PHP: 5.3.17
+/*
+Navicat MySQL Data Transfer
 
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
+Source Server         : localhost
+Source Server Version : 50525
+Source Host           : localhost:3306
+Source Database       : banners
 
+Target Server Type    : MYSQL
+Target Server Version : 50525
+File Encoding         : 65001
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+Date: 2013-07-27 12:28:20
+*/
 
---
--- База данных: `ozisby_banners`
---
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `projects`
---
-
-CREATE TABLE IF NOT EXISTS `projects` (
+SET FOREIGN_KEY_CHECKS=0;
+-- ----------------------------
+-- Table structure for `projects`
+-- ----------------------------
+DROP TABLE IF EXISTS `projects`;
+CREATE TABLE `projects` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(1000) NOT NULL,
   `status` varchar(255) NOT NULL,
@@ -38,15 +30,17 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `created_time` datetime NOT NULL,
   `out_hash` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+-- ----------------------------
+-- Records of projects
+-- ----------------------------
 
---
--- Структура таблицы `project_comments`
---
-
-CREATE TABLE IF NOT EXISTS `project_comments` (
+-- ----------------------------
+-- Table structure for `project_comments`
+-- ----------------------------
+DROP TABLE IF EXISTS `project_comments`;
+CREATE TABLE `project_comments` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `project_id` int(11) NOT NULL,
@@ -54,80 +48,88 @@ CREATE TABLE IF NOT EXISTS `project_comments` (
   `datetime` datetime NOT NULL,
   `mode` enum('worker','customer') NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+-- ----------------------------
+-- Records of project_comments
+-- ----------------------------
 
---
--- Структура таблицы `project_comment_files`
---
-
-CREATE TABLE IF NOT EXISTS `project_comment_files` (
+-- ----------------------------
+-- Table structure for `project_comment_files`
+-- ----------------------------
+DROP TABLE IF EXISTS `project_comment_files`;
+CREATE TABLE `project_comment_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `comment_id` int(11) NOT NULL,
   `file` varchar(255) NOT NULL,
   `real_filename` varchar(255) NOT NULL,
   `file_size` int(11) NOT NULL,
+  `pos` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+-- ----------------------------
+-- Records of project_comment_files
+-- ----------------------------
 
---
--- Структура таблицы `project_comment_reads`
---
-
-CREATE TABLE IF NOT EXISTS `project_comment_reads` (
+-- ----------------------------
+-- Table structure for `project_comment_reads`
+-- ----------------------------
+DROP TABLE IF EXISTS `project_comment_reads`;
+CREATE TABLE `project_comment_reads` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `comment_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+-- ----------------------------
+-- Records of project_comment_reads
+-- ----------------------------
 
---
--- Структура таблицы `project_users`
---
-
-CREATE TABLE IF NOT EXISTS `project_users` (
+-- ----------------------------
+-- Table structure for `project_users`
+-- ----------------------------
+DROP TABLE IF EXISTS `project_users`;
+CREATE TABLE `project_users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `project_id` int(11) NOT NULL,
+  `datetime` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+-- ----------------------------
+-- Records of project_users
+-- ----------------------------
 
---
--- Структура таблицы `rights_authassignment`
---
-
-CREATE TABLE IF NOT EXISTS `rights_authassignment` (
+-- ----------------------------
+-- Table structure for `rights_authassignment`
+-- ----------------------------
+DROP TABLE IF EXISTS `rights_authassignment`;
+CREATE TABLE `rights_authassignment` (
   `itemname` varchar(64) NOT NULL,
   `userid` varchar(64) NOT NULL,
   `bizrule` text,
   `data` text,
-  PRIMARY KEY (`itemname`,`userid`)
+  PRIMARY KEY (`itemname`,`userid`),
+  CONSTRAINT `rights_authassignment_ibfk_1` FOREIGN KEY (`itemname`) REFERENCES `rights_authitem` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Дамп данных таблицы `rights_authassignment`
---
+-- ----------------------------
+-- Records of rights_authassignment
+-- ----------------------------
+INSERT INTO `rights_authassignment` VALUES ('admin', '1', null, 'N;');
+INSERT INTO `rights_authassignment` VALUES ('admin', 'admin', null, 'N;');
+INSERT INTO `rights_authassignment` VALUES ('customer', '2', null, 'N;');
+INSERT INTO `rights_authassignment` VALUES ('customer', 'customer', null, 'N;');
+INSERT INTO `rights_authassignment` VALUES ('worker', 'worker', null, 'N;');
 
-INSERT INTO `rights_authassignment` (`itemname`, `userid`, `bizrule`, `data`) VALUES
-('admin', '1', NULL, 'N;'),
-('admin', 'admin', NULL, 'N;'),
-('customer', 'customer', NULL, 'N;'),
-('worker', 'worker', NULL, 'N;');
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `rights_authitem`
---
-
-CREATE TABLE IF NOT EXISTS `rights_authitem` (
+-- ----------------------------
+-- Table structure for `rights_authitem`
+-- ----------------------------
+DROP TABLE IF EXISTS `rights_authitem`;
+CREATE TABLE `rights_authitem` (
   `name` varchar(64) NOT NULL,
   `type` int(11) NOT NULL,
   `description` text,
@@ -136,105 +138,102 @@ CREATE TABLE IF NOT EXISTS `rights_authitem` (
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Дамп данных таблицы `rights_authitem`
---
+-- ----------------------------
+-- Records of rights_authitem
+-- ----------------------------
+INSERT INTO `rights_authitem` VALUES ('admin', '2', 'Администратор', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('customer', '2', 'Клиент', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.Add_Comment', '0', 'Добавление комментариев', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.Admin_Comment', '0', 'Комментарий от админа(\"Заказчику\", \"Сотруднику\")', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.Comments', '0', 'Просмотр комментариев', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.Create', '0', 'Создание проектов', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.Delete', '0', 'Удаление проектов', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.Delete_Comment', '0', 'Удаление комментариев', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.Delete_Comment_File', '0', 'Удаление файлов в комментариях', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.Delete_Files', '0', 'Множественное удаление файлов', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.Download', '0', 'Скачивание файлов в комментариях', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.Edit', '0', 'Редактирование проекта', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.Edit_Comment', '0', 'Редактирование комментария', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.Index', '0', 'Просмотр списка проектов', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.Upload_Comment_File', '0', 'Добавление файлов к коментариям', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Projects.View', '0', 'Просмотр проекта', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Users.*', '1', 'Управление пользователями', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Users.Create', '0', 'Создание нового пользователя', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Users.Delete', '0', 'Удаление пользователей', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Users.Edit', '0', 'Редактирование пользователей', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('Users.Index', '0', 'Просмотр списка пользователей', null, 'N;');
+INSERT INTO `rights_authitem` VALUES ('worker', '2', 'Сотрудник', null, 'N;');
 
-INSERT INTO `rights_authitem` (`name`, `type`, `description`, `bizrule`, `data`) VALUES
-('admin', 2, 'Администратор', NULL, 'N;'),
-('customer', 2, 'Клиент', NULL, 'N;'),
-('Projects.Add_Comment', 0, 'Добавление комментариев', NULL, 'N;'),
-('Projects.Admin_Comment', 0, 'Комментарий от админа("Заказчику", "Сотруднику")', NULL, 'N;'),
-('Projects.Comments', 0, 'Просмотр комментариев', NULL, 'N;'),
-('Projects.Create', 0, 'Создание проектов', NULL, 'N;'),
-('Projects.Delete', 0, 'Удаление проектов', NULL, 'N;'),
-('Projects.Delete_Comment', 0, 'Удаление комментариев', NULL, 'N;'),
-('Projects.Delete_Comment_File', 0, 'Удаление файлов в комментариях', NULL, 'N;'),
-('Projects.Delete_Files', 0, 'Множественное удаление файлов', NULL, 'N;'),
-('Projects.Download', 0, 'Скачивание файлов в комментариях', NULL, 'N;'),
-('Projects.Edit', 0, 'Редактирование проекта', NULL, 'N;'),
-('Projects.Edit_Comment', 0, 'Редактирование комментария', NULL, 'N;'),
-('Projects.Index', 0, 'Просмотр списка проектов', NULL, 'N;'),
-('Projects.Upload_Comment_File', 0, 'Добавление файлов к коментариям', NULL, 'N;'),
-('Projects.View', 0, 'Просмотр проекта', NULL, 'N;'),
-('Users.*', 1, 'Управление пользователями', NULL, 'N;'),
-('Users.Create', 0, 'Создание нового пользователя', NULL, 'N;'),
-('Users.Delete', 0, 'Удаление пользователей', NULL, 'N;'),
-('Users.Edit', 0, 'Редактирование пользователей', NULL, 'N;'),
-('Users.Index', 0, 'Просмотр списка пользователей', NULL, 'N;'),
-('worker', 2, 'Сотрудник', NULL, 'N;');
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `rights_authitemchild`
---
-
-CREATE TABLE IF NOT EXISTS `rights_authitemchild` (
+-- ----------------------------
+-- Table structure for `rights_authitemchild`
+-- ----------------------------
+DROP TABLE IF EXISTS `rights_authitemchild`;
+CREATE TABLE `rights_authitemchild` (
   `parent` varchar(64) NOT NULL,
   `child` varchar(64) NOT NULL,
   PRIMARY KEY (`parent`,`child`),
-  KEY `child` (`child`)
+  KEY `child` (`child`),
+  CONSTRAINT `rights_authitemchild_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `rights_authitem` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `rights_authitemchild_ibfk_2` FOREIGN KEY (`child`) REFERENCES `rights_authitem` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Дамп данных таблицы `rights_authitemchild`
---
+-- ----------------------------
+-- Records of rights_authitemchild
+-- ----------------------------
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Add_Comment');
+INSERT INTO `rights_authitemchild` VALUES ('customer', 'Projects.Add_Comment');
+INSERT INTO `rights_authitemchild` VALUES ('worker', 'Projects.Add_Comment');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Admin_Comment');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Comments');
+INSERT INTO `rights_authitemchild` VALUES ('customer', 'Projects.Comments');
+INSERT INTO `rights_authitemchild` VALUES ('worker', 'Projects.Comments');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Create');
+INSERT INTO `rights_authitemchild` VALUES ('customer', 'Projects.Create');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Delete');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Delete_Comment');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Delete_Comment_File');
+INSERT INTO `rights_authitemchild` VALUES ('customer', 'Projects.Delete_Comment_File');
+INSERT INTO `rights_authitemchild` VALUES ('worker', 'Projects.Delete_Comment_File');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Delete_Files');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Download');
+INSERT INTO `rights_authitemchild` VALUES ('customer', 'Projects.Download');
+INSERT INTO `rights_authitemchild` VALUES ('worker', 'Projects.Download');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Edit');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Edit_Comment');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Index');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.Upload_Comment_File');
+INSERT INTO `rights_authitemchild` VALUES ('customer', 'Projects.Upload_Comment_File');
+INSERT INTO `rights_authitemchild` VALUES ('worker', 'Projects.Upload_Comment_File');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Projects.View');
+INSERT INTO `rights_authitemchild` VALUES ('customer', 'Projects.View');
+INSERT INTO `rights_authitemchild` VALUES ('worker', 'Projects.View');
+INSERT INTO `rights_authitemchild` VALUES ('admin', 'Users.*');
+INSERT INTO `rights_authitemchild` VALUES ('Users.*', 'Users.Create');
+INSERT INTO `rights_authitemchild` VALUES ('Users.*', 'Users.Delete');
+INSERT INTO `rights_authitemchild` VALUES ('Users.*', 'Users.Edit');
+INSERT INTO `rights_authitemchild` VALUES ('Users.*', 'Users.Index');
 
-INSERT INTO `rights_authitemchild` (`parent`, `child`) VALUES
-('admin', 'Projects.Add_Comment'),
-('customer', 'Projects.Add_Comment'),
-('worker', 'Projects.Add_Comment'),
-('admin', 'Projects.Admin_Comment'),
-('admin', 'Projects.Comments'),
-('customer', 'Projects.Comments'),
-('worker', 'Projects.Comments'),
-('admin', 'Projects.Create'),
-('customer', 'Projects.Create'),
-('admin', 'Projects.Delete'),
-('admin', 'Projects.Delete_Comment'),
-('admin', 'Projects.Delete_Comment_File'),
-('customer', 'Projects.Delete_Comment_File'),
-('worker', 'Projects.Delete_Comment_File'),
-('admin', 'Projects.Delete_Files'),
-('admin', 'Projects.Download'),
-('customer', 'Projects.Download'),
-('worker', 'Projects.Download'),
-('admin', 'Projects.Edit'),
-('admin', 'Projects.Edit_Comment'),
-('admin', 'Projects.Index'),
-('admin', 'Projects.Upload_Comment_File'),
-('customer', 'Projects.Upload_Comment_File'),
-('worker', 'Projects.Upload_Comment_File'),
-('admin', 'Projects.View'),
-('customer', 'Projects.View'),
-('worker', 'Projects.View'),
-('admin', 'Users.*'),
-('Users.*', 'Users.Create'),
-('Users.*', 'Users.Delete'),
-('Users.*', 'Users.Edit'),
-('Users.*', 'Users.Index');
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `rights_rights`
---
-
-CREATE TABLE IF NOT EXISTS `rights_rights` (
+-- ----------------------------
+-- Table structure for `rights_rights`
+-- ----------------------------
+DROP TABLE IF EXISTS `rights_rights`;
+CREATE TABLE `rights_rights` (
   `itemname` varchar(64) NOT NULL,
   `type` int(11) NOT NULL,
   `weight` int(11) NOT NULL,
-  PRIMARY KEY (`itemname`)
+  PRIMARY KEY (`itemname`),
+  CONSTRAINT `rights_rights_ibfk_1` FOREIGN KEY (`itemname`) REFERENCES `rights_authitem` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+-- ----------------------------
+-- Records of rights_rights
+-- ----------------------------
 
---
--- Структура таблицы `slider_items`
---
-
-CREATE TABLE IF NOT EXISTS `slider_items` (
+-- ----------------------------
+-- Table structure for `slider_items`
+-- ----------------------------
+DROP TABLE IF EXISTS `slider_items`;
+CREATE TABLE `slider_items` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `comment_file_id` int(11) DEFAULT NULL,
   `page_id` int(11) NOT NULL,
@@ -242,71 +241,45 @@ CREATE TABLE IF NOT EXISTS `slider_items` (
   `real_filename` varchar(255) DEFAULT NULL,
   `html` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+-- ----------------------------
+-- Records of slider_items
+-- ----------------------------
 
---
--- Структура таблицы `slider_pages`
---
-
-CREATE TABLE IF NOT EXISTS `slider_pages` (
+-- ----------------------------
+-- Table structure for `slider_pages`
+-- ----------------------------
+DROP TABLE IF EXISTS `slider_pages`;
+CREATE TABLE `slider_pages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `project_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+-- ----------------------------
+-- Records of slider_pages
+-- ----------------------------
 
---
--- Структура таблицы `users`
---
-
-CREATE TABLE IF NOT EXISTS `users` (
+-- ----------------------------
+-- Table structure for `users`
+-- ----------------------------
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `role` enum('admin','customer','worker') NOT NULL,
   `email` varchar(255) NOT NULL,
   `login` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `salt` varchar(255) NOT NULL,
   `contact` text,
   `time_created` datetime NOT NULL,
   `last_visit` datetime NOT NULL,
   `hide_information` text,
   `avatar` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=23 ;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
---
--- Дамп данных таблицы `users`
---
-
-INSERT INTO `users` (`id`, `role`, `email`, `login`, `password`, `salt`, `contact`, `time_created`, `last_visit`, `hide_information`, `avatar`) VALUES
-(1, 'admin', 'ozicoder@gmail.com', 'Администратор', '$2gCXDSrN2DHo', '$2a$10$0JTq3q9Gr7r99gyU4eQ/QK', '1231233333', '2013-03-11 00:53:03', '2013-07-08 19:03:53', '123321', '513d144460c76.jpg');
-
---
--- Ограничения внешнего ключа сохраненных таблиц
---
-
---
--- Ограничения внешнего ключа таблицы `rights_authassignment`
---
-ALTER TABLE `rights_authassignment`
-  ADD CONSTRAINT `rights_authassignment_ibfk_1` FOREIGN KEY (`itemname`) REFERENCES `rights_authitem` (`name`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Ограничения внешнего ключа таблицы `rights_authitemchild`
---
-ALTER TABLE `rights_authitemchild`
-  ADD CONSTRAINT `rights_authitemchild_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `rights_authitem` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `rights_authitemchild_ibfk_2` FOREIGN KEY (`child`) REFERENCES `rights_authitem` (`name`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Ограничения внешнего ключа таблицы `rights_rights`
---
-ALTER TABLE `rights_rights`
-  ADD CONSTRAINT `rights_rights_ibfk_1` FOREIGN KEY (`itemname`) REFERENCES `rights_authitem` (`name`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- ----------------------------
+-- Records of users
+-- ----------------------------
+INSERT INTO `users` VALUES ('1', 'admin', 'ozicoder@gmail.com', 'Администратор', '21232f297a57a5a743894a0e4a801fc3', '1231233333', '2013-03-11 00:53:03', '2013-07-27 03:04:41', '123321', '513d144460c76.jpg');

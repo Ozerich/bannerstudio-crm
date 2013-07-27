@@ -6,7 +6,6 @@
  * @property string $email
  * @property string $login
  * @property string $password
- * @property string $salt
  * @property string $contact
  * @property string $time_created
  * @property string $last_visit
@@ -61,18 +60,18 @@ class User extends CActiveRecord
     public function rules()
     {
         return array(
-            array('role, email, login, salt, time_created', 'required'),
+            array('role, email, login, time_created', 'required'),
             array('email, login', 'unique'),
             array('role', 'length', 'max' => 8),
             array('email', 'email'),
-            array('email, login, salt', 'length', 'max' => 255),
+            array('email, login', 'length', 'max' => 255),
             array('contact, hide_information, password, send_invite', 'safe'),
 
             array('password', 'required', 'on' => 'insert'),
 
             array('avatar', 'file', 'types' => 'jpg, png, jpeg, bmp, gif', 'maxSize' => 1024 * 1024 * 10, 'tooLarge' => 'Файл имеет большой размер', 'allowEmpty' => true),
 
-            array('id, role, email, login, password, salt, contact, time_created, last_visit', 'safe', 'on' => 'search'),
+            array('id, role, email, login, password, contact, time_created, last_visit', 'safe', 'on' => 'search'),
         );
     }
 
@@ -107,7 +106,6 @@ class User extends CActiveRecord
 
     public function validatePassword($password)
     {
-
         return md5($password) === $this->password;
     }
 
@@ -116,22 +114,9 @@ class User extends CActiveRecord
         return md5($password);
     }
 
-    public function generateSalt($cost = 10)
-    {
-        $rand = '';
-        for ($i = 0; $i < 8; ++$i)
-            $rand .= pack('S', mt_rand(0, 0xffff));
-        $rand .= microtime();
-        $rand = sha1($rand, true);
-        $salt = '$2a$' . str_pad((int)$cost, 2, '0', STR_PAD_RIGHT) . '$';
-        $salt .= strtr(substr(base64_encode($rand), 0, 22), array('+' => '.'));
-        return $salt;
-    }
-
     public function beforeValidate()
     {
         if ($this->isNewRecord) {
-            $this->salt = $this->generateSalt();
             $this->time_created = date("Y-m-d H:i:s");
         }
 
@@ -229,7 +214,6 @@ class User extends CActiveRecord
             }
         }
 
-
         usort($result, 'sort_projects_function');
 
         return $result;
@@ -250,59 +234,44 @@ class User extends CActiveRecord
 
     public function getInboxComments($from_time = 0)
     {
-
-        $project_ids = array();
-
-        if (Yii::app()->user->role == 'admin') {
-            foreach (Project::model()->findAll() as $project) {
-                $project_ids[] = array('time' => Yii::app()->user->getModel()->time_created, 'id' => $project->id);
-            }
+        $projects = array();
+        if ($this->role == 'admin') {
+            $projects = Project::model()->findAll();
         } else {
-            foreach (ProjectUser::model()->findAllByAttributes(array('user_id' => Yii::app()->user->id)) as $project) {
-                $project_ids[] = array('time' => $project->datetime, 'id' => $project->project_id);
-            }
-        }
-
-        $comments_all = array();
-        foreach ($project_ids as $project_info) {
-
-            $project_id = $project_info['id'];
-            $project_time = strtotime($project_info['time']);
-
-            if (Yii::app()->user->role == 'admin') {
-                $project_comments = ProjectComment::model()->findAllByAttributes(array('project_id' => $project_id));
-            } else {
-
-                $project_comments = ProjectComment::model()->findAllByAttributes(array('project_id' => $project_id,
-                    'mode' => Yii::app()->user->role,
-                    'user_id' => $this->id,
-                ));
-
-                $admins = User::model()->findAllByAttributes(array('role' => 'admin'));
-                foreach($admins as $admin){
-                    $project_comments = array_merge($project_comments, ProjectComment::model()->findAllByAttributes(array('project_id' => $project_id,
-                        'mode' => Yii::app()->user->role,
-                        'user_id' => $admin->id,
-                    )));
+            foreach (ProjectUser::model()->findAllByAttributes(array('user_id' => $this->id)) as $_project_user) {
+                $project = Project::model()->findByPk($_project_user->project_id);
+                if ($project) {
+                    $projects[] = $project;
                 }
             }
-
-            $project_comments_filtered = array();
-
-            foreach ($project_comments as $comment) {
-                if(strtotime($comment->datetime) >= $project_time){
-                    $project_comments_filtered[] = $comment;
-                }
-            }
-
-            $comments_all = array_merge($comments_all, $project_comments_filtered);
+        }
+        if (empty($projects)) {
+            return array();
         }
 
+        $comments = array();
+        foreach ($projects as $project) {
+            foreach ($project->comments as $comment) {
+                if ($this->role == 'admin') {
+                    if ($comment->user_id != $this->id) {
+                        $comments[] = $comment;
+                    }
+                } else {
+                    if ($comment->mode == $this->role) {
+                        $comments[] = $comment;
+                    }
+                }
+            }
+        }
 
         $result = array();
-        foreach ($comments_all as $comment) {
-            if ($comment->user_id != Yii::app()->user->id && strtotime($comment->datetime) > $from_time) {
-                $result[] = $comment;
+
+        foreach ($comments as $comment) {
+            if (strtotime($comment->datetime) > strtotime($comment->user->time_created) && strtotime($comment->datetime) >= $from_time) {
+                $result[] = array(
+                    'comment' => $comment,
+                    'readed' => ProjectCommentRead::model()->countByAttributes(array('user_id' => $this->id, 'comment_id' => $comment->id)) > 0
+                );
             }
         }
 

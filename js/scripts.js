@@ -812,65 +812,54 @@ $(function () {
     var lastTime = 0;
 
     function loadUnreadComments(callback) {
-        var project_id = null;
+        var project_id = null, i;
 
-        if ($('#project_id').length > 0) {
+        if ($('#page_project').length > 0) {
             project_id = $('#project_id').val();
         }
 
         $.post('/ajax/get_unread_comments' + (project_id ? '/project_id/' + project_id : ''), {time: lastTime}, function (data) {
+
             data = jQuery.parseJSON(data);
 
             var $message_status_block = $('.message-status-block');
-
             $message_status_block.toggleClass('new-exist', data.count > 0);
             if (data.count > 0) {
                 $message_status_block.find('span').html(data.count);
-
-                if ($('#page_project').length > 0) {
-                    var project_id = $('#project_id').val();
-					
-                    if (data.project_new_count[project_id] && lastTime) {
-					
-						var project_ids = data.unread_ids;			
-						
-						var need_update = false;					
-						for(var i = 0; i < project_ids.length; i++){
-							if($('.comment-item[data-id=' + projects_ids[i] + ']').length === 0){
-								need_update = true;
-							}
-						}
-						
-						//if(need_update)
-							updateComments();
-                    }
-                }
             }
 
-            if (lastTime && data.html.length > 0) {
-                for (var i = 0; i < data.html.length; i++) {
+            if (!lastTime) {
+                lastTime = data.timestamp;
+                callback();
+                return;
+            }
 
-					if($('.messages-list-container .message[data-id=' + $(data.html[i].header).data('id') + ']').length === 0)
-                    $('.messages-list-container').prepend(data.html[i].header);
 
-                    if ($('#page_index').length > 0) {
-                        $('.comments-table .items').find('.empty').hide();
-						if($('.comments-table .items .row[data-id=' + $(data.html[i].index).data('id') + ']').length === 0)
-                        $('.comments-table .items').prepend(data.html[i].index);
-                    }
+            if ($('#page_project').length > 0 && data.project_new_count[$('#project_id').val()]) {
+                updateComments();
+            }
+
+
+            for (i = 0; i < data.html.length; i++) {
+                $('.messages-list-container .items').prepend(data.html[i].header);
+
+                if ($('#page_index').length > 0) {
+                    var $items = $('.comments-table .items');
+                    $items.find('.empty').hide();
+                    $items.prepend(data.html[i].index);
                 }
             }
 
 
             $('.messages-list-container .message').removeClass('no-read').addClass('read');
             for (var i = 0; i < data.unread_ids.length; i++) {
-                var comment_id = data.unread_ids[i];
-                $('.messages-list-container .message[data-id="' + comment_id + '"]').addClass('no-read').removeClass('read');
+                $('.messages-list-container .message[data-id="' + data.unread_ids[i] + '"]').addClass('no-read').removeClass('read');
             }
 
             if ($('#page_project').length > 0) {
                 var pages_count = 0;
-                for (var page_id in data.slider_stats)pages_count++;
+                var page_id;
+                for (page_id in data.slider_stats)pages_count++;
 
                 var need_update_slider = false;
 
@@ -878,7 +867,7 @@ $(function () {
                     need_update_slider = true;
                 }
                 else {
-                    for (var page_id in data.slider_stats) {
+                    for (page_id in data.slider_stats) {
 
                         var count = +data.slider_stats[page_id];
                         var page = $('.slider-page[data-id=' + page_id + ']');
