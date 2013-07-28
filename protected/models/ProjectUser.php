@@ -79,6 +79,16 @@ class ProjectUser extends CActiveRecord
             $model->user_id = $user_id;
             $model->datetime = $last_time ? $last_time : new CDbExpression('NOW()');
 
+
+            $comments = ProjectComment::model()->findAllByAttributes(array('project_id' => $project_id));
+            foreach($comments as $comment){
+                $read = new ProjectCommentRead();
+                $read->user_id = Yii::app()->user->id;
+                $read->comment_id = $comment->id;
+                $read->save();
+
+            }
+
             return $model->save();
         }
 

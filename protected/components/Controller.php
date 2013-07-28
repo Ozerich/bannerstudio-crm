@@ -50,7 +50,7 @@ class Controller extends RController
                 $criteria->limit = 50;
                 $criteria->addNotInCondition('user_id', array(Yii::app()->user->id));
 
-                $project_ids= array();
+                $project_ids = array();
                 foreach ($projects as $project) {
                     $project_ids[] = $project->id;
                 }
@@ -71,7 +71,9 @@ class Controller extends RController
 
         foreach ($comments as $comment) {
             if ($comment->project) {
-                $result[] = $comment;
+                $project_user = ProjectUser::model()->findByAttributes(array('user_id' => Yii::app()->user->id, 'project_id' => $comment->project_id));
+                if (strtotime($comment->datetime) > strtotime($project_user->datetime))
+                    $result[] = $comment;
             }
         }
 

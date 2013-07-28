@@ -825,7 +825,7 @@ $(function () {
             var $message_status_block = $('.message-status-block');
             $message_status_block.toggleClass('new-exist', data.count > 0);
             if (data.count > 0) {
-                $message_status_block.find('span').html(data.count);
+                $message_status_block.find('span:first').html(data.count);
             }
 
             if (!lastTime) {

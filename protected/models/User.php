@@ -234,6 +234,8 @@ class User extends CActiveRecord
 
     public function getInboxComments($from_time = 0)
     {
+        $project_times = array();
+
         $projects = array();
         if ($this->role == 'admin') {
             $projects = Project::model()->findAll();
@@ -242,6 +244,7 @@ class User extends CActiveRecord
                 $project = Project::model()->findByPk($_project_user->project_id);
                 if ($project) {
                     $projects[] = $project;
+                    $project_times[$project->id] = strtotime($_project_user->datetime);
                 }
             }
         }
@@ -267,7 +270,9 @@ class User extends CActiveRecord
         $result = array();
 
         foreach ($comments as $comment) {
-            if (strtotime($comment->datetime) > strtotime($comment->user->time_created) && strtotime($comment->datetime) >= $from_time) {
+            $comment_time = strtotime($comment->datetime);
+            $min_limit = max($project_times[$comment->project_id], $from_time);
+            if ($comment_time > $min_limit) {
                 $result[] = array(
                     'comment' => $comment,
                     'readed' => ProjectCommentRead::model()->countByAttributes(array('user_id' => $this->id, 'comment_id' => $comment->id)) > 0
