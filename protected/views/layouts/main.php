@@ -27,7 +27,7 @@
 
     <? if (!Yii::app()->user->isGuest): ?>
         <script src="/js/jquery.expandable.js"></script>
-        <script src="/js/scripts.js"></script>
+        <script src="/js/scripts.js?v=1"></script>
         <script src="/js/ajaxfileupload.js"></script>
 
         <link rel="stylesheet" href="/css/jquery.fancybox.css?v=2.1.4" type="text/css" media="screen"/>
@@ -35,9 +35,15 @@
 
     <? endif; ?>
 
+    <script>
+        var AJAX_ENABLED = <?=Yii::app()->params['ajax_enabled'];?>;
+        var AJAX_UPDATE_TIMEOUT = <?=Yii::app()->params['ajax_update_timeout'] * 1000;?>;
+    </script>
+
 </head>
 
 <body>
+
 
 <ul class="flashes">
     <? foreach (Yii::app()->user->getFlashes() as $key => $message): ?>

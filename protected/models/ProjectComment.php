@@ -121,29 +121,45 @@ class ProjectComment extends CActiveRecord
     {
         if ($this->isNewRecord) {
 
-            // Рассылка уведомлений
-            $project = Project::model()->findByPk($this->project->id);
-            if ($this->user->role == 'admin') {
-                $users = $project->getUsers($this->mode);
-            } else {
-                $users = User::GetAdmins();
-            }
+            if (Yii::app()->params['email_enabled']) {
 
-            foreach ($users as $user) {
-                $message = new YiiMailMessage;
+                // Рассылка уведомлений
+                $project = Project::model()->findByPk($this->project_id);
+                if ($project) {
+                    if ($this->user->role == 'admin') {
+                        $users = $project->getUsers($this->mode);
+                    } else {
+                        $users = User::GetAdmins();
+                    }
 
-                $message->subject = 'Уважаемый, ' . $user->login . '! Новый комментарий в проекте ' . $project->name;
-                $message->view = 'new_comment_in_project';
-                $message->from = Yii::app()->params['email_admin'];
-                $message->to = $user->email;
+                    foreach ($users as $user) {
+                        $message = new YiiMailMessage;
 
-                $message->setBody(array(
-                    'user' => $user,
-                    'project' => $project,
-                    'comment' => $this,
-                ), 'text/html');
+                        $message->subject = 'Уважаемый, ' . $user->login . '! Новый комментарий в проекте ' . $project->name;
+                        $message->view = 'new_comment_in_project';
+                        $message->from = Yii::app()->params['email_admin'];
+                        $message->to = $user->email;
 
-                Yii::app()->mail->send($message);
+                        $message->setBody(array(
+                            'user' => $user,
+                            'project' => $project,
+                            'comment' => $this,
+                        ), 'text/html');
+
+                        $body = Yii::app()->controller->renderPartial('//email/new_comment_in_project', array(
+                            'user' => $user,
+                            'project' => $project,
+                            'comment' => $this,
+                        ), true);
+
+                        //  Yii::app()->mail->send($message);
+
+                        $headers = "MIME-Version: 1.0" . "\r\n";
+                        $headers .= "Content-type:text/html;charset=utf-8" . "\r\n";
+                        $headers .= "From: " . Yii::app()->params['email_admin'] . "\r\nReply-To: " . Yii::app()->params['email_admin'] . "";
+                        mail($user->email, $message->subject, $body, $headers);
+                    }
+                }
             }
 
         }

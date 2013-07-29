@@ -2,8 +2,8 @@
 
 function sort_projects_function($a, $b)
 {
-    if($a->closed && !$b->closed)return 1;
-    if($b->closed && !$a->closed)return -1;
+    if ($a->closed && !$b->closed) return 1;
+    if ($b->closed && !$a->closed) return -1;
 
     return $a->created_time > $b->created_time ? -1 : 1;
 }
@@ -40,7 +40,7 @@ return array(
 
     'components' => array(
 
-        'session' => array (
+        'session' => array(
             'autoStart' => false,
         ),
 
@@ -75,6 +75,8 @@ return array(
                 'gii' => 'gii',
                 'gii/<controller:\w+>' => 'gii/<controller>',
                 'gii/<controller:\w+>/<action:\w+>' => 'gii/<controller>/<action>',
+
+                'mark_all_read' => 'ajax/mark_all_read',
 
                 'login' => 'auth/login',
                 'logout' => 'auth/logout',
@@ -117,11 +119,16 @@ return array(
     ),
 
     'params' => array(
-        'upload_avatar' => '/uploads/avatars/',
+
         'upload_dir' => '/uploads/',
+        'upload_avatar' => '/uploads/avatars/',
         'upload_dir_comments' => '/uploads/comments/',
         'tmp_dir' => '/uploads/tmp/',
+
         'email_admin' => 'mail@bannerstudio.ru',
-        'admin_emails' => array('ozicoder@gmail.com'),
+        'email_enabled' => 1,
+
+        'ajax_enabled' => 1,                         // Включено ли AJAX обновление
+        'ajax_update_timeout' => 5,                 // Таймаут AJAX обновления (количество секунд)
     ),
 );

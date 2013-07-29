@@ -86,7 +86,6 @@ class ProjectUser extends CActiveRecord
                 $read->user_id = Yii::app()->user->id;
                 $read->comment_id = $comment->id;
                 $read->save();
-
             }
 
             return $model->save();

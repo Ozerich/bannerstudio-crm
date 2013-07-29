@@ -11,6 +11,7 @@ $dataProvider = new CActiveDataProvider('ProjectComment', array(
 ));
 
 
+
 $this->widget('bootstrap.widgets.TbListView', array(
     'dataProvider' => $dataProvider,
     'itemView' => '_comment',

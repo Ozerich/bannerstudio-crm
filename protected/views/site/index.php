@@ -18,8 +18,21 @@
 
     <div class="widget" id="widget_comments">
 
+        <? $dataProvider = $this->getCommentsDataProvider();
+        $noread_exist = false;
+        foreach ($dataProvider->data as $comment) {
+            if ($comment->readed == false) {
+                $noread_exist = true;
+                break;
+            }
+        }
+        ?>
+
         <div class="w-header">
             <h2>Последние сообщения</h2>
+            <button class="btn btn-info btn-mini mark_all_read-btn" style="display: <?= $noread_exist ? 'inline' : 'none' ?>">Все сообщения
+                прочитаны
+            </button>
         </div>
 
         <div class="w-content">
@@ -36,7 +49,7 @@
 
                 <div class="w-tbody">
                     <? $this->widget('bootstrap.widgets.TbListView', array(
-                        'dataProvider' => $this->getCommentsDataProvider(),
+                        'dataProvider' => $dataProvider,
                         'itemView' => '/projects/_comments_table_item',
                         'template' => "{items}",
                         'enablePagination' => false,

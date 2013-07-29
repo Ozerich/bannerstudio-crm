@@ -148,35 +148,58 @@ class ProjectsController extends Controller
 
     public function actionAdd_Comment()
     {
-        if (!Yii::app()->request->isAjaxRequest) {
-            throw new CHttpException(404);
-        }
-
         $project_id = Yii::app()->request->getPost('project_id');
         $message = Yii::app()->request->getPost('message');
         $mode = Yii::app()->request->getPost('mode');
-        $session = Yii::app()->request->getPost('session');
 
-        $model = new ProjectComment();
-        $model->project_id = $project_id;
-        $model->text = $message;
-        $model->user_id = Yii::app()->user->id;
-        $model->mode = $mode;
-        $model->save();
+        if (Yii::app()->request->isAjaxRequest) {
+            $session = Yii::app()->request->getPost('session');
 
-        if (isset($_SESSION['files'][$session])) {
-            foreach ($_SESSION['files'][$session] as $file_id) {
-                $file = ProjectCommentFile::model()->findByPk($file_id);
-                if ($file) {
-                    $file->comment_id = $model->id;
-                    $file->save();
+            $model = new ProjectComment();
+            $model->project_id = $project_id;
+            $model->text = $message;
+            $model->user_id = Yii::app()->user->id;
+            $model->mode = $mode;
+            $model->save();
+
+            if (isset($_SESSION['files'][$session])) {
+                foreach ($_SESSION['files'][$session] as $file_id) {
+                    $file = ProjectCommentFile::model()->findByPk($file_id);
+                    if ($file) {
+                        $file->comment_id = $model->id;
+                        $file->save();
+                    }
                 }
             }
+
+
+            echo json_encode(array('comment_id' => $model->id));
+            Yii::app()->end();
         }
 
+        if (Yii::app()->request->isPostRequest) {
 
-        echo json_encode(array('comment_id' => $model->id));
-        Yii::app()->end();
+            $model_comment = new ProjectComment();
+            $model_comment->project_id = $project_id;
+            $model_comment->text = $message;
+            $model_comment->user_id = Yii::app()->user->id;
+            $model_comment->mode = $mode;
+            $model_comment->save();
+
+            $files = CUploadedFile::getInstancesByName('file');
+            foreach ($files as $pos => $file) {
+                $model = new ProjectCommentFile();
+
+                $model->file = uniqid() . '.' . $file->getExtensionName();
+                $model->real_filename = $file->getName();
+                $model->pos = $pos;
+                $model->file_size = $file->getSize();
+                $model->comment_id = $model_comment->id;
+                $model->save();
+            }
+
+            $this->redirect('/projects/' . $project_id);
+        }
     }
 
     public function actionEdit_Comment($id = 0)
@@ -211,7 +234,7 @@ class ProjectsController extends Controller
     }
 
 
-    public function actionUpload_Comment_File($session = '', $pos = 0)
+    public function actionUpload_Comment_File($session = '', $pos = 0, $fuck = 0)
     {
         if (!Yii::app()->request->isPostRequest) {
             throw new CHttpException(404);

@@ -3,6 +3,8 @@ function nl2br(str, is_xhtml) {
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
 }
 
+var BLOCK_AJAX_UPDATE = false;
+
 $(function () {
 
     setTimeout(function () {
@@ -90,6 +92,29 @@ $(function () {
             }
         });
 
+    })();
+
+    // Главная страница
+    (function () {
+        var $page = $('#page_index');
+        if ($page.length === 0) return;
+
+        $page.find('.mark_all_read-btn').on('click', function () {
+
+            BLOCK_AJAX_UPDATE = true;
+
+            $.get('/mark_all_read', function () {
+                BLOCK_AJAX_UPDATE = false;
+            });
+            $(this).hide();
+
+            $('.comments-table .list-view .row.no-read').removeClass('no-read').addClass('readed');
+            $('.message-status-block .messages-list .message.no-read').removeClass('no-read').addClass('readed');
+            $('.message-status-block').toggleClass('new-exist', false);
+
+
+            return false;
+        });
     })();
 
     // страница с формой проекта
@@ -182,7 +207,6 @@ $(function () {
     (function () {
         if ($('#page_project').length === 0)return;
 
-
         $(window).bind("scroll", function (event) {
 
             if (window.forceScroll)return;
@@ -264,8 +288,15 @@ $(function () {
 
         $('#btn_add_comment').on('click', function () {
 
-            var $message_textarea = $('.comments-form').find('textarea').prop('disabled', true);
+            $('.comments-form .disabled').show();
+            if (navigator.userAgent.indexOf("Opera") !== -1 && $comments_form.find('.file-item').length > 2) {
 
+                return true;
+            }
+
+            $('.comments-form .disabled').hide();
+
+            var $message_textarea = $('.comments-form').find('textarea').prop('disabled', true);
             var $btn = $(this).prop('disabled', true);
 
             var session = Math.round(Math.random() * 10000000);
@@ -305,7 +336,7 @@ $(function () {
 
                     (function ($file_item, ind) {
                         $.ajaxFileUpload({
-                            url: '/projects/upload_comment_file/session/' + session + '/pos/' + (ind + 1),
+                            url: '/projects/upload_comment_file/session/' + session + '/pos/' + (ind + 1) + '/fuck/' + (Math.random() * 100000),
                             secureuri: false,
                             fileElementId: 'comment_file_' + ind,
                             dataType: 'json',
@@ -319,7 +350,15 @@ $(function () {
                                 }
 
                                 if (++loaded_count == count) {
-                                    successCallback();
+                                    $.ajaxFileUpload({
+                                        url: '/projects/upload_comment_file',
+                                        secureuri: false,
+                                        fileElementId: 'comment_file_' + 0,
+                                        dataType: 'json',
+                                        complete: function (data, status) {
+                                            successCallback();
+                                        }
+                                    });
                                 }
                             }
                         });
@@ -419,6 +458,8 @@ $(function () {
                 $('[mode=customer]').hide();
                 $('[mode=worker]').show();
             }
+
+            $('.comments-form input[name=mode]').val(mode);
 
             $('.switch').removeClass('active');
             $('.switch.' + mode).addClass('active');
@@ -707,22 +748,6 @@ $(function () {
             var width = $item.data('width');
             var height = $item.data('height');
 
-            /*  $item.fancybox({
-             autoResize: false,
-             autoSize: false,
-             autoDimension: false,
-             fitToView: false,
-             minHeight: 1,
-             padding: 15,
-             margin: 0,
-             width: width,
-             height: height,
-             minWidth: 1,
-             aspectRatio: false,
-             type: $item.hasClass('iframe') ? 'iframe' : null
-             });
-             */
-
             $item.fancybox({
                 autoResize: false,
                 autoSize: false,
@@ -814,89 +839,117 @@ $(function () {
     function loadUnreadComments(callback) {
         var project_id = null, i;
 
+        if (BLOCK_AJAX_UPDATE) {
+            callback();
+            return;
+        }
+
         if ($('#page_project').length > 0) {
             project_id = $('#project_id').val();
         }
 
-        $.post('/ajax/get_unread_comments' + (project_id ? '/project_id/' + project_id : ''), {time: lastTime}, function (data) {
+        $.ajax({
+            url: '/ajax/get_unread_comments' + (project_id ? '/project_id/' + project_id : ''),
+            type: 'POST',
+            data: {time: lastTime},
+            success: function (data) {
 
-            data = jQuery.parseJSON(data);
+                data = jQuery.parseJSON(data);
 
-            var $message_status_block = $('.message-status-block');
-            $message_status_block.toggleClass('new-exist', data.count > 0);
-            if (data.count > 0) {
-                $message_status_block.find('span:first').html(data.count);
-            }
+                var $message_status_block = $('.message-status-block');
+                $message_status_block.toggleClass('new-exist', data.count > 0);
+                if (data.count > 0) {
+                    $message_status_block.find('span:first').html(data.count);
+                }
 
-            if (!lastTime) {
-                lastTime = data.timestamp;
-                callback();
-                return;
-            }
-
-
-            if ($('#page_project').length > 0 && data.project_new_count[$('#project_id').val()]) {
-                updateComments();
-            }
+                if (!lastTime) {
+                    lastTime = data.timestamp;
+                    callback();
+                    return;
+                }
 
 
-            for (i = 0; i < data.html.length; i++) {
-                $('.messages-list-container .items').prepend(data.html[i].header);
+                if ($('#page_project').length > 0 && data.project_new_count[$('#project_id').val()]) {
+                    updateComments();
+                }
 
                 if ($('#page_index').length > 0) {
-                    var $items = $('.comments-table .items');
-                    $items.find('.empty').hide();
-                    $items.prepend(data.html[i].index);
+                    $('.mark_all_read-btn').toggle(data.count > 0);
                 }
-            }
 
 
-            $('.messages-list-container .message').removeClass('no-read').addClass('read');
-            for (var i = 0; i < data.unread_ids.length; i++) {
-                $('.messages-list-container .message[data-id="' + data.unread_ids[i] + '"]').addClass('no-read').removeClass('read');
-            }
+                for (i = 0; i < data.html.length; i++) {
 
-            if ($('#page_project').length > 0) {
-                var pages_count = 0;
-                var page_id;
-                for (page_id in data.slider_stats)pages_count++;
+                    if ($('.messages-list-container .items').find('.message[data-id=' + $(data.html[i].header).data('id') + ']').length === 0) {
+                        $('.messages-list-container .items').prepend(data.html[i].header);
+                    }
 
-                var need_update_slider = false;
+                    if ($('#page_index').length > 0) {
+                        var $items = $('.comments-table .items');
+                        $items.find('.empty').hide();
 
-                if (pages_count != $('.slider-page').length) {
-                    need_update_slider = true;
-                }
-                else {
-                    for (page_id in data.slider_stats) {
+                        $('.mark_all_read-btn').toggle(data.count > 0);
 
-                        var count = +data.slider_stats[page_id];
-                        var page = $('.slider-page[data-id=' + page_id + ']');
-
-                        if (page.length == 0 || page.find('.slider-item').length != count) {
-                            need_update_slider = true;
-                            break;
+                        if ($items.find('.row[data-id=' + $(data.html[i].index).data('id') + ']').length === 0) {
+                            $items.prepend(data.html[i].index);
                         }
-
                     }
                 }
 
-                if (need_update_slider) {
-                    updateSlider();
+
+                $('.messages-list-container .message').removeClass('no-read').addClass('read');
+                for (var i = 0; i < data.unread_ids.length; i++) {
+                    $('.messages-list-container .message[data-id="' + data.unread_ids[i] + '"]').addClass('no-read').removeClass('read');
                 }
+
+                if ($('#page_project').length > 0) {
+                    var pages_count = 0;
+                    var page_id;
+                    for (page_id in data.slider_stats)pages_count++;
+
+                    var need_update_slider = false;
+
+                    if (pages_count != $('.slider-page').length) {
+                        need_update_slider = true;
+                    }
+                    else {
+                        for (page_id in data.slider_stats) {
+
+                            var count = +data.slider_stats[page_id];
+                            var page = $('.slider-page[data-id=' + page_id + ']');
+
+                            if (page.length == 0 || page.find('.slider-item').length != count) {
+                                need_update_slider = true;
+                                break;
+                            }
+
+                        }
+                    }
+
+                    if (need_update_slider) {
+                        updateSlider();
+                    }
+                }
+
+                lastTime = data.timestamp;
+
+            },
+            complete: function (data) {
+                callback();
             }
-
-
-            lastTime = data.timestamp;
-            callback();
         });
+
     }
 
     function commentsTimerFunction() {
         loadUnreadComments(function () {
-            setTimeout(commentsTimerFunction, 5000);
+            setTimeout(commentsTimerFunction, AJAX_UPDATE_TIMEOUT);
         });
     }
 
-    commentsTimerFunction();
+    if (AJAX_ENABLED) {
+        commentsTimerFunction();
+    }
+
 
 });

@@ -232,13 +232,16 @@ class User extends CActiveRecord
     }
 
 
-    public function getInboxComments($from_time = 0)
+    public function getInboxComments()
     {
         $project_times = array();
-
         $projects = array();
+
         if ($this->role == 'admin') {
             $projects = Project::model()->findAll();
+			foreach($projects as $project){
+				$project_times[$project->id] = strtotime(Yii::app()->user->getModel()->time_created);
+			}
         } else {
             foreach (ProjectUser::model()->findAllByAttributes(array('user_id' => $this->id)) as $_project_user) {
                 $project = Project::model()->findByPk($_project_user->project_id);
@@ -248,38 +251,20 @@ class User extends CActiveRecord
                 }
             }
         }
-        if (empty($projects)) {
-            return array();
-        }
 
-        $comments = array();
+        $result = array();
         foreach ($projects as $project) {
             foreach ($project->comments as $comment) {
-                if ($this->role == 'admin') {
-                    if ($comment->user_id != $this->id) {
-                        $comments[] = $comment;
-                    }
-                } else {
-                    if ($comment->mode == $this->role) {
-                        $comments[] = $comment;
+                if ($comment->user_id != $this->id && ($this->role == 'admin' || $comment->mode == $this->role)) {
+                    if (strtotime($comment->datetime) >= $project_times[$comment->project_id]) {
+                        $result[] = array(
+                            'comment' => $comment,
+                            'readed' => ProjectCommentRead::model()->countByAttributes(array('user_id' => $this->id, 'comment_id' => $comment->id)) > 0
+                        );
                     }
                 }
             }
         }
-
-        $result = array();
-
-        foreach ($comments as $comment) {
-            $comment_time = strtotime($comment->datetime);
-            $min_limit = max($project_times[$comment->project_id], $from_time);
-            if ($comment_time > $min_limit) {
-                $result[] = array(
-                    'comment' => $comment,
-                    'readed' => ProjectCommentRead::model()->countByAttributes(array('user_id' => $this->id, 'comment_id' => $comment->id)) > 0
-                );
-            }
-        }
-
         return $result;
     }
 }
