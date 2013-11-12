@@ -128,7 +128,7 @@ return array(
         'email_admin' => 'mail@bannerstudio.ru',
         'email_enabled' => 1,
 
-        'ajax_enabled' => 1,                         // Включено ли AJAX обновление
+        'ajax_enabled' => 0,                         // Включено ли AJAX обновление
         'ajax_update_timeout' => 5,                 // Таймаут AJAX обновления (количество секунд)
     ),
 );

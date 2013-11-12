@@ -187,6 +187,7 @@ class ProjectsController extends Controller
             $model_comment->save();
 
             $files = CUploadedFile::getInstancesByName('file');
+            print_r($files);exit;
             foreach ($files as $pos => $file) {
                 $model = new ProjectCommentFile();
 
@@ -234,7 +235,7 @@ class ProjectsController extends Controller
     }
 
 
-    public function actionUpload_Comment_File($session = '', $pos = 0, $fuck = 0)
+    public function actionUpload_Comment_File($session = '', $pos = 0)
     {
         if (!Yii::app()->request->isPostRequest) {
             throw new CHttpException(404);
@@ -270,7 +271,7 @@ class ProjectsController extends Controller
 
                 echo '1';
             } else {
-                echo '0';
+                echo print_r($model->getErrors());;
             }
 
 
@@ -330,8 +331,6 @@ class ProjectsController extends Controller
 
         $message = Yii::app()->request->getPost('message');
 
-        $to_slider = Yii::app()->request->getPost('to_slider', 0);
-
         $to = Yii::app()->request->getPost('to');
         if ($to != 'customer' && $to != 'worker') die;
 
@@ -347,7 +346,7 @@ class ProjectsController extends Controller
         if ($model->save()) {
             $to_slider = array();
 
-            foreach ($files as $_file) {
+            foreach ($files as $ind => $_file) {
 
                 $file = ProjectCommentFile::model()->findByPk($_file['id']);
                 if (!$file) continue;
@@ -358,8 +357,11 @@ class ProjectsController extends Controller
                 $new_file->file = $file->file;
                 $new_file->real_filename = $file->real_filename;
                 $new_file->file_size = $file->file_size;
+                $new_file->pos = $ind + 1;
 
-                $new_file->save();
+                if(!$new_file->save()){
+                    print_r($new_file->getErrors());
+                }
 
                 if ($_file['to_slider']) {
                     $to_slider[] = $new_file;

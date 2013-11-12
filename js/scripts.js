@@ -290,7 +290,6 @@ $(function () {
 
             $('.comments-form .disabled').show();
             if (navigator.userAgent.indexOf("Opera") !== -1 && $comments_form.find('.file-item').length > 2) {
-
                 return true;
             }
 
@@ -335,8 +334,9 @@ $(function () {
 
 
                     (function ($file_item, ind) {
+                        $('#' + 'comment_file_' + ind).attr('name', 'file');
                         $.ajaxFileUpload({
-                            url: '/projects/upload_comment_file/session/' + session + '/pos/' + (ind + 1) + '/fuck/' + (Math.random() * 100000),
+                            url: '/projects/upload_comment_file/session/' + session + '/pos/' + (ind + 1),
                             secureuri: false,
                             fileElementId: 'comment_file_' + ind,
                             dataType: 'json',
@@ -837,6 +837,9 @@ $(function () {
     var lastTime = 0;
 
     function loadUnreadComments(callback) {
+        callback = callback || function () {
+        };
+
         var project_id = null, i;
 
         if (BLOCK_AJAX_UPDATE) {
@@ -949,6 +952,9 @@ $(function () {
 
     if (AJAX_ENABLED) {
         commentsTimerFunction();
+    }
+    else {
+        loadUnreadComments();
     }
 
 
